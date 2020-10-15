@@ -32,29 +32,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="https://snackbud.azurewebsites.net/time";
-
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                       // DisplayText.setText(response);
-                        Log.d("aaa", response);
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("aaa", Objects.requireNonNull(error.getMessage()));
-//                DisplayText.setText((CharSequence) error);
-            }
-        });
-
-// Add the request to the RequestQueue.
-        queue.add(stringRequest);
     }
 
     /**
