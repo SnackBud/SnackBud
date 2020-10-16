@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">SnackBud</string>
     <string name="title_activity_maps">Map</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="bottom_menu_one">One</string>
+    <string name="bottom_menu_two">Two</string>
+    <string name="bottom_menu_three">Three</string>
 </resources>
