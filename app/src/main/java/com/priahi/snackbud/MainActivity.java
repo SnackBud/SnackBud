@@ -5,6 +5,7 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
 
                         case R.id.action_two:
                             selectedFragment = new TwoFragment();
+                            break;
+
+                        case R.id.action_three:
+                            selectedFragment = new MapsFragment();
                             break;
                     }
 
