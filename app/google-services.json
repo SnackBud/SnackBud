@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "445405092041",
+    "firebase_url": "https://snackbud-5911d.firebaseio.com",
+    "project_id": "snackbud-5911d",
+    "storage_bucket": "snackbud-5911d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:445405092041:android:a798114b1aeb668285d518",
+        "android_client_info": {
+          "package_name": "com.priahi.snackbud"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "445405092041-6aen2drtcsqp2kptdk4of2dmmo96jefc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCF5QplDmA_k_beLv_Cg_7rmAOO86z_WH4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "445405092041-6aen2drtcsqp2kptdk4of2dmmo96jefc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
