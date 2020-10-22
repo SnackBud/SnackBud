@@ -6,4 +6,6 @@
     <string name="bottom_menu_one">One</string>
     <string name="bottom_menu_two">Two</string>
     <string name="bottom_menu_three">Three</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
 </resources>

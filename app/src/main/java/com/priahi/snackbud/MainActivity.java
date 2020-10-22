@@ -3,18 +3,37 @@ package com.priahi.snackbud;
 import android.os.Bundle;
 import android.view.MenuItem;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
+    DrawerLayout drawerLayout;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // side menu
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
 
         // Bottom Navigation
         BottomNavigationView btmNav = findViewById(R.id.bottom_navigation);
@@ -22,8 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Fragment One is main
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_layout, new OneFragment()).commit();
-
+                .replace(R.id.fragment_layout, new HomeFragment()).commit();
     }
 
     //Listener
@@ -35,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
                     switch (item.getItemId()) {
                         case R.id.action_one:
-                            selectedFragment = new OneFragment();
+                            selectedFragment = new HomeFragment();
                             break;
 
                         case R.id.action_two:
@@ -55,5 +73,8 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
             };
+
+            //side menu
+
 
 }
