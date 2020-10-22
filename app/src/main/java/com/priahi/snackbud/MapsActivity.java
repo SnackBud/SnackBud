@@ -11,11 +11,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.Objects;
@@ -46,10 +48,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
+        // Add a marker in Vancity and move the camera
+        LatLng vancouver = new LatLng(49.32, -123.0724);
+        LatLng topLeft = new LatLng(49.4, -123.1);
+        LatLng bottomRight = new LatLng(49.30, -123.0);
+        MarkerOptions van = new MarkerOptions().position(vancouver).title("Ready for a meetup?");
+        LatLngBounds.Builder b = new LatLngBounds.Builder();
+        b.include(vancouver);
+        b.include(topLeft);
+        b.include(bottomRight);
+        LatLngBounds bounds = b.build();
+        int width = getResources().getDisplayMetrics().widthPixels;
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width,width,25);
+        mMap.animateCamera(cu);
+        mMap.addMarker(van);
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(vancouver));
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 }
