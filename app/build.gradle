@@ -3,10 +3,11 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 29
+    buildToolsVersion "29.0.2"
 
     defaultConfig {
         applicationId "com.priahi.snackbud"
-        minSdkVersion 29
+        minSdkVersion 16
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -25,8 +26,7 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation platform('com.google.firebase:firebase-bom:25.12.0')
     implementation 'com.google.firebase:firebase-messaging'
@@ -42,5 +42,26 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:18.1.0'
 
     /* Material */
-    implementation 'com.google.android.material:material:1.2.0'
+    implementation 'com.google.android.material:material:1.2.1'
+
+    //
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+    //
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
+
+    //
+    implementation 'com.google.android.gms:play-services-maps:16.1.0'
+
+    //
+    implementation 'com.google.android.libraries.places:places:2.4.0'
+
+    //
+    implementation 'androidx.navigation:navigation-fragment:2.3.1'
+    implementation 'androidx.navigation:navigation-ui:2.3.1'
+    implementation 'com.github.mancj:MaterialSearchBar:0.8.5'
+
+    //
+    implementation 'com.karumi:dexter:6.2.1'
+
 }

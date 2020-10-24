@@ -1,5 +1,13 @@
 package com.priahi.snackbud;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.ImageView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -9,12 +17,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
 
 public class MapsFragment extends Fragment {
 
@@ -31,9 +46,35 @@ public class MapsFragment extends Fragment {
          */
         @Override
         public void onMapReady(GoogleMap googleMap) {
-            LatLng sydney = new LatLng(-34, 151);
-            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            GoogleMap mMap = googleMap;
+            // Add a marker in Vancity and move the camera
+            LatLng vancouver = new LatLng(49.20, -123.0724);
+            LatLng topLeft = new LatLng(49.15, -123.2);
+            LatLng bottomRight = new LatLng(49.35, -123.0);
+            //MarkerOptions van = new MarkerOptions().position(vancouver).title("Ready for a meetup?");
+            LatLngBounds.Builder b = new LatLngBounds.Builder();
+            b.include(vancouver);
+            b.include(topLeft);
+            b.include(bottomRight);
+            LatLngBounds bounds = b.build();
+            int width = getResources().getDisplayMetrics().widthPixels;
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width,width,25);
+            mMap.animateCamera(cu);
+            //mMap.addMarker(van);
+            try {
+                // get JSONObject from JSON file
+                JSONObject obj = new JSONObject(loadJSONFromAsset());
+                // fetch JSONArray named users
+                JSONArray userArray = obj.getJSONArray("data");
+                // implement for loop for getting users list data
+                for (int i = 0; i < userArray.length(); i++) {
+                    JSONObject userDetail = userArray.getJSONObject(i);
+                    LatLng loc = new LatLng(userDetail.getDouble("lng"), userDetail.getDouble("lat"));
+                    mMap.addMarker(new MarkerOptions().position(loc).title(userDetail.getString("name")));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     };
 
@@ -54,4 +95,21 @@ public class MapsFragment extends Fragment {
             mapFragment.getMapAsync(callback);
         }
     }
+
+    public String loadJSONFromAsset() {
+        String json = null;
+        try {
+            InputStream is = getContext().getAssets().open("restaurants.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
+    }
 }
+

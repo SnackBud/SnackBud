@@ -86,8 +86,6 @@ public class LoginActivity extends AppCompatActivity {
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
             updateUI(null);
         }
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
     }
 
     private void updateUI(GoogleSignInAccount account) {
@@ -96,11 +94,9 @@ public class LoginActivity extends AppCompatActivity {
         }
         else {
             String personName = account.getDisplayName();
-            String personGivenName = account.getGivenName();
-            String personFamilyName = account.getFamilyName();
-            String personEmail = account.getEmail();
-            String personId = account.getId();
             Uri personPhoto = account.getPhotoUrl();
+            Intent intent = new Intent(this, PermissionsActivity.class);
+            startActivity(intent);
         }
     }
 

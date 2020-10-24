@@ -1,4 +1,5 @@
-[
+{
+"data" : [
   {
     "id": 1000,
     "name": "Loafe Cafe",
@@ -9656,3 +9657,4 @@
     "Sunday_Close_Time": 2100
   }
 ]
+}
