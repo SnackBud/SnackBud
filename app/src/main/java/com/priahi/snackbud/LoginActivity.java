@@ -12,14 +12,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-import com.priahi.snackbud.PermissionsActivity;
-import com.priahi.snackbud.R;
 
 public class LoginActivity extends AppCompatActivity {
 
     private GoogleSignInClient mGoogleSignInClient;
     private int RC_SIGN_IN = 1;
     final static String TAG = "LoginActivity";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

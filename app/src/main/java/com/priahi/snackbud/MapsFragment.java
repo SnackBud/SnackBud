@@ -23,6 +23,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -30,16 +36,24 @@ import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.JsonArray;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
 public class MapsFragment extends Fragment {
+
+    private RequestQueue mQueue;
+
+    private GoogleMap mMap;
+
+    final private String RESTAURANTS_URL = "";
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -54,16 +68,19 @@ public class MapsFragment extends Fragment {
          */
         @Override
         public void onMapReady(GoogleMap googleMap) {
-            GoogleMap mMap = googleMap;
+            mMap = googleMap;
 
             LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
 
-            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
+            // check for permissions
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
                     Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
 
+            // get last known location
             Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
             if (location != null)
             {
@@ -76,7 +93,11 @@ public class MapsFragment extends Fragment {
                         .tilt(0)                   // Sets the tilt of the camera to 30 degrees
                         .build();                   // Creates a CameraPosition from the builder
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            } else {
+
+                mMap.setMyLocationEnabled(true);
+            }
+            // default to vancouver
+            else {
                 // Add a marker in Vancity and move the camera
                 LatLng vancouver = new LatLng(49.20, -123.0724);
                 LatLng topLeft = new LatLng(49.15, -123.2);
@@ -93,20 +114,27 @@ public class MapsFragment extends Fragment {
                 //mMap.addMarker(van);
             }
 
+            // this is using assets locally
             try {
                 // get JSONObject from JSON file
                 JSONObject obj = new JSONObject(loadJSONFromAsset());
                 // fetch JSONArray named users
-                JSONArray userArray = obj.getJSONArray("data");
+                JSONArray restaurantsArray = obj.getJSONArray("data");
                 // implement for loop for getting users list data
-                for (int i = 0; i < userArray.length(); i++) {
-                    JSONObject userDetail = userArray.getJSONObject(i);
-                    LatLng loc = new LatLng(userDetail.getDouble("lng"), userDetail.getDouble("lat"));
-                    mMap.addMarker(new MarkerOptions().position(loc).title(userDetail.getString("name")));
+                for (int i = 0; i < restaurantsArray.length(); i++) {
+                    JSONObject restaurants = restaurantsArray.getJSONObject(i);
+                    LatLng loc = new LatLng(restaurants.getDouble("lng"), restaurants.getDouble("lat"));
+                    mMap.addMarker(new MarkerOptions().position(loc).title(restaurants.getString("name")));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            // this is using a GET request
+            /*
+               mQueue = Volley.newRequestQueue(getContext());
+               jsonParse(RESTAURANTS_URL);
+            */
         }
     };
 
@@ -126,6 +154,7 @@ public class MapsFragment extends Fragment {
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
+
     }
 
     public String loadJSONFromAsset() {
@@ -142,6 +171,36 @@ public class MapsFragment extends Fragment {
             return null;
         }
         return json;
+    }
+
+
+    private void jsonParse(String url) {
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray jsonArray = response.getJSONArray("data");
+
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject restaurants = jsonArray.getJSONObject(i);
+                        LatLng loc = new LatLng(restaurants.getDouble("lng"), restaurants.getDouble("lat"));
+                        mMap.addMarker(new MarkerOptions().position(loc).title(restaurants.getString("name")));
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+
+        mQueue.add(jsonObjectRequest);
     }
 
 }
