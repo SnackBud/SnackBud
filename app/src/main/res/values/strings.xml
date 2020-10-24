@@ -11,4 +11,5 @@
     <string name="create_meeting">Create Meeting</string>
     <string name="guest_name">Guest Name</string>
     <string name="meeting_time">Meeting Time</string>
+    <string name="personName">personName</string>
 </resources>

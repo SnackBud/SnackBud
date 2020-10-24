@@ -1,8 +1,13 @@
 package com.priahi.snackbud;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -10,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
@@ -17,11 +23,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.*;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,20 +55,44 @@ public class MapsFragment extends Fragment {
         @Override
         public void onMapReady(GoogleMap googleMap) {
             GoogleMap mMap = googleMap;
-            // Add a marker in Vancity and move the camera
-            LatLng vancouver = new LatLng(49.20, -123.0724);
-            LatLng topLeft = new LatLng(49.15, -123.2);
-            LatLng bottomRight = new LatLng(49.35, -123.0);
-            //MarkerOptions van = new MarkerOptions().position(vancouver).title("Ready for a meetup?");
-            LatLngBounds.Builder b = new LatLngBounds.Builder();
-            b.include(vancouver);
-            b.include(topLeft);
-            b.include(bottomRight);
-            LatLngBounds bounds = b.build();
-            int width = getResources().getDisplayMetrics().widthPixels;
-            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width,width,25);
-            mMap.animateCamera(cu);
-            //mMap.addMarker(van);
+
+            LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+
+            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+            if (location != null)
+            {
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
+                        .zoom(15)                   // Sets the zoom
+                        .bearing(0)                // Sets the orientation of the camera to east
+                        .tilt(0)                   // Sets the tilt of the camera to 30 degrees
+                        .build();                   // Creates a CameraPosition from the builder
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            } else {
+                // Add a marker in Vancity and move the camera
+                LatLng vancouver = new LatLng(49.20, -123.0724);
+                LatLng topLeft = new LatLng(49.15, -123.2);
+                LatLng bottomRight = new LatLng(49.35, -123.0);
+                //MarkerOptions van = new MarkerOptions().position(vancouver).title("Ready for a meetup?");
+                LatLngBounds.Builder b = new LatLngBounds.Builder();
+                b.include(vancouver);
+                b.include(topLeft);
+                b.include(bottomRight);
+                LatLngBounds bounds = b.build();
+                int width = getResources().getDisplayMetrics().widthPixels;
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width,width,25);
+                mMap.animateCamera(cu);
+                //mMap.addMarker(van);
+            }
+
             try {
                 // get JSONObject from JSON file
                 JSONObject obj = new JSONObject(loadJSONFromAsset());
@@ -111,5 +143,6 @@ public class MapsFragment extends Fragment {
         }
         return json;
     }
+
 }
 
