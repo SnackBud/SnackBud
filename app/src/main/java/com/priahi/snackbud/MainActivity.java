@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                             break;
 
                         case R.id.action_two:
-                            selectedFragment = new TwoFragment();
+                            selectedFragment = new MeetingFragment();
                             break;
 
                         case R.id.action_three:
