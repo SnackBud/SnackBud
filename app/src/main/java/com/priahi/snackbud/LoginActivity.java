@@ -96,6 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         else {
             String personName = account.getDisplayName();
             Uri personPhoto = account.getPhotoUrl();
+            // volley to backend user POST
             Intent intent = new Intent(this, PermissionsActivity.class);
             startActivity(intent);
         }

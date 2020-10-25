@@ -1,16 +1,19 @@
 package com.priahi.snackbud;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -29,6 +32,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.arsy.maps_library.MapRipple;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -55,6 +59,8 @@ public class MapsFragment extends Fragment {
 
     final private String RESTAURANTS_URL = "";
 
+    private Button findMeetUp;
+
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
         /**
@@ -66,24 +72,13 @@ public class MapsFragment extends Fragment {
          * install it inside the SupportMapFragment. This method will only be triggered once the
          * user has installed Google Play services and returned to the app.
          */
+
         @Override
         public void onMapReady(GoogleMap googleMap) {
             mMap = googleMap;
 
-            LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-            Criteria criteria = new Criteria();
-
-            // check for permissions
-            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-
-            // get last known location
-            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-            if (location != null)
-            {
+            Location location = getLocation();
+            if (location != null) {
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
 
                 CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -94,6 +89,10 @@ public class MapsFragment extends Fragment {
                         .build();                   // Creates a CameraPosition from the builder
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
                 mMap.setMyLocationEnabled(true);
             }
             // default to vancouver
@@ -155,6 +154,23 @@ public class MapsFragment extends Fragment {
             mapFragment.getMapAsync(callback);
         }
 
+        findMeetUp = view.findViewById(R.id.begin_meetup_search);
+        findMeetUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Location location = getLocation();
+                MapRipple mapRipple = new MapRipple(mMap, new LatLng(location.getLatitude(), location.getLongitude()), getContext());
+                mapRipple.withNumberOfRipples(3);
+                mapRipple.withFillColor(Color.BLUE);
+                mapRipple.withStrokeColor(Color.BLACK);
+                mapRipple.withStrokewidth(10);      // 10dp
+                mapRipple.withDistance(500);      // 2000 metres radius
+                mapRipple.withRippleDuration(10000);    //12000ms
+                mapRipple.withTransparency(0.7f);
+                mapRipple.startRippleMapAnimation();
+            }
+        });
+
     }
 
     public String loadJSONFromAsset() {
@@ -201,6 +217,14 @@ public class MapsFragment extends Fragment {
         });
 
         mQueue.add(jsonObjectRequest);
+    }
+
+    private Location getLocation() {
+        LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+
+        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+        return location;
     }
 
 }

@@ -5,18 +5,43 @@
              android:layout_height="match_parent"
              tools:context=".HomeFragment">
 
+    <Button android:layout_width="120dp"
+            android:layout_height="100dp"
+            android:id="@+id/covid_report"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="30dp"
+            android:text="@string/covid_report"/>
+
     <ImageView
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:id="@+id/profile_image"
             app:srcCompat="@drawable/ic_profile" android:layout_marginBottom="50dp"
             android:layout_alignBottom="@+id/person_name" tools:ignore="UnknownId,VectorDrawableCompat"/>
+
     <TextView
             android:id="@+id/person_name"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:textAlignment="center" android:layout_alignParentBottom="true" android:layout_marginBottom="381dp"
-            android:layout_marginTop="320dp" android:layout_alignParentTop="true" android:gravity="center_horizontal"/>
+            android:layout_height="45dp"
+            android:textAlignment="center"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="370dp"
+            android:layout_marginTop="310dp"
+            android:layout_alignParentTop="true"
+            android:gravity="center_horizontal"/>
+
+    <TextView
+            android:id="@+id/person_user_id"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:textAlignment="center"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="320dp"
+            android:layout_marginTop="355dp"
+            android:layout_alignParentTop="true"
+            android:gravity="center_horizontal"/>
 
 
 </RelativeLayout>

@@ -69,4 +69,8 @@ dependencies {
     // Screen
     implementation "androidx.recyclerview:recyclerview-selection:1.1.0-rc03"
     implementation "androidx.cardview:cardview:1.0.0"
+
+    // ripple
+    implementation 'com.github.aarsy.googlemapsanimations:googlemapsanimations:1.0.5'
+
 }
