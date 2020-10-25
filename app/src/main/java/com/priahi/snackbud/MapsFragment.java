@@ -1,8 +1,10 @@
 package com.priahi.snackbud;
 
 import android.Manifest;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -60,6 +62,8 @@ public class MapsFragment extends Fragment {
     final private String RESTAURANTS_URL = "";
 
     private Button findMeetUp;
+
+    private boolean isMeetUpOn = false;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -158,16 +162,14 @@ public class MapsFragment extends Fragment {
         findMeetUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Location location = getLocation();
-                MapRipple mapRipple = new MapRipple(mMap, new LatLng(location.getLatitude(), location.getLongitude()), getContext());
-                mapRipple.withNumberOfRipples(3);
-                mapRipple.withFillColor(Color.BLUE);
-                mapRipple.withStrokeColor(Color.BLACK);
-                mapRipple.withStrokewidth(10);      // 10dp
-                mapRipple.withDistance(500);      // 2000 metres radius
-                mapRipple.withRippleDuration(10000);    //12000ms
-                mapRipple.withTransparency(0.7f);
-                mapRipple.startRippleMapAnimation();
+                if (!isMeetUpOn) {
+                    isMeetUpOn = true;
+                    findMeetUp.setText("End search");
+                }
+                else {
+                    isMeetUpOn = false;
+                    findMeetUp.setText("Find Meetup!");
+                }
             }
         });
 
@@ -228,4 +230,7 @@ public class MapsFragment extends Fragment {
     }
 
 }
+
+
+
 
