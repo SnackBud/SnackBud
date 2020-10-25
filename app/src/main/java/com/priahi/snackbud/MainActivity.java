@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                             break;
 
                         case R.id.meetup_view:
-                            selectedFragment = new TwoFragment();
+                            selectedFragment = new HomeFragment();
                             break;
                     }
 
