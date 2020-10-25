@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     private int RC_SIGN_IN = 1;
     final static String TAG = "LoginActivity";
 
-    private static final String url = "http://13.68.137.122:3000/register";
+    private static final String url = "http://13.68.137.122:3000";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +122,9 @@ public class LoginActivity extends AppCompatActivity {
             params.put("deviceToken", MyFirebaseMessagingService.deviceToken);
             params.put("username", personName);
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params),
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
+                    url + "/user",
+                    new JSONObject(params),
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
