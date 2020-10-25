@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             break;
 
                         case R.id.meetup_view:
+                            selectedFragment = new MeetingFragment();
                             break;
                     }
 

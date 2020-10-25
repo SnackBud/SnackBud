@@ -6,6 +6,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -13,12 +21,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+
 public class LoginActivity extends AppCompatActivity {
 
     private GoogleSignInClient mGoogleSignInClient;
     private int RC_SIGN_IN = 1;
     final static String TAG = "LoginActivity";
 
+    private static final String url = "http://13.68.137.122:3000";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,11 +94,12 @@ public class LoginActivity extends AppCompatActivity {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
 
             // Signed in successfully, show authenticated UI.
-            updateUI(account);
+            Intent intent = new Intent(this, PermissionsActivity.class);
+            startActivity(intent);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            Log.w(TAG, "signInResult:failed code = " + e.getStatusCode());
             updateUI(null);
         }
     }
@@ -94,9 +109,40 @@ public class LoginActivity extends AppCompatActivity {
             Log.d(TAG, "There is no user signed in");
         }
         else {
+            String personId = account.getId();
             String personName = account.getDisplayName();
             Uri personPhoto = account.getPhotoUrl();
+
             // volley to backend user POST
+            Log.d(TAG, "Sending userId and deviceToken to backend");
+
+            RequestQueue queue = Volley.newRequestQueue(this);
+            HashMap<String, String> params = new HashMap<String, String>();
+            params.put("userId", personId);
+            params.put("deviceToken", MyFirebaseMessagingService.deviceToken);
+            params.put("username", personName);
+
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
+                    url + "/user",
+                    new JSONObject(params),
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                VolleyLog.v("Response:%n %s", response.toString(4));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.e("Error: ", error.getMessage());
+                }
+            });
+
+            queue.add(request);
+
             Intent intent = new Intent(this, PermissionsActivity.class);
             startActivity(intent);
         }

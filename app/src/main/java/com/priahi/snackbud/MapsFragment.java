@@ -1,8 +1,10 @@
 package com.priahi.snackbud;
 
 import android.Manifest;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,6 +34,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.arsy.maps_library.MapRadar;
 import com.arsy.maps_library.MapRipple;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -60,6 +63,8 @@ public class MapsFragment extends Fragment {
     final private String RESTAURANTS_URL = "";
 
     private Button findMeetUp;
+
+    private boolean isMeetUpOn = false;
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -129,6 +134,22 @@ public class MapsFragment extends Fragment {
                 e.printStackTrace();
             }
 
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    LatLng position = marker.getPosition();
+                    CameraPosition cameraPosition = new CameraPosition.Builder()
+                            .target(new LatLng(position.latitude, position.longitude))      // Sets the center of the map to location user
+                            .zoom(15)                   // Sets the zoom
+                            .bearing(0)                // Sets the orientation of the camera to east
+                            .tilt(0)                   // Sets the tilt of the camera to 30 degrees
+                            .build();                   // Creates a CameraPosition from the builder
+                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    Toast.makeText(getContext(), marker.getTitle(), Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
+
             // this is using a GET request
             /*
                mQueue = Volley.newRequestQueue(getContext());
@@ -158,16 +179,15 @@ public class MapsFragment extends Fragment {
         findMeetUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Location location = getLocation();
-                MapRipple mapRipple = new MapRipple(mMap, new LatLng(location.getLatitude(), location.getLongitude()), getContext());
-                mapRipple.withNumberOfRipples(3);
-                mapRipple.withFillColor(Color.BLUE);
-                mapRipple.withStrokeColor(Color.BLACK);
-                mapRipple.withStrokewidth(10);      // 10dp
-                mapRipple.withDistance(500);      // 2000 metres radius
-                mapRipple.withRippleDuration(10000);    //12000ms
-                mapRipple.withTransparency(0.7f);
-                mapRipple.startRippleMapAnimation();
+
+                if (!isMeetUpOn) {
+                    isMeetUpOn = true;
+                    findMeetUp.setText("End search");
+                }
+                else {
+                    isMeetUpOn = false;
+                    findMeetUp.setText("Find Meetup!");
+                }
             }
         });
 
@@ -228,4 +248,7 @@ public class MapsFragment extends Fragment {
     }
 
 }
+
+
+
 
