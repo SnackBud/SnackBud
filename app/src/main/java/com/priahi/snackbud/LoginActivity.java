@@ -19,6 +19,7 @@ public class LoginActivity extends AppCompatActivity {
     private int RC_SIGN_IN = 1;
     final static String TAG = "LoginActivity";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
