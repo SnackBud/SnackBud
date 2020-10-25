@@ -1,23 +1,21 @@
 package com.priahi.snackbud;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.android.volley.*;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.android.gms.maps.GoogleMap;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +28,14 @@ public class HomeFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    private GoogleMap mMap;
+
+    final private String RESTAURANTS_URL = "";
+
+
+    private Button covidReport;
+    private Button enterPasscode;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -72,10 +78,57 @@ public class HomeFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        // modify view
+        // modify view GET REQUEST
+        covidReport = view.findViewById(R.id.covid_report);
+
+        covidReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                postCovidReport();
+            }
+        });
 
         // Inflate the layout for this fragment
         return view;
+    }
+
+    private void postCovidReport() {
+        // send with cur date + 14 days
+        RequestQueue mQueue = Volley.newRequestQueue(getContext());
+        String url = "http://13.68.137.122:3000/event/contactTrace";
+        StringRequest stringRequest = new StringRequest(Request.Method.PUT, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(getContext(), "reported", Toast.LENGTH_LONG).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), "server error: "+ error, Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams()throws AuthFailureError {
+                Map<String, String> param = new HashMap<String, String>();
+
+                Date myDate = Calendar.getInstance().getTime();
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(myDate);
+                calendar.add(Calendar.DAY_OF_YEAR, -14);
+                Date newDate = calendar.getTime();
+
+                String currentDate = myDate.toString();
+                String twoWeeksAgo = newDate.toString();
+
+                param.put("userId", "2");
+                param.put("currentDate", currentDate);
+                param.put("twoWeeksAgo", twoWeeksAgo);
+                return param;
+            }
+
+        };
+
+        mQueue.add(stringRequest);
     }
 
 }
