@@ -34,6 +34,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.arsy.maps_library.MapRadar;
 import com.arsy.maps_library.MapRipple;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -133,6 +134,22 @@ public class MapsFragment extends Fragment {
                 e.printStackTrace();
             }
 
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    LatLng position = marker.getPosition();
+                    CameraPosition cameraPosition = new CameraPosition.Builder()
+                            .target(new LatLng(position.latitude, position.longitude))      // Sets the center of the map to location user
+                            .zoom(15)                   // Sets the zoom
+                            .bearing(0)                // Sets the orientation of the camera to east
+                            .tilt(0)                   // Sets the tilt of the camera to 30 degrees
+                            .build();                   // Creates a CameraPosition from the builder
+                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    Toast.makeText(getContext(), marker.getTitle(), Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            });
+
             // this is using a GET request
             /*
                mQueue = Volley.newRequestQueue(getContext());
@@ -162,6 +179,7 @@ public class MapsFragment extends Fragment {
         findMeetUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (!isMeetUpOn) {
                     isMeetUpOn = true;
                     findMeetUp.setText("End search");
