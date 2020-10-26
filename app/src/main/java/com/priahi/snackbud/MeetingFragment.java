@@ -145,7 +145,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         userDropdown.setAdapter(userAdapter);
         userDropdown.setOnItemSelectedListener(this);
 
-        // List the users
+        // List the restaurants
         Spinner restDropdown = requireView().findViewById(R.id.restSpinner);
         ArrayAdapter<String> restAdapter = new ArrayAdapter<String>(requireContext(),
                 android.R.layout.simple_spinner_dropdown_item, restNames);
@@ -164,7 +164,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                     public void onResponse(JSONObject response) {
                         try {
                             VolleyLog.v("Response:%n %s", response.toString(4));
-                            JSONArray array = response.getJSONArray("users");
+                            JSONArray array = response.getJSONArray("data");
                             for (int i = 0; i < array.length(); i++) {
                                 JSONObject object1 = array.getJSONObject(i);
                                 String userId = object1.getString("userId");
@@ -258,7 +258,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                     new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                            txtDate.setText(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+                            String date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+                            txtDate.setText(date);
                         }
                     }, mYear, mMonth, mDay);
             datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
@@ -274,7 +275,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                     new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                            txtTime.setText(hourOfDay + ":" + minute);
+                            String timeOfDay = hourOfDay + ":" + minute;
+                            txtTime.setText(timeOfDay);
                         }
                     }, mHour, mMinute, false);
             timePickerDialog.show();

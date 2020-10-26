@@ -1,13 +1,19 @@
 package com.priahi.snackbud;
 
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.Toast;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.android.volley.*;
+import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.maps.GoogleMap;
@@ -94,9 +100,9 @@ public class HomeFragment extends Fragment {
 
     private void postCovidReport() {
         // send with cur date + 14 days
-        RequestQueue mQueue = Volley.newRequestQueue(getContext());
+        RequestQueue mQueue = Volley.newRequestQueue(requireContext());
         String url = "http://13.68.137.122:3000/event/contactTrace";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Toast.makeText(getContext(), "reported", Toast.LENGTH_LONG).show();
