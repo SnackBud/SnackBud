@@ -24,7 +24,9 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="105.5dp"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="105.5dp"/>
+            android:layout_marginStart="105.5dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true" />
 
     <ImageView android:layout_width="match_parent"
                android:layout_height="200dp"
