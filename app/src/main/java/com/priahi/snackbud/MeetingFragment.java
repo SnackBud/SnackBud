@@ -19,18 +19,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.JsonArray;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,12 +38,11 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class MeetingFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
@@ -106,6 +105,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                 restaurants.put(restaurant.getString("name"), restaurant.getString("id"));
                 restNames.add(i, restaurant.getString("name"));
             }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -150,19 +150,20 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         btnCreateMeeting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                postRequest();
+                try {
+                    postRequest();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
+        Log.d("user", userNames.toString());
         // List the users
-        Spinner userDropdown = requireView().findViewById(R.id.userSpinner);
-        ArrayAdapter<String> userAdapter = new ArrayAdapter<String>(requireContext(),
-                android.R.layout.simple_spinner_dropdown_item, userNames);
-        userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        userDropdown.setAdapter(userAdapter);
+        final Spinner userDropdown = requireView().findViewById(R.id.userSpinner);
         userDropdown.setOnItemSelectedListener(this);
 
-        // List the users
+        // List the restaurants
         Spinner restDropdown = requireView().findViewById(R.id.restSpinner);
         ArrayAdapter<String> restAdapter = new ArrayAdapter<String>(requireContext(),
                 android.R.layout.simple_spinner_dropdown_item, restNames);
@@ -192,6 +193,11 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                                     userNames.add(i, username);
                                 }
                             }
+                            ArrayAdapter<String> userAdapter = new ArrayAdapter<String>(requireContext(),
+                                    android.R.layout.simple_spinner_dropdown_item, userNames);
+                            userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            userDropdown.setAdapter(userAdapter);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -223,6 +229,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                 Log.d("restaurant", restNames.get(position));
                 if (restNames.get(position) != null) {
                     restId = restaurants.get(restNames.get(position));
+                    restName = restNames.get(position);
                 }
                 break;
             case R.id.userSpinner:
@@ -232,6 +239,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                 }
                 break;
         }
+        Log.d("restaurant", restId);
 
     }
 
@@ -254,7 +262,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                     new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                            txtDate.setText(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+                            String date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+                            txtDate.setText(date);
                         }
                     }, mYear, mMonth, mDay);
             datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
@@ -270,7 +279,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                     new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                            txtTime.setText(hourOfDay + ":" + minute);
+                            String timeOfDay = hourOfDay + ":" + minute;
+                            txtTime.setText(timeOfDay);
                         }
                     }, mHour, mMinute, false);
             timePickerDialog.show();
@@ -278,7 +288,46 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         timeOfMeet = mYear + "-" + (mMonth + 1) + "-" + mDay + "T" + mHour + ":" + mMinute + ":00Z";
     }
 
-    private void postRequest() {
-        
+    private void postRequest() throws JSONException {
+
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireActivity());
+        if (acct == null) {
+            Log.e(TAG, "error, no google sign in");
+            return;
+        }
+
+        JSONObject eventRequest = new JSONObject();
+        eventRequest.put("hostId", acct.getId());
+
+        JSONArray array = new JSONArray();
+        JSONObject guestId = new JSONObject();
+        guestId.put("guestId", this.guestId);
+        array.put(guestId);
+
+        eventRequest.put("guestIds", array);
+        eventRequest.put("restId", restId);
+        eventRequest.put("restName", restName);
+        eventRequest.put("timeOfMeet", timeOfMeet);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
+                url + "/event",
+                eventRequest,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            VolleyLog.v("Response:%n %s", response.toString(4));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+            }
+        });
+
+        queue.add(request);
     }
 }
