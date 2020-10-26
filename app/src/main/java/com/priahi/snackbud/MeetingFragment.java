@@ -19,18 +19,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,7 +33,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -146,12 +140,9 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         btnDatePicker.setOnClickListener((View.OnClickListener) this);
         btnTimePicker.setOnClickListener((View.OnClickListener) this);
 
+        Log.d("user", userNames.toString());
         // List the users
-        Spinner userDropdown = requireView().findViewById(R.id.userSpinner);
-        ArrayAdapter<String> userAdapter = new ArrayAdapter<String>(requireContext(),
-                android.R.layout.simple_spinner_dropdown_item, userNames);
-        userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        userDropdown.setAdapter(userAdapter);
+        final Spinner userDropdown = requireView().findViewById(R.id.userSpinner);
         userDropdown.setOnItemSelectedListener(this);
 
         // List the restaurants
@@ -184,6 +175,11 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                                     userNames.add(i, username);
                                 }
                             }
+                            ArrayAdapter<String> userAdapter = new ArrayAdapter<String>(requireContext(),
+                                    android.R.layout.simple_spinner_dropdown_item, userNames);
+                            userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            userDropdown.setAdapter(userAdapter);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -215,6 +211,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                 Log.d("restaurant", restNames.get(position));
                 if (restNames.get(position) != null) {
                     restId = restaurants.get(restNames.get(position));
+
                 }
                 break;
             case R.id.userSpinner:
@@ -224,6 +221,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                 }
                 break;
         }
+        Log.d("restaurant", restId);
 
     }
 
