@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -14,6 +15,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,10 +30,12 @@ public class MeetingFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private String hostid;
-    private String guestid;
-    private Date timeOfMeet;
-    private Date timeOfCreation;
+    private String hostId;
+    private String guestId;
+    private String restId;
+    private String restName;
+    private String timeOfMeet;
+    private String timeOfCreation;
 
     public MeetingFragment() {
         // Required empty public constructor
@@ -63,31 +67,41 @@ public class MeetingFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        // RequestQueue queue = Volley.newRequestQueue(this);
-        // String url = "";
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        String url = "";
 
-        // StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-        //    @Override
-        //    public void onResponse(String response) {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(getContext(), "reported", Toast.LENGTH_LONG).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), "server error: "+ error, Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError{
+                Map<String, String> params = new HashMap<String, String>();
 
-        //    }
-        // }, new Response.ErrorListener() {
-        //    @Override
-        //    public void onErrorResponse(VolleyError error) {
+                Date myDate = Calendar.getInstance().getTime();
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(myDate);
 
-        //    }
-        // }){
-        //    @Override
-        //    protected Map<String, String> getParams(){
-        //        Map<String, String> params = new HashMap<String, String>();
-                // params.put();
-         //   }
+                timeOfCreation = myDate.toString();
 
-        //    @Override
-        //    protected Map<String, String> getHeaders() throws AuthFailureError {
+                params.put("hostId", hostId);
+                params.put("guestId", guestId);
+                params.put("restId", restId);
+                params.put("restName", restName);
+                params.put("timeOfMeet", timeOfMeet);
+                params.put("timeOfCreation", timeOfCreation);
 
-        //    }
-        //}
+                return params;
+            }
+        };
+        queue.add(stringRequest);
     }
 
     @Override
