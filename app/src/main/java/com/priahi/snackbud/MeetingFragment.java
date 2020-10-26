@@ -82,7 +82,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
         }
 
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        String url = "";
+        String url = "http://13.68.137.122:3000/event";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -102,14 +102,6 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
                 Date myDate = Calendar.getInstance().getTime();
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(myDate);
-
-        //    }
-        // }){
-        //    @Override
-        //    protected Map<String, String> getParams(){
-        //        Map<String, String> params = new HashMap<String, String>();
-        // params.put();
-        //   }
                 timeOfCreation = myDate.toString();
 
                 params.put("hostId", hostId);
@@ -117,7 +109,6 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
                 params.put("restId", restId);
                 params.put("restName", restName);
                 params.put("timeOfMeet", timeOfMeet);
-                params.put("timeOfCreation", timeOfCreation);
 
                 return params;
             }

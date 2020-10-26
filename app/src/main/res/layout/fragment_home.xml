@@ -9,19 +9,13 @@
         android:id="@+id/covid_report"
         android:layout_width="120dp"
         android:layout_height="100dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="261dp"
-        android:layout_marginLeft="261dp"
-        android:layout_marginTop="601dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="30dp"
-        android:text="@string/covid_report"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="30dp" />
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="147dp"
+        android:layout_marginRight="147dp"
+        android:layout_marginBottom="62dp"
+        android:text="@string/covid_report" />
 
     <ImageView
             android:layout_width="match_parent"
