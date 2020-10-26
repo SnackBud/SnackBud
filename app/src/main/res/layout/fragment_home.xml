@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              tools:context=".HomeFragment">
 
     <Button
-        android:id="@+id/covid_report"
-        android:layout_width="120dp"
-        android:layout_height="100dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="147dp"
-        android:layout_marginRight="147dp"
-        android:layout_marginBottom="20dp"
-        android:text="@string/covid_report" />
+            android:id="@+id/covid_report"
+            android:layout_width="120dp"
+            android:layout_height="100dp"
+            android:text="@string/covid_report" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/verify_meetup"/>
 
     <TextView
             android:id="@+id/person_name_google"
@@ -23,12 +19,10 @@
             android:layout_height="45dp"
             android:textAlignment="center"
             android:textColor="#000000"
-            android:textSize="30sp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="440dp"
-            android:layout_marginTop="250dp"
-            android:layout_alignParentTop="true"
-            android:gravity="center_horizontal"/>
+            android:textSize="20sp"
+            android:gravity="center_horizontal" app:layout_constraintBottom_toTopOf="@+id/person_user_id_google"
+            app:layout_constraintTop_toBottomOf="@+id/profile_image" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
             android:id="@+id/person_user_id_google"
@@ -36,34 +30,27 @@
             android:layout_height="45dp"
             android:textAlignment="center"
             android:textColor="#000000"
-            android:textSize="30sp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="390dp"
-            android:layout_marginTop="300dp"
-            android:layout_alignParentTop="true"
-            android:gravity="center_horizontal"/>
+            android:textSize="20sp"
+            android:gravity="center_horizontal" app:layout_constraintBottom_toTopOf="@+id/verify_meetup"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/person_name_google"/>
 
     <Button android:layout_width="300dp"
             android:layout_height="100dp"
-            android:layout_marginTop="400dp"
-            android:layout_alignParentTop="true"
             android:id="@+id/verify_meetup"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="50dp"
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="50dp"
-            android:text="@string/verify_meetup"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="231dp"/>
+            android:text="@string/verify_meetup" app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
     <ImageView
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="150dp"
             android:id="@+id/profile_image"
             app:srcCompat="@drawable/ic_profile"
-            android:layout_marginBottom="50dp"
-            android:layout_alignBottom="@+id/person_name"
-            tools:ignore="UnknownId"/>
+            android:layout_alignBottom="@+id/person_name" tools:ignore="UnknownId"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/person_name_google"/>
 
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

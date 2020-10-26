@@ -3,6 +3,7 @@ package com.priahi.snackbud;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.*;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
@@ -145,12 +146,21 @@ public class HomeFragment extends Fragment {
 
         // name not working, need to debug
         TextView name = view.findViewById(R.id.person_name_google);
-        name.setText("hello");
-
+        String displayName = acct.getDisplayName();
+        if (displayName != null) {
+            name.setText("Name: " + displayName);
+        } else {
+            name.setText("Name: Anon");
+        }
 
         // userid not working, need to debug
         TextView id = view.findViewById(R.id.person_user_id_google);
-        id.setText("bye");
+        String userId = acct.getId();
+        if (userId != null) {
+            id.setText("UserId: " + userId);
+        } else {
+            id.setText("UserId: null");
+        }
 
 
         // Inflate the layout for this fragment
@@ -173,7 +183,7 @@ public class HomeFragment extends Fragment {
 
     private void postCovidReport() {
         // send with cur date + 14 days
-        RequestQueue mQueue = Volley.newRequestQueue(getContext());
+        RequestQueue mQueue = Volley.newRequestQueue(requireContext());
         String url = "http://13.68.137.122:3000/event/contactTrace";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
