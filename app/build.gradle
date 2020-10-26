@@ -71,4 +71,6 @@ dependencies {
     // ripple
     implementation 'com.github.aarsy.googlemapsanimations:googlemapsanimations:1.0.5'
 
+    // picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }
