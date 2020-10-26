@@ -13,6 +13,6 @@
     <string name="meeting_time">Meeting Time</string>
     <string name="personName">personName</string>
     <string name="covid_report">Report Covid Symptoms</string>
-    <string name="verify_meetup">Enter code Here</string>
+    <string name="verify_meetup">Verify Meetup</string>
     <string name="begin_meetup_search">Find Meetup!</string>
 </resources>

@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.*;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.fragment.app.FragmentManager;
 import com.android.volley.*;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -119,19 +121,16 @@ public class HomeFragment extends Fragment {
         });
 
 
-        /*
-        enterPasscode = view.findViewById(R.id.meetup_view);
+
+        enterPasscode = view.findViewById(R.id.verify_meetup);
 
         enterPasscode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(requireContext(), VerifyMeetup.class);
-                startActivityForResult(intent, REQUEST_CODE);
+                DialogFragment dialogFragment = VerifyMeetup.newInstance();
+                dialogFragment.show(getParentFragmentManager(), "VerifyMeetup");
             }
         });
-
-        */
-
 
 
         // profile setup
@@ -144,7 +143,7 @@ public class HomeFragment extends Fragment {
             Picasso.get().load("http://www.gravatar.com/avatar/?d=identicon").into(profileImage);
         }
 
-        // name not working, need to debug
+        // Name
         TextView name = view.findViewById(R.id.person_name_google);
         String displayName = acct.getDisplayName();
         if (displayName != null) {
@@ -153,7 +152,7 @@ public class HomeFragment extends Fragment {
             name.setText("Name: Anon");
         }
 
-        // userid not working, need to debug
+        // UserId
         TextView id = view.findViewById(R.id.person_user_id_google);
         String userId = acct.getId();
         if (userId != null) {
@@ -162,22 +161,8 @@ public class HomeFragment extends Fragment {
             id.setText("UserId: null");
         }
 
-
         // Inflate the layout for this fragment
         return view;
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==1)
-        {
-            Toast.makeText(requireContext(), "Verified!", Toast.LENGTH_LONG).show();
-        }
-        else {
-            Toast.makeText(requireContext(), "Not Verified!", Toast.LENGTH_LONG).show();
-        }
     }
 
 
