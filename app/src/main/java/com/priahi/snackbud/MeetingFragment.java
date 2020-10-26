@@ -21,8 +21,13 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -45,6 +50,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
     private String restName;
     private String timeOfMeet;
     private String timeOfCreation;
+    private static final String url = "http://13.68.137.122:3000";
 
 
     public MeetingFragment() {
@@ -82,50 +88,40 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
         }
 
         RequestQueue queue = Volley.newRequestQueue(getContext());
-        String url = "";
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Toast.makeText(getContext(), "reported", Toast.LENGTH_LONG).show();
-            }
-        }, new Response.ErrorListener() {
+        HashMap<String, String> params = new HashMap<String, String>();
+        Date myDate = Calendar.getInstance().getTime();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(myDate);
+        timeOfCreation = myDate.toString();
+
+        params.put("hostId", hostId);
+        params.put("guestId", guestId);
+        params.put("restId", restId);
+        params.put("restName", restName);
+        params.put("timeOfMeet", timeOfMeet);
+        params.put("timeOfCreation", timeOfCreation);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
+                url + "/event",
+                new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            VolleyLog.v("Response:%n %s", response.toString(4));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(), "server error: "+ error, Toast.LENGTH_SHORT).show();
+                VolleyLog.e("Error: ", error.getMessage());
             }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
+        });
 
-                Date myDate = Calendar.getInstance().getTime();
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(myDate);
-
-        //    }
-        // }){
-        //    @Override
-        //    protected Map<String, String> getParams(){
-        //        Map<String, String> params = new HashMap<String, String>();
-        // params.put();
-        //   }
-                timeOfCreation = myDate.toString();
-
-                params.put("hostId", hostId);
-                params.put("guestId", guestId);
-                params.put("restId", restId);
-                params.put("restName", restName);
-                params.put("timeOfMeet", timeOfMeet);
-                params.put("timeOfCreation", timeOfCreation);
-
-                return params;
-            }
-        };
-        queue.add(stringRequest);
-        //    }
-        //}
-
+        queue.add(request);
 
     }
 
