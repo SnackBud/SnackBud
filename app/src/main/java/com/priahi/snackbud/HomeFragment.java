@@ -95,7 +95,7 @@ public class HomeFragment extends Fragment {
     private void postCovidReport() {
         // send with cur date + 14 days
         RequestQueue mQueue = Volley.newRequestQueue(getContext());
-        String url = "http://localhost:3000/event/contactTrace";
+        String url = "http://13.68.137.122:3000/event/contactTrace";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
