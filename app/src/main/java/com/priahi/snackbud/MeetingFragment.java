@@ -19,13 +19,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +38,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -45,6 +51,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = "MeetingFragment";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -54,6 +61,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private String restId;
     private String restName;
     private String timeOfMeet;
+    //http://13.68.137.122:3000
     private static final String url = "http://13.68.137.122:3000";
     Map<String, String> users = new HashMap<String, String>();
     ArrayList<String> userNames = new ArrayList<String>();
@@ -62,7 +70,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     Button btnDatePicker, btnTimePicker;
     EditText txtDate, txtTime;
     private int mYear, mMonth, mDay, mHour, mMinute;
-    RequestQueue queue;
+    private RequestQueue queue;
+
     public MeetingFragment() {
         // Required empty public constructor
     }
@@ -90,7 +99,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
             // get JSONObject from JSON file
             JSONObject obj = new JSONObject(loadJSONFromAsset());
             // fetch JSONArray named users
-            JSONArray restaurantsArray = obj.getJSONArray("restaurants");
+            JSONArray restaurantsArray = obj.getJSONArray("data");
             // implement for loop for getting users list data
             for (int i = 0; i < restaurantsArray.length(); i++) {
                 JSONObject restaurant = restaurantsArray.getJSONObject(i);
@@ -153,20 +162,21 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         restDropdown.setAdapter(restAdapter);
         restDropdown.setOnItemSelectedListener(this);
 
+        JSONArray js = new JSONArray();
 
         queue = Volley.newRequestQueue(requireContext());
         // Get all users
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
                 url + "/user/getAll",
-                new JSONObject(),
-                new Response.Listener<JSONObject>() {
+                js,
+                new Response.Listener<JSONArray>() {
                     @Override
-                    public void onResponse(JSONObject response) {
+                    public void onResponse(JSONArray response) {
+                        Log.w(TAG, "/user/getAll request successful");
                         try {
                             VolleyLog.v("Response:%n %s", response.toString(4));
-                            JSONArray array = response.getJSONArray("users");
-                            for (int i = 0; i < array.length(); i++) {
-                                JSONObject object1 = array.getJSONObject(i);
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject object1 = response.getJSONObject(i);
                                 String userId = object1.getString("userId");
                                 String username = object1.getString("username");
                                 if (!userId.equals(hostId)) {
@@ -181,42 +191,20 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                VolleyLog.e("Error: ", error.getMessage());
+                Log.d(TAG, "Failed with error msg:\t" + error.getMessage());
+                Log.d(TAG, "Error StackTrace: \t" + error.getStackTrace());
+                // edited here
+                try {
+                    byte[] htmlBodyBytes = error.networkResponse.data;
+                    Log.e(TAG, new String(htmlBodyBytes), error);
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
             }
         });
+
+        // Start the request immediately
         queue.add(request);
-
-        HashMap<String, String> params = new HashMap<String, String>();
-        Date myDate = Calendar.getInstance().getTime();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(myDate);
-        params.put("hostId", hostId);
-        params.put("guestId", guestId);
-        params.put("restId", restId);
-        params.put("restName", restName);
-        params.put("timeOfMeet", timeOfMeet);
-
-        JsonObjectRequest request2 = new JsonObjectRequest(Request.Method.POST,
-                url + "/event",
-                new JSONObject(params),
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            VolleyLog.v("Response:%n %s", response.toString(4));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.e("Error: ", error.getMessage());
-            }
-        });
-
-        queue.add(request2);
-
     }
 
     // for setting the users and restaurants
