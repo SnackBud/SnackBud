@@ -114,7 +114,7 @@ public class HomeFragment extends Fragment {
             }
         }) {
             @Override
-            protected Map<String, String> getParams()throws AuthFailureError {
+            protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> param = new HashMap<String, String>();
 
                 Date myDate = Calendar.getInstance().getTime();
@@ -127,7 +127,7 @@ public class HomeFragment extends Fragment {
                 String twoWeeksAgo = newDate.toString();
 
                 param.put("userId", "2");
-                param.put("currentDate", currentDate);
+                param.put("today", currentDate);
                 param.put("twoWeeksAgo", twoWeeksAgo);
                 return param;
             }

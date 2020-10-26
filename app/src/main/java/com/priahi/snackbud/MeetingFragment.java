@@ -34,6 +34,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -196,7 +197,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(TAG, "Failed with error msg:\t" + error.getMessage());
-                Log.d(TAG, "Error StackTrace: \t" + error.getStackTrace());
+                Log.d(TAG, "Error StackTrace: \t" + Arrays.toString(error.getStackTrace()));
                 // edited here
                 try {
                     byte[] htmlBodyBytes = error.networkResponse.data;
@@ -219,18 +220,17 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                 Log.d("restaurant", restNames.get(position));
                 if (restNames.get(position) != null) {
                     restId = restaurants.get(restNames.get(position));
-
+                    Log.d("restaurant", restId);
                 }
                 break;
             case R.id.userSpinner:
                 Log.d("user", userNames.get(position));
                 if (userNames.get(position) != null) {
                     guestId = users.get(userNames.get(position));
+                    Log.d("user", guestId);
                 }
                 break;
         }
-        Log.d("restaurant", restId);
-
     }
 
     @Override
@@ -252,7 +252,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                     new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                            String date = year + "-" + (monthOfYear + 1) + "-" + dayOfMonth;
+                            String date = String.format("%d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
                             txtDate.setText(date);
                         }
                     }, mYear, mMonth, mDay);
@@ -269,13 +269,13 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                     new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                            String timeOfDay = hourOfDay + ":" + minute;
+                            String timeOfDay = String.format("%02d:%02d", hourOfDay, minute);
                             txtTime.setText(timeOfDay);
                         }
                     }, mHour, mMinute, false);
             timePickerDialog.show();
         }
-        timeOfMeet = mYear + "-" + (mMonth + 1) + "-" + mDay + "T" + mHour + ":" + mMinute + ":00Z";
+        timeOfMeet = String.format("%d-%02d-%02dT%02d:%02d:00Z", mYear, mMonth + 1, mDay, mHour, mMinute);
     }
 
     private void postRequest() {
