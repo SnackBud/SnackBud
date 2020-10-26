@@ -14,20 +14,6 @@
               tools:context=".MapsFragment"
               android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
-    <Button
-            android:layout_width="200dp"
-            android:layout_height="50dp"
-            android:id="@+id/begin_meetup_search"
-            android:text="@string/begin_meetup_search"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="20dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="105.5dp"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="105.5dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentLeft="true" />
-
     <ImageView android:layout_width="match_parent"
                android:layout_height="200dp"
                android:id="@+id/restaurant_image"
