@@ -67,7 +67,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     ArrayList<String> userNames = new ArrayList<String>();
     Map<String, String> restaurants = new HashMap<String, String>();
     ArrayList<String> restNames = new ArrayList<String>();
-    Button btnDatePicker, btnTimePicker;
+    Button btnDatePicker, btnTimePicker, btnCreateMeeting;
     EditText txtDate, txtTime;
     private int mYear, mMonth, mDay, mHour, mMinute;
     private RequestQueue queue;
@@ -139,12 +139,20 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        btnCreateMeeting = (Button) requireView().findViewById(R.id.createmeeting);
         btnDatePicker = (Button) requireView().findViewById(R.id.btn_date);
         btnTimePicker = (Button) requireView().findViewById(R.id.btn_time);
         txtDate = (EditText) requireView().findViewById(R.id.in_date);
         txtTime = (EditText) requireView().findViewById(R.id.in_time);
         btnDatePicker.setOnClickListener((View.OnClickListener) this);
         btnTimePicker.setOnClickListener((View.OnClickListener) this);
+
+        btnCreateMeeting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                postRequest();
+            }
+        });
 
         // List the users
         Spinner userDropdown = requireView().findViewById(R.id.userSpinner);
@@ -268,5 +276,9 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
             timePickerDialog.show();
         }
         timeOfMeet = mYear + "-" + (mMonth + 1) + "-" + mDay + "T" + mHour + ":" + mMinute + ":00Z";
+    }
+
+    private void postRequest() {
+        
     }
 }
