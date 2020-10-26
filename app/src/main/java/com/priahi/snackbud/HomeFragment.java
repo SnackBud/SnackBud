@@ -135,8 +135,8 @@ public class HomeFragment extends Fragment {
 
         // profile setup
         // image
-        Uri url = acct.getPhotoUrl();
         ImageView profileImage = view.findViewById(R.id.profile_image);
+        Uri url = acct.getPhotoUrl();
         if(url != null) {
             Picasso.get().load(url).into(profileImage);
         } else {
