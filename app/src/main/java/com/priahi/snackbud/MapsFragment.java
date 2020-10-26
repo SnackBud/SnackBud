@@ -17,10 +17,12 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
@@ -42,15 +44,19 @@ import com.google.android.gms.maps.model.*;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.JsonArray;
+import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MapsFragment extends Fragment {
 
@@ -63,6 +69,10 @@ public class MapsFragment extends Fragment {
     private Button findMeetUp;
 
     private boolean isMeetUpOn = false;
+
+    View mapView;
+
+    Map<String, String> restaurantImageUrl = new HashMap<>();
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -126,7 +136,9 @@ public class MapsFragment extends Fragment {
                 for (int i = 0; i < restaurantsArray.length(); i++) {
                     JSONObject restaurants = restaurantsArray.getJSONObject(i);
                     LatLng loc = new LatLng(restaurants.getDouble("lng"), restaurants.getDouble("lat"));
-                    mMap.addMarker(new MarkerOptions().position(loc).title(restaurants.getString("name")));
+                    MarkerOptions marker = new MarkerOptions().position(loc).title(restaurants.getString("name"));
+                    restaurantImageUrl.put(marker.getTitle(), restaurants.getString("imageUrl"));
+                    mMap.addMarker(marker);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -141,12 +153,22 @@ public class MapsFragment extends Fragment {
                             .zoom(15)                   // Sets the zoom
                             .bearing(0)                // Sets the orientation of the camera to east
                             .tilt(0)                   // Sets the tilt of the camera to 30 degrees
-                            .build();                   // Creates a CameraPosition from the builder
+                            .build();                  // Creates a CameraPosition from the builder
                     mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                    Toast.makeText(getContext(), marker.getTitle(), Toast.LENGTH_SHORT).show();
-                    return true;
+                    ImageView restaurant_image = mapView.findViewById(R.id.restaurant_image);
+                    Picasso.get().load(restaurantImageUrl.get(marker.getTitle())).into(restaurant_image);
+                    return false;
                 }
             });
+
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    ImageView restaurant_image = mapView.findViewById(R.id.restaurant_image);
+                    restaurant_image.setImageBitmap(null);
+                }
+            });
+
 
             // this is using a GET request
             /*
@@ -165,7 +187,7 @@ public class MapsFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -173,22 +195,7 @@ public class MapsFragment extends Fragment {
             mapFragment.getMapAsync(callback);
         }
 
-        findMeetUp = view.findViewById(R.id.begin_meetup_search);
-        findMeetUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (!isMeetUpOn) {
-                    isMeetUpOn = true;
-                    findMeetUp.setText("End search");
-                }
-                else {
-                    isMeetUpOn = false;
-                    findMeetUp.setText("Find Meetup!");
-                }
-            }
-        });
-
+        mapView = view;
     }
 
     public String loadJSONFromAsset() {

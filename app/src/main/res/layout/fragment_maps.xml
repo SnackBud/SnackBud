@@ -26,4 +26,12 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="105.5dp"/>
 
+    <ImageView android:layout_width="match_parent"
+               android:layout_height="200dp"
+               android:id="@+id/restaurant_image"
+               tools:context=".MapsFragment"
+               android:contentDescription="TODO"/>
+
+
+
 </RelativeLayout>
