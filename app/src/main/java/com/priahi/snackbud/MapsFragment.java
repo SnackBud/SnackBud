@@ -199,7 +199,7 @@ public class MapsFragment extends Fragment {
             return null;
         }
         return json;
-    }
+}
 
 
     private void jsonParse(String url) {

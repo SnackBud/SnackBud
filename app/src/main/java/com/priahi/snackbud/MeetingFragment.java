@@ -3,12 +3,16 @@ package com.priahi.snackbud;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TimePicker;
 
 import androidx.annotation.NonNull;
@@ -23,14 +27,19 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
-public class MeetingFragment extends Fragment implements View.OnClickListener {
+public class MeetingFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -45,23 +54,19 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
     private String restId;
     private String restName;
     private String timeOfMeet;
-    private String timeOfCreation;
-    private static final String url = "http://13.68.137.122:3000/event";
-
-
+    private static final String url = "http://13.68.137.122:3000";
+    Map<String, String> users = new HashMap<String, String>();
+    ArrayList<String> userNames = new ArrayList<String>();
+    Map<String, String> restaurants = new HashMap<String, String>();
+    ArrayList<String> restNames = new ArrayList<String>();
+    Button btnDatePicker, btnTimePicker;
+    EditText txtDate, txtTime;
+    private int mYear, mMonth, mDay, mHour, mMinute;
+    RequestQueue queue;
     public MeetingFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TwoFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static MeetingFragment newInstance(String param1, String param2) {
         MeetingFragment fragment = new MeetingFragment();
         Bundle args = new Bundle();
@@ -71,9 +76,6 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
         return fragment;
     }
 
-    Button btnDatePicker, btnTimePicker;
-    EditText txtDate, txtTime;
-    private int mYear, mMonth, mDay, mHour, mMinute;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,7 +85,39 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+        // this is using assets locally
+        try {
+            // get JSONObject from JSON file
+            JSONObject obj = new JSONObject(loadJSONFromAsset());
+            // fetch JSONArray named users
+            JSONArray restaurantsArray = obj.getJSONArray("restaurants");
+            // implement for loop for getting users list data
+            for (int i = 0; i < restaurantsArray.length(); i++) {
+                JSONObject restaurant = restaurantsArray.getJSONObject(i);
+                restaurants.put(restaurant.getString("name"), restaurant.getString("id"));
+                restNames.add(i, restaurant.getString("name"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
+
+    public String loadJSONFromAsset() {
+        String json = null;
+        try {
+            InputStream is = getContext().getAssets().open("restaurants.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
@@ -103,22 +137,66 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
         btnDatePicker.setOnClickListener((View.OnClickListener) this);
         btnTimePicker.setOnClickListener((View.OnClickListener) this);
 
+        // List the users
+        Spinner userDropdown = requireView().findViewById(R.id.userSpinner);
+        ArrayAdapter<String> userAdapter = new ArrayAdapter<String>(requireContext(),
+                android.R.layout.simple_spinner_dropdown_item, userNames);
+        userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        userDropdown.setAdapter(userAdapter);
+        userDropdown.setOnItemSelectedListener(this);
 
-        RequestQueue queue = Volley.newRequestQueue(requireContext());
+        // List the users
+        Spinner restDropdown = requireView().findViewById(R.id.restSpinner);
+        ArrayAdapter<String> restAdapter = new ArrayAdapter<String>(requireContext(),
+                android.R.layout.simple_spinner_dropdown_item, restNames);
+        restAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        restDropdown.setAdapter(restAdapter);
+        restDropdown.setOnItemSelectedListener(this);
+
+
+        queue = Volley.newRequestQueue(requireContext());
+        // Get all users
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
+                url + "/user/getAll",
+                new JSONObject(),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            VolleyLog.v("Response:%n %s", response.toString(4));
+                            JSONArray array = response.getJSONArray("users");
+                            for (int i = 0; i < array.length(); i++) {
+                                JSONObject object1 = array.getJSONObject(i);
+                                String userId = object1.getString("userId");
+                                String username = object1.getString("username");
+                                if (!userId.equals(hostId)) {
+                                    users.put(username, userId);
+                                    userNames.add(i, username);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+            }
+        });
+        queue.add(request);
 
         HashMap<String, String> params = new HashMap<String, String>();
         Date myDate = Calendar.getInstance().getTime();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(myDate);
-        timeOfCreation = myDate.toString();
-
         params.put("hostId", hostId);
         params.put("guestId", guestId);
         params.put("restId", restId);
         params.put("restName", restName);
         params.put("timeOfMeet", timeOfMeet);
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
+        JsonObjectRequest request2 = new JsonObjectRequest(Request.Method.POST,
                 url + "/event",
                 new JSONObject(params),
                 new Response.Listener<JSONObject>() {
@@ -137,10 +215,36 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        queue.add(request);
+        queue.add(request2);
 
     }
 
+    // for setting the users and restaurants
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+        switch (parent.getId()){
+            case R.id.restSpinner:
+                Log.d("restaurant", restNames.get(position));
+                if (restNames.get(position) != null) {
+                    restId = restaurants.get(restNames.get(position));
+                }
+                break;
+            case R.id.userSpinner:
+                Log.d("user", userNames.get(position));
+                if (userNames.get(position) != null) {
+                    guestId = users.get(userNames.get(position));
+                }
+                break;
+        }
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // TODO Auto-generated method stub
+    }
+
+    // For choosing time
     @Override
     public void onClick(View v) {
         if (v == btnDatePicker) {
