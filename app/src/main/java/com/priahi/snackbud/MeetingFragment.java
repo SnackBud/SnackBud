@@ -34,7 +34,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -145,7 +144,11 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         btnCreateMeeting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                postRequest();
+                try {
+                    postRequest();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -221,6 +224,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                 if (restNames.get(position) != null) {
                     restId = restaurants.get(restNames.get(position));
                     Log.d("restaurant", restId);
+                    restName = restNames.get(position);
                 }
                 break;
             case R.id.userSpinner:
@@ -278,7 +282,46 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         timeOfMeet = String.format("%d-%02d-%02dT%02d:%02d:00Z", mYear, mMonth + 1, mDay, mHour, mMinute);
     }
 
-    private void postRequest() {
+    private void postRequest() throws JSONException {
 
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireActivity());
+        if (acct == null) {
+            Log.e(TAG, "error, no google sign in");
+            return;
+        }
+
+        JSONObject eventRequest = new JSONObject();
+        eventRequest.put("hostId", acct.getId());
+
+        JSONArray array = new JSONArray();
+        JSONObject guestId = new JSONObject();
+        guestId.put("guestId", this.guestId);
+        array.put(guestId);
+
+        eventRequest.put("guestIds", array);
+        eventRequest.put("restId", restId);
+        eventRequest.put("restName", restName);
+        eventRequest.put("timeOfMeet", timeOfMeet);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
+                url + "/event",
+                eventRequest,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            VolleyLog.v("Response:%n %s", response.toString(4));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+            }
+        });
+
+        queue.add(request);
     }
 }
