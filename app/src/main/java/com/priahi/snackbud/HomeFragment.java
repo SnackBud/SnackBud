@@ -1,8 +1,10 @@
 package com.priahi.snackbud;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.Toast;
+import android.widget.*;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +12,12 @@ import android.view.ViewGroup;
 import com.android.volley.*;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.maps.GoogleMap;
+import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -29,6 +36,11 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    private GoogleSignInClient mGoogleSignInClient;
+    private GoogleSignInAccount acct;
+
+    GridLayout gridLayout;
+
     private GoogleMap mMap;
 
     final private String RESTAURANTS_URL = "";
@@ -36,6 +48,7 @@ public class HomeFragment extends Fragment {
 
     private Button covidReport;
     private Button enterPasscode;
+    private int REQUEST_CODE = -1;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -70,6 +83,22 @@ public class HomeFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        // Google data
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("220578639199-rv1vof8saj5d8b31fk2tp76hi8d9jv80.apps.googleusercontent.com")
+                .requestProfile()
+                .requestId()
+                .requestEmail()
+                .build();
+
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(requireContext(), gso);
+
+        // get account info
+        acct = GoogleSignIn.getLastSignedInAccount(requireContext());
+
+
+
     }
 
     @Override
@@ -88,15 +117,65 @@ public class HomeFragment extends Fragment {
             }
         });
 
+
+        /*
+        enterPasscode = view.findViewById(R.id.meetup_view);
+
+        enterPasscode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(requireContext(), VerifyMeetup.class);
+                startActivityForResult(intent, REQUEST_CODE);
+            }
+        });
+
+        */
+
+
+
+        // profile setup
+        // image
+        Uri url = acct.getPhotoUrl();
+        ImageView profileImage = view.findViewById(R.id.profile_image);
+        if(url != null) {
+            Picasso.get().load(url).into(profileImage);
+        } else {
+            Picasso.get().load("http://www.gravatar.com/avatar/?d=identicon").into(profileImage);
+        }
+
+        // name not working, need to debug
+        TextView name = view.findViewById(R.id.person_name_google);
+        name.setText("hello");
+
+
+        // userid not working, need to debug
+        TextView id = view.findViewById(R.id.person_user_id_google);
+        id.setText("bye");
+
+
         // Inflate the layout for this fragment
         return view;
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==1)
+        {
+            Toast.makeText(requireContext(), "Verified!", Toast.LENGTH_LONG).show();
+        }
+        else {
+            Toast.makeText(requireContext(), "Not Verified!", Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     private void postCovidReport() {
         // send with cur date + 14 days
         RequestQueue mQueue = Volley.newRequestQueue(getContext());
         String url = "http://13.68.137.122:3000/event/contactTrace";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Toast.makeText(getContext(), "reported", Toast.LENGTH_LONG).show();
@@ -120,8 +199,8 @@ public class HomeFragment extends Fragment {
                 String currentDate = myDate.toString();
                 String twoWeeksAgo = newDate.toString();
 
-                param.put("userId", "2");
-                param.put("currentDate", currentDate);
+                param.put("userId", "116641537845528174870");
+                param.put("today", currentDate);
                 param.put("twoWeeksAgo", twoWeeksAgo);
                 return param;
             }
