@@ -90,7 +90,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
             // get JSONObject from JSON file
             JSONObject obj = new JSONObject(loadJSONFromAsset());
             // fetch JSONArray named users
-            JSONArray restaurantsArray = obj.getJSONArray("restaurants");
+            JSONArray restaurantsArray = obj.getJSONArray("data");
             // implement for loop for getting users list data
             for (int i = 0; i < restaurantsArray.length(); i++) {
                 JSONObject restaurant = restaurantsArray.getJSONObject(i);
