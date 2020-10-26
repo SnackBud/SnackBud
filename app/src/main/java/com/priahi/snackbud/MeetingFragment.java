@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,13 +89,14 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
             // get JSONObject from JSON file
             JSONObject obj = new JSONObject(loadJSONFromAsset());
             // fetch JSONArray named users
-            JSONArray restaurantsArray = obj.getJSONArray("restaurants");
+            JSONArray restaurantsArray = obj.getJSONArray("data");
             // implement for loop for getting users list data
             for (int i = 0; i < restaurantsArray.length(); i++) {
                 JSONObject restaurant = restaurantsArray.getJSONObject(i);
                 restaurants.put(restaurant.getString("name"), restaurant.getString("id"));
                 restNames.add(i, restaurant.getString("name"));
             }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -186,36 +186,36 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         });
         queue.add(request);
 
-        HashMap<String, String> params = new HashMap<String, String>();
-        Date myDate = Calendar.getInstance().getTime();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(myDate);
-        params.put("hostId", hostId);
-        params.put("guestId", guestId);
-        params.put("restId", restId);
-        params.put("restName", restName);
-        params.put("timeOfMeet", timeOfMeet);
-
-        JsonObjectRequest request2 = new JsonObjectRequest(Request.Method.POST,
-                url + "/event",
-                new JSONObject(params),
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            VolleyLog.v("Response:%n %s", response.toString(4));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.e("Error: ", error.getMessage());
-            }
-        });
-
-        queue.add(request2);
+//        HashMap<String, String> params = new HashMap<String, String>();
+//        Date myDate = Calendar.getInstance().getTime();
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.setTime(myDate);
+//        params.put("hostId", hostId);
+//        params.put("guestId", guestId);
+//        params.put("restId", restId);
+//        params.put("restName", restName);
+//        params.put("timeOfMeet", timeOfMeet);
+//
+//        JsonObjectRequest request2 = new JsonObjectRequest(Request.Method.POST,
+//                url + "/event",
+//                new JSONObject(params),
+//                new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        try {
+//                            VolleyLog.v("Response:%n %s", response.toString(4));
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                VolleyLog.e("Error: ", error.getMessage());
+//            }
+//        });
+//
+//        queue.add(request2);
 
     }
 
