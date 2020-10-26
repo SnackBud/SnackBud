@@ -1,7 +1,10 @@
 package com.priahi.snackbud;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+<<<<<<< HEAD
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +20,28 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+=======
+import android.widget.*;
+import androidx.cardview.widget.CardView;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import androidx.fragment.app.FragmentManager;
+import com.android.volley.*;
+>>>>>>> 8bdb31002a2c458daad40beb92962445352ddfa4
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+<<<<<<< HEAD
+=======
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+>>>>>>> 8bdb31002a2c458daad40beb92962445352ddfa4
 import com.google.android.gms.maps.GoogleMap;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,6 +64,11 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "HomeFragment";
 
+    private GoogleSignInClient mGoogleSignInClient;
+    private GoogleSignInAccount acct;
+
+    GridLayout gridLayout;
+
     private GoogleMap mMap;
 
     final private String RESTAURANTS_URL = "";
@@ -51,6 +76,7 @@ public class HomeFragment extends Fragment {
 
     private Button covidReport;
     private Button enterPasscode;
+    private int REQUEST_CODE = -1;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -85,6 +111,22 @@ public class HomeFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        // Google data
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("220578639199-rv1vof8saj5d8b31fk2tp76hi8d9jv80.apps.googleusercontent.com")
+                .requestProfile()
+                .requestId()
+                .requestEmail()
+                .build();
+
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(requireContext(), gso);
+
+        // get account info
+        acct = GoogleSignIn.getLastSignedInAccount(requireContext());
+
+
+
     }
 
     @Override
@@ -103,9 +145,51 @@ public class HomeFragment extends Fragment {
             }
         });
 
+
+
+        enterPasscode = view.findViewById(R.id.verify_meetup);
+
+        enterPasscode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment dialogFragment = VerifyMeetup.newInstance();
+                dialogFragment.show(getParentFragmentManager(), "VerifyMeetup");
+            }
+        });
+
+
+        // profile setup
+        // image
+        ImageView profileImage = view.findViewById(R.id.profile_image);
+        Uri url = acct.getPhotoUrl();
+        if(url != null) {
+            Picasso.get().load(url).into(profileImage);
+        } else {
+            Picasso.get().load("http://www.gravatar.com/avatar/?d=identicon").into(profileImage);
+        }
+
+        // Name
+        TextView name = view.findViewById(R.id.person_name_google);
+        String displayName = acct.getDisplayName();
+        if (displayName != null) {
+            name.setText("Name: " + displayName);
+        } else {
+            name.setText("Name: Anon");
+        }
+
+        // UserId
+        TextView id = view.findViewById(R.id.person_user_id_google);
+        String userId = acct.getId();
+        if (userId != null) {
+            id.setText("UserId: " + userId);
+        } else {
+            id.setText("UserId: null");
+        }
+
         // Inflate the layout for this fragment
         return view;
     }
+
 
     private void postCovidReport() {
         // send with cur date + 14 days
@@ -133,6 +217,7 @@ public class HomeFragment extends Fragment {
         params.put("twoWeeksAgo", twoWeeksAgo);
 
         String url = "http://13.68.137.122:3000/event/contactTrace";
+<<<<<<< HEAD
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
             url,
             new JSONObject(params),
@@ -152,6 +237,37 @@ public class HomeFragment extends Fragment {
         }
         });
 
+=======
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(getContext(), "reported", Toast.LENGTH_LONG).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), "server error: "+ error, Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams()throws AuthFailureError {
+                Map<String, String> param = new HashMap<String, String>();
+
+                Date myDate = Calendar.getInstance().getTime();
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(myDate);
+                calendar.add(Calendar.DAY_OF_YEAR, -14);
+                Date newDate = calendar.getTime();
+
+                String currentDate = myDate.toString();
+                String twoWeeksAgo = newDate.toString();
+
+                param.put("userId", "116641537845528174870");
+                param.put("today", currentDate);
+                param.put("twoWeeksAgo", twoWeeksAgo);
+                return param;
+            }
+>>>>>>> 8bdb31002a2c458daad40beb92962445352ddfa4
 
 
         mQueue.add(request);

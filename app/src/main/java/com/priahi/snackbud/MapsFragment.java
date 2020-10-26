@@ -157,6 +157,8 @@ public class MapsFragment extends Fragment {
             });
 
 
+
+
             // this is using a GET request
             /*
                mQueue = Volley.newRequestQueue(getContext());
