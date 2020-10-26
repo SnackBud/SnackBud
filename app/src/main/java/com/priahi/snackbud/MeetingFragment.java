@@ -22,10 +22,15 @@ import androidx.fragment.app.Fragment;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class MeetingFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
@@ -144,7 +150,11 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         btnCreateMeeting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                postRequest();
+                try {
+                    postRequest();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -219,7 +229,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                 Log.d("restaurant", restNames.get(position));
                 if (restNames.get(position) != null) {
                     restId = restaurants.get(restNames.get(position));
-
+                    restName = restNames.get(position);
                 }
                 break;
             case R.id.userSpinner:
@@ -278,7 +288,46 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         timeOfMeet = mYear + "-" + (mMonth + 1) + "-" + mDay + "T" + mHour + ":" + mMinute + ":00Z";
     }
 
-    private void postRequest() {
+    private void postRequest() throws JSONException {
 
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireActivity());
+        if (acct == null) {
+            Log.e(TAG, "error, no google sign in");
+            return;
+        }
+
+        JSONObject eventRequest = new JSONObject();
+        eventRequest.put("hostId", acct.getId());
+
+        JSONArray array = new JSONArray();
+        JSONObject guestId = new JSONObject();
+        guestId.put("guestId", this.guestId);
+        array.put(guestId);
+
+        eventRequest.put("guestIds", array);
+        eventRequest.put("restId", restId);
+        eventRequest.put("restName", restName);
+        eventRequest.put("timeOfMeet", timeOfMeet);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
+                url + "/event",
+                eventRequest,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            VolleyLog.v("Response:%n %s", response.toString(4));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+            }
+        });
+
+        queue.add(request);
     }
 }
