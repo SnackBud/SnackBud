@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSelectedListener{
+public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "VerifyMeetup";
     private static final String url = "http://13.68.137.122:3000";
@@ -33,10 +33,15 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     private Button sendCodeButton;
     private ImageButton closeButton;
 
+    private String eventVerifyCode;
     private String eventId;
     private Map<String, String> eventsIdMap = new HashMap<String, String>();
     private ArrayList<String> eventsIdList = new ArrayList<String>();
+    private ArrayList<String> guestId = new ArrayList<String>();
     private RequestQueue queue;
+
+
+    GoogleSignInAccount acct;
 
     static VerifyMeetup newInstance() {
         return new VerifyMeetup();
@@ -46,6 +51,11 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.layout.activity_verify_meetup);
+        acct = GoogleSignIn.getLastSignedInAccount(requireActivity());
+        if (acct == null) {
+            Log.e(TAG, "error, no google sign in");
+            return;
+        }
     }
 
 
@@ -56,10 +66,12 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         return view;
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // button to POST the verification code onto the server
         sendCodeButton = view.findViewById(R.id.send_code);
         sendCodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,6 +84,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
             }
         });
 
+        // button to close the dialog
         closeButton = view.findViewById(R.id.close_verify_meetup);
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,14 +93,22 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
             }
         });
 
-        // List the events
+        // A spinner for the events
         final Spinner eventDropdown = requireView().findViewById(R.id.eventSpinner);
         eventDropdown.setOnItemSelectedListener(this);
 
+
+        // JSON array to get event ID's
         JSONArray js = new JSONArray();
 
+        // Auto-fill the verification code
+        EditText editText = view.findViewById(R.id.verify_meetup_code);
+        editText.setText(eventVerifyCode);
+
+        // queue to hold the volley requests
         queue = Volley.newRequestQueue(requireContext());
-         // request all event for guest
+
+         // request all events on App
          JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
                 url + "/event/getAll",
                 js,
@@ -100,28 +121,41 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject object1 = response.getJSONObject(i);
                                 String eventIdString = object1.getString("eventId");
-                                // one more param for event
+                                String verifyCode = object1.getString("verifyCode");
 
-                                // populate the maps and arrays
-                                //eventsIdMap.put(paramEvent, eventId);
-                                //eventsIdList.add(i, eventId);
+                                JSONArray guestIds = object1.getJSONArray("guestIds");
+                                if (guestIds != null) {
+                                   for (int j = 0; j < guestIds.length(); j++) {
+                                    guestId.add(guestIds.getString(j));
+                                   }
+                                }
+
+                                if (guestId.contains(acct.getId())) {
+                                    eventsIdMap.put(eventIdString, verifyCode);
+                                    eventsIdList.add(i, eventIdString);
+                                }
                             }
+
                             ArrayAdapter<String> eventAdapter = new ArrayAdapter<String>(requireContext(),
                                     android.R.layout.simple_spinner_dropdown_item, eventsIdList);
                             eventAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             eventDropdown.setAdapter(eventAdapter);
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
                 }, new Response.ErrorListener() {
+
+
             /**
              * Callback method that an error has been occurred with the provided error code and optional
              * user-readable message.
              *
              * @param error
              */
+
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(TAG, "Failed with error msg:\t" + error.getMessage());
@@ -149,7 +183,8 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                 Log.d("eventId", eventsIdList.get(position));
                 if (eventsIdList.get(position) != null) {
                     // get the eventId for selected spinner element
-                    eventId = eventsIdMap.get(eventsIdList.get(position));
+                    eventId = eventsIdMap.get(position);
+                    eventVerifyCode = eventsIdMap.get(eventsIdList.get(position));
                     Log.d("eventId", eventId);
                 }
                 break;
@@ -163,15 +198,10 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
     private void postRequest() throws JSONException {
 
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireActivity());
-        if (acct == null) {
-            Log.e(TAG, "error, no google sign in");
-            return;
-        }
-
         JSONObject eventRequest = new JSONObject();
         eventRequest.put("guestId", acct.getId());
         eventRequest.put("eventId", this.eventId);
+        eventRequest.put("verifyCode", eventVerifyCode);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
                 url + "/event",
@@ -181,6 +211,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                     public void onResponse(JSONObject response) {
                         try {
                             VolleyLog.v("Response:%n %s", response.toString(4));
+                            Toast.makeText(requireContext(), response.toString(), Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -188,11 +219,13 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Toast.makeText(requireContext(), error.toString(), Toast.LENGTH_SHORT).show();
                 VolleyLog.e("Error: ", error.getMessage());
             }
         });
         queue.add(request);
     }
+
 }
 
 
