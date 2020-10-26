@@ -10,24 +10,25 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 
 public class MeetingFragment extends Fragment implements View.OnClickListener {
 
@@ -45,6 +46,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
     private String restName;
     private String timeOfMeet;
     private String timeOfCreation;
+    private static final String url = "http://13.68.137.122:3000/event";
 
 
     public MeetingFragment() {
@@ -81,47 +83,11 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        RequestQueue queue = Volley.newRequestQueue(getContext());
-        String url = "http://13.68.137.122:3000/event";
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Toast.makeText(getContext(), "reported", Toast.LENGTH_LONG).show();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(), "server error: "+ error, Toast.LENGTH_SHORT).show();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-
-                Date myDate = Calendar.getInstance().getTime();
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(myDate);
-                timeOfCreation = myDate.toString();
-
-                params.put("hostId", hostId);
-                params.put("guestId", guestId);
-                params.put("restId", restId);
-                params.put("restName", restName);
-                params.put("timeOfMeet", timeOfMeet);
-
-                return params;
-            }
-        };
-        queue.add(stringRequest);
-        //    }
-        //}
-
-
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
+            savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_two, container, false);
     }
@@ -136,6 +102,42 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
         txtTime = (EditText) requireView().findViewById(R.id.in_time);
         btnDatePicker.setOnClickListener((View.OnClickListener) this);
         btnTimePicker.setOnClickListener((View.OnClickListener) this);
+
+
+        RequestQueue queue = Volley.newRequestQueue(requireContext());
+
+        HashMap<String, String> params = new HashMap<String, String>();
+        Date myDate = Calendar.getInstance().getTime();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(myDate);
+        timeOfCreation = myDate.toString();
+
+        params.put("hostId", hostId);
+        params.put("guestId", guestId);
+        params.put("restId", restId);
+        params.put("restName", restName);
+        params.put("timeOfMeet", timeOfMeet);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
+                url + "/event",
+                new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            VolleyLog.v("Response:%n %s", response.toString(4));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+            }
+        });
+
+        queue.add(request);
 
     }
 
@@ -157,10 +159,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
                     }, mYear, mMonth, mDay);
             datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
             datePickerDialog.show();
-            timeOfMeet = mYear + "-" + (mMonth + 1) + "-" + mDay + "T" + mHour + ":" + mMinute + ":00Z";
             //TODO: make this timezone invariant
-        }
-        if (v == btnTimePicker) {
+        } else if (v == btnTimePicker) {
             // Get Current Time
             final Calendar c = Calendar.getInstance();
             mHour = c.get(Calendar.HOUR_OF_DAY);
@@ -173,9 +173,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
                             txtTime.setText(hourOfDay + ":" + minute);
                         }
                     }, mHour, mMinute, false);
-            timeOfMeet = mYear + "-" + (mMonth + 1) + "-" + mDay + "T" + mHour + ":" + mMinute + ":00Z";
             timePickerDialog.show();
         }
-
+        timeOfMeet = mYear + "-" + (mMonth + 1) + "-" + mDay + "T" + mHour + ":" + mMinute + ":00Z";
     }
 }
