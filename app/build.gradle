@@ -4,10 +4,10 @@ apply plugin: 'com.google.gms.google-services'
 android {
     signingConfigs {
         release {
-            storeFile file('C:\\Users\\Arnold\\Desktop\\Yikes\\2020W\\cpen321\\Keystore\\xd.jks')
-            storePassword '123123'
-            keyAlias 'key0'
-            keyPassword '123123'
+            storeFile file('C:\\UBC\\Third Year\\Cpen321\\SnackBud')
+            storePassword 'snackbud'
+            keyAlias 'test1'
+            keyPassword 'snackbud'
         }
     }
     compileSdkVersion 29

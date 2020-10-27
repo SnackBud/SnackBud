@@ -160,7 +160,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                                         guestId.add(guestIds.getString(j));
                                     }
                                 }
-
+                                
                                 Toast.makeText(getContext(), acct.getId(), Toast.LENGTH_SHORT);
                                 eventsIdMap.put(eventIdString, verifyCode);
                                 eventsIdList.add(i, eventIdString);
