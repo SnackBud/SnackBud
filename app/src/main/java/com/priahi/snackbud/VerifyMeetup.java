@@ -143,14 +143,14 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
                                 JSONArray guestIds = object1.getJSONArray("guestIds");
                                 if (guestIds != null) {
-                                   for (int j = 0; j < guestIds.length(); j++) {
-                                    guestId.add(guestIds.getString(j));
-                                   }
+                                    for (int j = 0; j < guestIds.length(); j++) {
+                                        guestId.add(guestIds.getString(j));
+                                    }
                                 }
-
-                                Toast.makeText(getContext(), acct.getId(), Toast.LENGTH_SHORT);
+                                // if(guestId.contains(acct.getId())) {
                                 eventsIdMap.put(eventIdString, verifyCode);
                                 eventsIdList.add(i, eventIdString);
+                            //}
 
                             }
 
@@ -223,7 +223,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         eventRequest.put("verifyCode", userInputCode);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT,
-                url + "/event",
+                url + "/event/",
                 eventRequest,
                 new Response.Listener<JSONObject>() {
                     @Override
