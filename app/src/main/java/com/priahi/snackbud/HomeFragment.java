@@ -196,8 +196,8 @@ public class HomeFragment extends Fragment {
         calendar.add(Calendar.DAY_OF_YEAR, -14);
         Date newDate = calendar.getTime();
 
-        Long currentDate = myDate.getTime();
-        Long twoWeeksAgo = newDate.getTime();
+        long currentDate = myDate.getTime();
+        long twoWeeksAgo = newDate.getTime();
 
         JSONObject covidRequest = new JSONObject();
         covidRequest.put("userId", acct.getId());
