@@ -7,7 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.GridLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
@@ -16,8 +20,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import android.widget.*;
-import androidx.fragment.app.DialogFragment;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -195,6 +197,8 @@ public class HomeFragment extends Fragment {
 
         String currentDate = myDate.toString();
         String twoWeeksAgo = newDate.toString();
+        Log.d("time", currentDate);
+        Log.d("time", twoWeeksAgo);
 
 
         params.put("userId", acct.getId());
