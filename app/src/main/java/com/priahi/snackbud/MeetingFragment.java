@@ -318,7 +318,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         eventRequest.put("guestIds", array);
         eventRequest.put("restId", restId);
         eventRequest.put("restName", restName);
-        eventRequest.put("timeOfMeet", timeOfMeet.getTime());
+        eventRequest.put("timeOfMeet", timeOfMeet.getTimeInMillis());
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
                 url + "/event",
