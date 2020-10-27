@@ -57,9 +57,9 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private String guestId;
     private String restId;
     private String restName;
-    private Calendar timeOfMeet = Calendar.getInstance();
-    private static final String url = "http://13.68.137.122:3000";
-//    private static final String url = "http://192.168.1.66:3000";
+    private Calendar timeOfMeet;
+//    private static final String url = "http://13.68.137.122:3000";
+    private static final String url = "http://192.168.1.66:3000";
     Map<String, String> users = new HashMap<String, String>();
     ArrayList<String> userNames = new ArrayList<String>();
     Map<String, String> restaurants = new HashMap<String, String>();
@@ -155,6 +155,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                 }
             }
         });
+
+        timeOfMeet = Calendar.getInstance();
 
         Log.d("user", userNames.toString());
         // List the users
@@ -264,9 +266,9 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                             txtDate.setText(date);
 
                             // set calendar
-                            timeOfMeet.set(Calendar.YEAR, year);
-                            timeOfMeet.set(Calendar.MONTH, monthOfYear);
-                            timeOfMeet.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                            timeOfMeet.set(year, monthOfYear, dayOfMonth);
+//                            timeOfMeet.set(Calendar.MONTH, monthOfYear);
+//                            timeOfMeet.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                         }
                     }, mYear, mMonth, mDay);
             datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
@@ -286,8 +288,11 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                             txtTime.setText(timeOfDay);
 
                             // set calendar
-                            timeOfMeet.set(Calendar.HOUR, hourOfDay);
-                            timeOfMeet.set(Calendar.MINUTE, minute);
+                            timeOfMeet.set(timeOfMeet.get(Calendar.YEAR),
+                                           timeOfMeet.get(Calendar.MONTH),
+                                           timeOfMeet.get(Calendar.DATE),
+                                           hourOfDay, minute);
+//                            timeOfMeet.set(Calendar.MINUTE, minute);
                         }
                     }, mHour, mMinute, false);
             timePickerDialog.show();
