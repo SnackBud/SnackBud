@@ -33,6 +33,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     private static final String url = "http://13.68.137.122:3000";
 
     private Button sendCodeButton;
+    private Button enterCodeButton;
     private ImageButton closeButton;
     private EditText editTextCode;
     private TextView displayCode;
@@ -98,6 +99,18 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
             }
         });
 
+        // enter the verification code
+        editTextCode = view.findViewById(R.id.verify_meetup_code);
+
+        // enter code button
+        enterCodeButton = view.findViewById(R.id.enter_code);
+        enterCodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userInputCode = editTextCode.getText().toString();
+            }
+        });
+
         // A spinner for the events
         final Spinner eventDropdown = requireView().findViewById(R.id.eventSpinner);
         eventDropdown.setOnItemSelectedListener(this);
@@ -109,10 +122,6 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         // display verification code
         displayCode = view.findViewById(R.id.display_code);
         displayCode.setText(eventVerifyCode);
-
-        // enter the verification code
-        editTextCode = view.findViewById(R.id.verify_meetup_code);
-
 
         // queue to hold the volley requests
         queue = Volley.newRequestQueue(requireContext());
@@ -193,7 +202,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                 Log.d("verificationCode", eventsIdMap.get(eventsIdList.get(position)));
                 if (eventsIdList.get(position) != null) {
                     // get the eventId for selected spinner element
-                    eventId = eventsIdMap.get(position);
+                    eventId = eventsIdList.get(position);
                     eventVerifyCode = eventsIdMap.get(eventsIdList.get(position));
                     updateCodeText();
                 }
