@@ -1,19 +1,23 @@
 package com.priahi.snackbud;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.*;
-import androidx.cardview.widget.CardView;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.fragment.app.FragmentManager;
-import com.android.volley.*;
-import com.android.volley.toolbox.StringRequest;
+import android.widget.Button;
+
+import androidx.fragment.app.Fragment;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import android.widget.*;
+import androidx.fragment.app.DialogFragment;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -21,6 +25,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.maps.GoogleMap;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -38,6 +45,7 @@ public class HomeFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = "HomeFragment";
 
     private GoogleSignInClient mGoogleSignInClient;
     private GoogleSignInAccount acct;
@@ -169,40 +177,51 @@ public class HomeFragment extends Fragment {
     private void postCovidReport() {
         // send with cur date + 14 days
         RequestQueue mQueue = Volley.newRequestQueue(requireContext());
+
+        Map<String, String> params = new HashMap<String, String>();
+
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireActivity());
+        if (acct == null) {
+            Log.e(TAG, "error, no google sign in");
+            return;
+        }
+
+        Date myDate = Calendar.getInstance().getTime();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(myDate);
+        calendar.add(Calendar.DAY_OF_YEAR, -14);
+        Date newDate = calendar.getTime();
+
+        String currentDate = myDate.toString();
+        String twoWeeksAgo = newDate.toString();
+
+        params.put("userId", acct.getId());
+        params.put("currentDate", currentDate);
+        params.put("twoWeeksAgo", twoWeeksAgo);
+
         String url = "http://13.68.137.122:3000/event/contactTrace";
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Toast.makeText(getContext(), "reported", Toast.LENGTH_LONG).show();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(), "server error: "+ error, Toast.LENGTH_SHORT).show();
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams()throws AuthFailureError {
-                Map<String, String> param = new HashMap<String, String>();
 
-                Date myDate = Calendar.getInstance().getTime();
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(myDate);
-                calendar.add(Calendar.DAY_OF_YEAR, -14);
-                Date newDate = calendar.getTime();
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
+            url,
+            new JSONObject(params),
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        VolleyLog.v("Response:%n %s", response.toString(4));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            VolleyLog.e("Error: ", error.getMessage());
+        }
+        });
 
-                String currentDate = myDate.toString();
-                String twoWeeksAgo = newDate.toString();
 
-                param.put("userId", "116641537845528174870");
-                param.put("today", currentDate);
-                param.put("twoWeeksAgo", twoWeeksAgo);
-                return param;
-            }
-
-        };
-
-        mQueue.add(stringRequest);
+        mQueue.add(request);
     }
 
 }
