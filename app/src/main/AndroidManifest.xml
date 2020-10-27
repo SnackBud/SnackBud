@@ -22,7 +22,8 @@
             android:usesCleartextTraffic="true">
         <activity android:name=".About">
         </activity>
-        <activity android:name=".VerifyMeetup">
+        <activity android:name=".VerifyMeetup" tools:ignore="Instantiatable">
+            
         </activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

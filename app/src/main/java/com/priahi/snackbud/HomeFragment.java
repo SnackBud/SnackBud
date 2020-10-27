@@ -26,6 +26,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.maps.GoogleMap;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -195,6 +196,7 @@ public class HomeFragment extends Fragment {
         String currentDate = myDate.toString();
         String twoWeeksAgo = newDate.toString();
 
+
         params.put("userId", acct.getId());
         params.put("currentDate", currentDate);
         params.put("twoWeeksAgo", twoWeeksAgo);
@@ -209,6 +211,7 @@ public class HomeFragment extends Fragment {
                 public void onResponse(JSONObject response) {
                     try {
                         VolleyLog.v("Response:%n %s", response.toString(4));
+                        // Log.d("Time: ", response.getString("timeOfMeet"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

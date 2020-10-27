@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -143,7 +144,7 @@ public class MapsFragment extends Fragment {
                             .build();                  // Creates a CameraPosition from the builder
                     mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                     ImageView restaurant_image = mapView.findViewById(R.id.restaurant_image);
-//                    Picasso.get().load(restaurantImageUrl.get(marker.getTitle())).into(restaurant_image);
+                    Picasso.get().load(restaurantImageUrl.get(marker.getTitle())).into(restaurant_image);
                     return false;
                 }
             });
@@ -155,7 +156,6 @@ public class MapsFragment extends Fragment {
                     restaurant_image.setImageBitmap(null);
                 }
             });
-
 
 
 
