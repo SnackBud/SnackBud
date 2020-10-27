@@ -112,7 +112,6 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
         // enter the verification code
         editTextCode = view.findViewById(R.id.verify_meetup_code);
-        editTextCode.addTextChangedListener(editTextWatcher);
 
 
         // queue to hold the volley requests
@@ -245,13 +244,13 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            userInputCode = editTextCode.getText().toString().trim();
             displayCode.setText(eventVerifyCode);
             displayCode.setVisibility(View.VISIBLE);
         }
 
         @Override
         public void afterTextChanged(Editable s) {
+            userInputCode = editTextCode.getText().toString().trim();
             displayCode.setText(eventVerifyCode);
             displayCode.setVisibility(View.VISIBLE);
         }
