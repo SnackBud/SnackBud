@@ -96,6 +96,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
             public void onClick(View v) {
                 try {
                     putRequest();
+                    dismiss();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
