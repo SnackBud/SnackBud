@@ -231,6 +231,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         eventRequest.put("eventId", this.eventId);
         eventRequest.put("verifyCode", userInputCode);
 
+
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT,
                 url + "/event/",
                 eventRequest,
