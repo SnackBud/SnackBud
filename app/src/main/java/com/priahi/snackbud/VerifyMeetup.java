@@ -1,5 +1,7 @@
 package com.priahi.snackbud;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,8 +34,11 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
     private Button sendCodeButton;
     private ImageButton closeButton;
+    private EditText editTextCode;
+    private TextView displayCode;
 
     private String eventVerifyCode;
+    private String userInputCode;
     private String eventId;
     private Map<String, String> eventsIdMap = new HashMap<String, String>();
     private ArrayList<String> eventsIdList = new ArrayList<String>();
@@ -51,7 +56,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.layout.activity_verify_meetup);
-        acct = GoogleSignIn.getLastSignedInAccount(requireActivity());
+        acct = GoogleSignIn.getLastSignedInAccount(getActivity());
         if (acct == null) {
             Log.e(TAG, "error, no google sign in");
             return;
@@ -77,7 +82,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
             @Override
             public void onClick(View v) {
                 try {
-                    postRequest();
+                    putRequest();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -101,9 +106,14 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         // JSON array to get event ID's
         JSONArray js = new JSONArray();
 
-        // Auto-fill the verification code
-        EditText editText = view.findViewById(R.id.verify_meetup_code);
-        editText.setText(eventVerifyCode);
+        // display verification code
+        displayCode = view.findViewById(R.id.display_code);
+        displayCode.addTextChangedListener(editTextWatcher);
+
+        // enter the verification code
+        editTextCode = view.findViewById(R.id.verify_meetup_code);
+        editTextCode.addTextChangedListener(editTextWatcher);
+
 
         // queue to hold the volley requests
         queue = Volley.newRequestQueue(requireContext());
@@ -130,10 +140,10 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                                    }
                                 }
 
-                                if (guestId.contains(acct.getId())) {
-                                    eventsIdMap.put(eventIdString, verifyCode);
-                                    eventsIdList.add(i, eventIdString);
-                                }
+                                Toast.makeText(getContext(), acct.getId(), Toast.LENGTH_SHORT);
+                                eventsIdMap.put(eventIdString, verifyCode);
+                                eventsIdList.add(i, eventIdString);
+
                             }
 
                             ArrayAdapter<String> eventAdapter = new ArrayAdapter<String>(requireContext(),
@@ -181,11 +191,11 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         switch (parent.getId()){
             case R.id.eventSpinner:
                 Log.d("eventId", eventsIdList.get(position));
+                Log.d("verificationCode", eventsIdMap.get(eventsIdList.get(position)));
                 if (eventsIdList.get(position) != null) {
                     // get the eventId for selected spinner element
                     eventId = eventsIdMap.get(position);
                     eventVerifyCode = eventsIdMap.get(eventsIdList.get(position));
-                    Log.d("eventId", eventId);
                 }
                 break;
         }
@@ -196,14 +206,14 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         // TODO Auto-generated method stub
     }
 
-    private void postRequest() throws JSONException {
+    private void putRequest() throws JSONException {
 
         JSONObject eventRequest = new JSONObject();
         eventRequest.put("guestId", acct.getId());
         eventRequest.put("eventId", this.eventId);
-        eventRequest.put("verifyCode", eventVerifyCode);
+        eventRequest.put("verifyCode", userInputCode);
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT,
                 url + "/event",
                 eventRequest,
                 new Response.Listener<JSONObject>() {
@@ -211,7 +221,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                     public void onResponse(JSONObject response) {
                         try {
                             VolleyLog.v("Response:%n %s", response.toString(4));
-                            Toast.makeText(requireContext(), response.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -219,12 +229,33 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(requireContext(), error.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), error.toString(), Toast.LENGTH_SHORT).show();
                 VolleyLog.e("Error: ", error.getMessage());
             }
         });
         queue.add(request);
     }
+
+    private TextWatcher editTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            displayCode.setText(eventVerifyCode);
+            displayCode.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            userInputCode = editTextCode.getText().toString().trim();
+            displayCode.setText(eventVerifyCode);
+            displayCode.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            displayCode.setText(eventVerifyCode);
+            displayCode.setVisibility(View.VISIBLE);
+        }
+    };
 
 }
 
