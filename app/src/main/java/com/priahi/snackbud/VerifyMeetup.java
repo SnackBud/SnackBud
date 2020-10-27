@@ -1,23 +1,35 @@
 package com.priahi.snackbud;
 
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.annotation.SuppressLint;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
 import androidx.fragment.app.DialogFragment;
-import com.android.volley.*;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSelectedListener {
 
@@ -53,14 +66,14 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         return new VerifyMeetup();
     }
 
+    @SuppressLint("ResourceType")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.layout.activity_verify_meetup);
-        acct = GoogleSignIn.getLastSignedInAccount(getActivity());
+        acct = GoogleSignIn.getLastSignedInAccount(requireActivity());
         if (acct == null) {
             Log.e(TAG, "error, no google sign in");
-            return;
         }
     }
 
@@ -68,8 +81,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_verify_meetup, container, false);
-        return view;
+        return inflater.inflate(R.layout.activity_verify_meetup, container, false);
     }
 
 
@@ -84,6 +96,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
             public void onClick(View v) {
                 try {
                     putRequest();
+                    dismiss();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -126,8 +139,8 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         // queue to hold the volley requests
         queue = Volley.newRequestQueue(requireContext());
 
-         // request all events on App
-         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
+        // request all events on App
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
                 url + "/event/getAll",
                 js,
                 new Response.Listener<JSONArray>() {
@@ -143,9 +156,9 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
                                 JSONArray guestIds = object1.getJSONArray("guestIds");
                                 if (guestIds != null) {
-                                   for (int j = 0; j < guestIds.length(); j++) {
-                                    guestId.add(guestIds.getString(j));
-                                   }
+                                    for (int j = 0; j < guestIds.length(); j++) {
+                                        guestId.add(guestIds.getString(j));
+                                    }
                                 }
 
                                 Toast.makeText(getContext(), acct.getId(), Toast.LENGTH_SHORT);
@@ -170,7 +183,6 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
             /**
              * Callback method that an error has been occurred with the provided error code and optional
              * user-readable message.
-             *
              * @param error
              */
 
@@ -196,17 +208,15 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     // for setting the users and restaurants
     @Override
     public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-        switch (parent.getId()){
-            case R.id.eventSpinner:
-                Log.d("eventId", eventsIdList.get(position));
-                Log.d("verificationCode", eventsIdMap.get(eventsIdList.get(position)));
-                if (eventsIdList.get(position) != null) {
-                    // get the eventId for selected spinner element
-                    eventId = eventsIdList.get(position);
-                    eventVerifyCode = eventsIdMap.get(eventsIdList.get(position));
-                    updateCodeText();
-                }
-                break;
+        if (parent.getId() == R.id.eventSpinner) {
+            Log.d("eventId", eventsIdList.get(position));
+            Log.d("verificationCode", Objects.requireNonNull(eventsIdMap.get(eventsIdList.get(position))));
+            if (eventsIdList.get(position) != null) {
+                // get the eventId for selected spinner element
+                eventId = eventsIdList.get(position);
+                eventVerifyCode = eventsIdMap.get(eventsIdList.get(position));
+                updateCodeText();
+            }
         }
     }
 
@@ -217,11 +227,17 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
     private void putRequest() throws JSONException {
 
-        JSONObject eventRequest = new JSONObject();
-        eventRequest.put("guestId", acct.getId());
-        eventRequest.put("eventId", this.eventId);
-        eventRequest.put("verifyCode", userInputCode);
-
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireActivity());
+        if (acct == null) {
+            Log.e(TAG, "error, no google sign in");
+            return;
+        }
+        Log.e(TAG, "about to PUT");
+        JSONObject eventRequest = new JSONObject("{guestId: "+acct.getId()+", eventId: "+this.eventId+", verifyCode: "+userInputCode+"}");
+//        eventRequest.put("guestId", acct.getId());
+//        eventRequest.put("eventId", this.eventId);
+//        eventRequest.put("verifyCode", userInputCode);
+        Log.e(TAG, eventRequest.toString());
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT,
                 url + "/event",
                 eventRequest,
@@ -230,7 +246,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                     public void onResponse(JSONObject response) {
                         try {
                             VolleyLog.v("Response:%n %s", response.toString(4));
-                            Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -238,7 +254,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(), error.toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), error.toString(), Toast.LENGTH_SHORT).show();
                 VolleyLog.e("Error: ", error.getMessage());
             }
         });
