@@ -13,9 +13,19 @@
             android:layout_height="62dp"
             android:text="Verify MeetUp"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="150dp"
+            android:layout_marginBottom="100dp"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="100dp"/>
+
+    <Button
+            android:id="@+id/enter_code"
+            android:layout_width="100dp"
+            android:layout_height="62dp"
+            android:text="Enter"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="200dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="150dp"/>
 
     <Spinner
             android:id="@+id/eventSpinner"
