@@ -1,5 +1,7 @@
 package com.priahi.snackbud;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +12,7 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -68,6 +71,9 @@ public class HomeFragment extends Fragment {
     private Button covidReport;
     private Button enterPasscode;
     private int REQUEST_CODE = -1;
+
+    AlertDialog dialog;
+    AlertDialog.Builder builder;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -133,13 +139,35 @@ public class HomeFragment extends Fragment {
         covidReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    postCovidReport();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                // postCovidReport();
+                builder = new AlertDialog.Builder(getContext());
+
+                builder.setTitle("Are you sure you want to report COVID symptoms?");
+
+                builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        try {
+                            postCovidReport();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Toast.makeText(getContext(), "COVID symptoms reported", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+
+                dialog = builder.create();
+                dialog.show();
             }
         });
+
 
 
 
