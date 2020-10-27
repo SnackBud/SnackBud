@@ -215,6 +215,7 @@ public class HomeFragment extends Fragment {
                 public void onResponse(JSONObject response) {
                     try {
                         VolleyLog.v("Response:%n %s", response.toString(4));
+                        // Log.d("Time: ", response.getString("timeOfMeet"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

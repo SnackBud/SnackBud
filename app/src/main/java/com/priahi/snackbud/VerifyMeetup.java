@@ -33,6 +33,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     private static final String url = "http://13.68.137.122:3000";
 
     private Button sendCodeButton;
+    private Button enterCodeButton;
     private ImageButton closeButton;
     private EditText editTextCode;
     private TextView displayCode;
@@ -98,6 +99,18 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
             }
         });
 
+        // enter the verification code
+        editTextCode = view.findViewById(R.id.verify_meetup_code);
+
+        // enter code button
+        enterCodeButton = view.findViewById(R.id.enter_code);
+        enterCodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userInputCode = editTextCode.getText().toString();
+            }
+        });
+
         // A spinner for the events
         final Spinner eventDropdown = requireView().findViewById(R.id.eventSpinner);
         eventDropdown.setOnItemSelectedListener(this);
@@ -108,11 +121,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
         // display verification code
         displayCode = view.findViewById(R.id.display_code);
-        displayCode.addTextChangedListener(editTextWatcher);
-
-        // enter the verification code
-        editTextCode = view.findViewById(R.id.verify_meetup_code);
-
+        displayCode.setText(eventVerifyCode);
 
         // queue to hold the volley requests
         queue = Volley.newRequestQueue(requireContext());
@@ -193,8 +202,9 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                 Log.d("verificationCode", eventsIdMap.get(eventsIdList.get(position)));
                 if (eventsIdList.get(position) != null) {
                     // get the eventId for selected spinner element
-                    eventId = eventsIdMap.get(position);
+                    eventId = eventsIdList.get(position);
                     eventVerifyCode = eventsIdMap.get(eventsIdList.get(position));
+                    updateCodeText();
                 }
                 break;
         }
@@ -235,27 +245,9 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         queue.add(request);
     }
 
-    private TextWatcher editTextWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            displayCode.setText(eventVerifyCode);
-            displayCode.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            displayCode.setText(eventVerifyCode);
-            displayCode.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            userInputCode = editTextCode.getText().toString().trim();
-            displayCode.setText(eventVerifyCode);
-            displayCode.setVisibility(View.VISIBLE);
-        }
-    };
-
+    private void updateCodeText() {
+        displayCode.setText(eventVerifyCode);
+    }
 }
 
 
