@@ -282,6 +282,9 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         if (hostIdMap.get(eventVerifyCode).equals(acct.getId())) {
             displayCode.setText(eventVerifyCode);
         }
+        else {
+            displayCode.setText("");
+        }
     }
 
 
