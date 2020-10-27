@@ -34,9 +34,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -56,6 +60,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     private String eventId;
     private Map<String, String> eventsIdMap = new HashMap<String, String>();
     private ArrayList<String> eventsIdList = new ArrayList<String>();
+    private ArrayList<String> eventTitle = new ArrayList<String>();
     private ArrayList<String> guestId = new ArrayList<String>();
     private RequestQueue queue;
 
@@ -132,6 +137,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         // JSON array to get event ID's
         JSONArray js = new JSONArray();
 
+
         // display verification code
         displayCode = view.findViewById(R.id.display_code);
         displayCode.setText(eventVerifyCode);
@@ -152,23 +158,26 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                             for (int i = 0; i < response.length(); i++) {
                                 JSONObject object1 = response.getJSONObject(i);
                                 String eventIdString = object1.getString("eventId");
+                                String restName = object1.getString("restName");
+                                long timeOfMeet = object1.getLong("timeOfMeet");
+                                Date meetingTime = new Date(timeOfMeet);
                                 String verifyCode = object1.getString("verifyCode");
 
                                 JSONArray guestIds = object1.getJSONArray("guestIds");
-                                if (guestIds != null) {
-                                    for (int j = 0; j < guestIds.length(); j++) {
-                                        guestId.add(guestIds.getString(j));
-                                    }
+                                for (int j = 0; j < guestIds.length(); j++) {
+                                    guestId.add(guestIds.getString(j));
                                 }
 
                                 Toast.makeText(getContext(), acct.getId(), Toast.LENGTH_SHORT);
                                 eventsIdMap.put(eventIdString, verifyCode);
                                 eventsIdList.add(i, eventIdString);
 
+                                DateFormat dateFormat = new SimpleDateFormat("E, dd MMM HH:mm", Locale.US);
+                                eventTitle.add(i, dateFormat.format(meetingTime) + " at " + restName);
                             }
 
                             ArrayAdapter<String> eventAdapter = new ArrayAdapter<String>(requireContext(),
-                                    android.R.layout.simple_spinner_dropdown_item, eventsIdList);
+                                    android.R.layout.simple_spinner_dropdown_item, eventTitle);
                             eventAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             eventDropdown.setAdapter(eventAdapter);
 
@@ -210,6 +219,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
         if (parent.getId() == R.id.eventSpinner) {
             Log.d("eventId", eventsIdList.get(position));
+            Log.d("eventTitle", eventTitle.get(position));
             Log.d("verificationCode", Objects.requireNonNull(eventsIdMap.get(eventsIdList.get(position))));
             if (eventsIdList.get(position) != null) {
                 // get the eventId for selected spinner element
