@@ -108,7 +108,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
         // display verification code
         displayCode = view.findViewById(R.id.display_code);
-        displayCode.addTextChangedListener(editTextWatcher);
+        displayCode.setText(eventVerifyCode);
 
         // enter the verification code
         editTextCode = view.findViewById(R.id.verify_meetup_code);
@@ -195,6 +195,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                     // get the eventId for selected spinner element
                     eventId = eventsIdMap.get(position);
                     eventVerifyCode = eventsIdMap.get(eventsIdList.get(position));
+                    updateCodeText();
                 }
                 break;
         }
@@ -235,27 +236,9 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         queue.add(request);
     }
 
-    private TextWatcher editTextWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            displayCode.setText(eventVerifyCode);
-            displayCode.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            displayCode.setText(eventVerifyCode);
-            displayCode.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            userInputCode = editTextCode.getText().toString().trim();
-            displayCode.setText(eventVerifyCode);
-            displayCode.setVisibility(View.VISIBLE);
-        }
-    };
-
+    private void updateCodeText() {
+        displayCode.setText(eventVerifyCode);
+    }
 }
 
 
