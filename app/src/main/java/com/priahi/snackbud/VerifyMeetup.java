@@ -58,6 +58,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     private String eventVerifyCode;
     private String userInputCode;
     private String eventId;
+    private Map<String, String> hostIdMap = new HashMap<String, String>();
     private Map<String, String> eventsIdMap = new HashMap<String, String>();
     private ArrayList<String> eventsIdList = new ArrayList<String>();
     private ArrayList<String> eventTitle = new ArrayList<String>();
@@ -162,16 +163,19 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                                 long timeOfMeet = object1.getLong("timeOfMeet");
                                 Date meetingTime = new Date(timeOfMeet);
                                 String verifyCode = object1.getString("verifyCode");
+                                String hostId = object1.getString("hostId");
 
                                 JSONArray guestIds = object1.getJSONArray("guestIds");
                                 for (int j = 0; j < guestIds.length(); j++) {
                                     guestId.add(guestIds.getString(j));
                                 }
                                 
-                                if (guestId.contains(acct.getId())) {
-                                    eventsIdMap.put(eventIdString, verifyCode);
-                                    eventsIdList.add(i, eventIdString);
-                                }
+
+                                eventsIdMap.put(eventIdString, verifyCode);
+                                eventsIdList.add(i, eventIdString);
+
+
+                                hostIdMap.put(verifyCode, hostId);
 
                                 DateFormat dateFormat = new SimpleDateFormat("E, dd MMM HH:mm", Locale.US);
                                 eventTitle.add(i, dateFormat.format(meetingTime) + " at " + restName);
@@ -218,22 +222,18 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     // for setting the users and restaurants
     @Override
     public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-        try {
-            if (eventsIdMap != null && eventsIdList != null) {
-                if (parent.getId() == R.id.eventSpinner) {
-                    Log.d("eventId", eventsIdList.get(position));
-                    Log.d("eventTitle", eventTitle.get(position));
-                    Log.d("verificationCode", Objects.requireNonNull(eventsIdMap.get(eventsIdList.get(position))));
-                    if (eventsIdList.get(position) != null) {
-                        // get the eventId for selected spinner element
-                        eventId = eventsIdList.get(position);
-                        eventVerifyCode = eventsIdMap.get(eventsIdList.get(position));
-                        updateCodeText();
-                    }
+        if (eventsIdMap != null && eventsIdList != null) {
+            if (parent.getId() == R.id.eventSpinner) {
+                Log.d("eventId", eventsIdList.get(position));
+                Log.d("eventTitle", eventTitle.get(position));
+                Log.d("verificationCode", Objects.requireNonNull(eventsIdMap.get(eventsIdList.get(position))));
+                if (eventsIdList.get(position) != null) {
+                    // get the eventId for selected spinner element
+                    eventId = eventsIdList.get(position);
+                    eventVerifyCode = eventsIdMap.get(eventsIdList.get(position));
+                    updateCodeText();
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -279,8 +279,12 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     }
 
     private void updateCodeText() {
-        displayCode.setText(eventVerifyCode);
+        if (hostIdMap.get(eventVerifyCode).equals(acct.getId())) {
+            displayCode.setText(eventVerifyCode);
+        }
     }
+
+
 }
 
 
