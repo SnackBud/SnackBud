@@ -57,9 +57,9 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private String guestId;
     private String restId;
     private String restName;
-    private String timeOfMeet;
-    //http://13.68.137.122:3000
-    private static final String url = "http://13.68.137.122:3000";
+    private Calendar timeOfMeet = Calendar.getInstance();
+//    private static final String url = "http://13.68.137.122:3000";
+    private static final String url = "http://192.168.1.66:3000";
     Map<String, String> users = new HashMap<String, String>();
     ArrayList<String> userNames = new ArrayList<String>();
     Map<String, String> restaurants = new HashMap<String, String>();
@@ -262,6 +262,11 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                             String date = String.format("%d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
                             txtDate.setText(date);
+
+                            // set calendar
+                            timeOfMeet.set(Calendar.YEAR, year);
+                            timeOfMeet.set(Calendar.MONTH, monthOfYear);
+                            timeOfMeet.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                         }
                     }, mYear, mMonth, mDay);
             datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
@@ -279,12 +284,17 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                             String timeOfDay = String.format("%02d:%02d", hourOfDay, minute);
                             txtTime.setText(timeOfDay);
+
+                            // set calendar
+                            timeOfMeet.set(Calendar.HOUR, hourOfDay);
+                            timeOfMeet.set(Calendar.MINUTE, minute);
                         }
                     }, mHour, mMinute, false);
             timePickerDialog.show();
         }
-        timeOfMeet = String.format("%d-%02d-%02dT%02d:%02d:00Z", mYear, mMonth + 1, mDay, mHour, mMinute);
-        Log.d("time", timeOfMeet);
+
+//                String.format("%d-%02d-%02dT%02d:%02d:00Z", mYear, mMonth + 1, mDay, mHour, mMinute);
+        Log.d("time", String.valueOf(timeOfMeet.getTime()));
     }
 
 
@@ -295,6 +305,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
             Log.e(TAG, "error, no google sign in");
             return;
         }
+
+        Log.d("time sent", String.valueOf(timeOfMeet.getTime()));
 
         JSONObject eventRequest = new JSONObject();
         eventRequest.put("hostId", acct.getId());
@@ -307,7 +319,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         eventRequest.put("guestIds", array);
         eventRequest.put("restId", restId);
         eventRequest.put("restName", restName);
-        eventRequest.put("timeOfMeet", timeOfMeet);
+        eventRequest.put("timeOfMeet", timeOfMeet.getTimeInMillis());
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
                 url + "/event",
