@@ -246,7 +246,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                     public void onResponse(JSONObject response) {
                         try {
                             VolleyLog.v("Response:%n %s", response.toString(4));
-                            Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -254,7 +254,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(), error.toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), error.toString(), Toast.LENGTH_SHORT).show();
                 VolleyLog.e("Error: ", error.getMessage());
             }
         });
