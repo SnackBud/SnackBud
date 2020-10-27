@@ -58,8 +58,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private String restId;
     private String restName;
     private Calendar timeOfMeet = Calendar.getInstance();
-//    private static final String url = "http://13.68.137.122:3000";
-    private static final String url = "http://192.168.1.66:3000";
+    private static final String url = "http://13.68.137.122:3000";
+//    private static final String url = "http://192.168.1.66:3000";
     Map<String, String> users = new HashMap<String, String>();
     ArrayList<String> userNames = new ArrayList<String>();
     Map<String, String> restaurants = new HashMap<String, String>();

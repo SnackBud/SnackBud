@@ -1,7 +1,5 @@
 package com.priahi.snackbud;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +10,6 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -29,6 +26,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -39,6 +37,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,9 +51,12 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "HomeFragment";
+//    private static final String url = "http://13.68.137.122:3000";
+    private static final String url = "http://192.168.1.66:3000";
 
     private GoogleSignInClient mGoogleSignInClient;
     private GoogleSignInAccount acct;
+    private RequestQueue mQueue;
 
     GridLayout gridLayout;
 
@@ -66,9 +68,6 @@ public class HomeFragment extends Fragment {
     private Button covidReport;
     private Button enterPasscode;
     private int REQUEST_CODE = -1;
-
-    AlertDialog dialog;
-    AlertDialog.Builder builder;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -117,7 +116,8 @@ public class HomeFragment extends Fragment {
         // get account info
         acct = GoogleSignIn.getLastSignedInAccount(requireContext());
 
-
+        // initialize request queue
+        mQueue = Volley.newRequestQueue(requireContext());
 
     }
 
@@ -133,28 +133,11 @@ public class HomeFragment extends Fragment {
         covidReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // postCovidReport();
-                builder = new AlertDialog.Builder(getContext());
-
-                builder.setTitle("Are you sure you want to report COVID symptoms?");
-
-                builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        postCovidReport();
-                        Toast.makeText(getContext(), "COVID symptoms reported", Toast.LENGTH_LONG).show();
-                    }
-                });
-
-                builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                });
-
-                dialog = builder.create();
-                dialog.show();
+                try {
+                    postCovidReport();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -204,17 +187,8 @@ public class HomeFragment extends Fragment {
     }
 
 
-    private void postCovidReport() {
+    private void postCovidReport() throws JSONException {
         // send with cur date + 14 days
-        RequestQueue mQueue = Volley.newRequestQueue(requireContext());
-
-        Map<String, String> params = new HashMap<String, String>();
-
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireActivity());
-        if (acct == null) {
-            Log.e(TAG, "error, no google sign in");
-            return;
-        }
 
         Date myDate = Calendar.getInstance().getTime();
         Calendar calendar = Calendar.getInstance();
@@ -222,21 +196,22 @@ public class HomeFragment extends Fragment {
         calendar.add(Calendar.DAY_OF_YEAR, -14);
         Date newDate = calendar.getTime();
 
-        String currentDate = myDate.toString();
-        String twoWeeksAgo = newDate.toString();
-        Log.d("time", currentDate);
-        Log.d("time", twoWeeksAgo);
+        Long currentDate = myDate.getTime();
+        Long twoWeeksAgo = newDate.getTime();
 
+        JSONObject covidRequest = new JSONObject();
+        covidRequest.put("userId", acct.getId());
 
-        params.put("userId", acct.getId());
-        params.put("currentDate", currentDate);
-        params.put("twoWeeksAgo", twoWeeksAgo);
+        covidRequest.put("currentDate", currentDate);
+        covidRequest.put("twoWeeksAgo", twoWeeksAgo);
 
-        String url = "http://13.68.137.122:3000/event/contactTrace";
+        Log.w(TAG, Objects.requireNonNull(acct.getId()));
+        Log.w(TAG, String.valueOf(currentDate));
+        Log.w(TAG, String.valueOf(twoWeeksAgo));
 
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,
-            url,
-            new JSONObject(params),
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
+            url + "/event/contactTrace",
+                covidRequest,
             new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -253,8 +228,6 @@ public class HomeFragment extends Fragment {
             VolleyLog.e("Error: ", error.getMessage());
         }
         });
-
-
         mQueue.add(request);
     }
 
