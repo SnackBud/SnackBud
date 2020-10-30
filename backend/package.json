@@ -1,0 +1,38 @@
+{
+  "name": "snackbud_server",
+  "version": "1.0.0",
+  "description": "cpen 321 snackbud application backend ",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Priahi/cpen321.git"
+  },
+  "keywords": [
+    "snackbud",
+    "dyne",
+    "cpen321"
+  ],
+  "author": "Parsa Riahi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Priahi/cpen321/issues"
+  },
+  "homepage": "https://github.com/Priahi/cpen321#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "firebase-admin": "^9.2.0",
+    "mongod": "^2.0.0",
+    "mongoose": "^5.10.9",
+    "nodejs": "0.0.0",
+    "nodemon": "^2.0.6"
+  },
+  "devDependencies": {
+    "jest": "^26.6.1"
+  }
+  
+}
