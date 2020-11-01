@@ -27,3 +27,5 @@ mongoose.connect(process.env.DB_CONNECTION,
 
 //listen on port 3000
 app.listen(3000);
+
+module.exports = app
