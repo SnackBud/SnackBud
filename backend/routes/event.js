@@ -2,18 +2,18 @@ const express = require('express');
 const router = express.Router();
 const Event = require('../models/event');
 const User = require('../models/user');
-const pushNotify = require('../emitter');
+const {pushNotify, notifyNewMeetup} = require('../emitter')
 
 // get all events in our db
 router.get('/getAll', (req, res) => {
     console.log('/event GET ALL request');
     Event.find(
         function (err, event) {
-            if (err) { 
+            if (err) {
                 res.send(err);
                 console.log(err);
             } else {
-                res.json(event);
+                res.status(200).json(event);
             }
         });
 });
@@ -27,7 +27,7 @@ router.get('/', (req, res) => {
                 res.send(err);
                 console.log(err);
             } else {
-                res.json(event);
+                res.status(200).json(event);
             }
         });
 });
@@ -52,7 +52,7 @@ router.post('/', (req, res) => {
 
     event.save()
         .then(data => {
-            res.json(data);
+            res.status(200).json(data);
         })
         .catch(err => {
             console.log(err);
@@ -72,7 +72,7 @@ router.delete('/', (req, res) => {
                 res.send(err);
                 console.log(err);
             } else {
-                res.send("delete successful");
+                res.status(200).send("delete successful");
             }
         });
 });
@@ -87,7 +87,7 @@ router.delete('/deleteAll', (req, res) => {
                 res.send(err);
                 console.log(err);
             } else {
-                res.send("delete all successful");
+                res.status(200).send("delete all successful");
             }
         });
 });
@@ -111,7 +111,7 @@ router.put('/', function (req, res) {
                             console.log(err);
                         } else {
                             pushNotify.emit('verifyMeetup', event, guest);
-                            res.send("verify successful");
+                            res.status(200).send("verify successful");
                         }
                     });
             }
@@ -130,7 +130,7 @@ router.post('/contactTrace', function (req, res) {
     Event.find({
             $or: [ { 'hostId': req.body.userId }, { 'guestIds': { $elemMatch: { 'guestId': req.body.userId } } }],
                     'timeOfMeet': { $gte: req.body.twoWeeksAgo, $lte: req.body.currentDate }, 
-                    // 'isVerified': true
+                    'isVerified': true
                },
         function (err, pastEvents) {
         if (err) {
@@ -157,7 +157,7 @@ router.post('/contactTrace', function (req, res) {
             if (pastEvents.length == 0) {
                 console.log("no events found...");
                 pushNotify.emit('finishContactTrace', sickUser, 0);
-                res.send("no at risk meet-ups");
+                res.status(200).send("no at risk meet-ups");
                 return;
             }
             let notifiedUserIds = [];
@@ -185,11 +185,11 @@ router.post('/contactTrace', function (req, res) {
                 // remove sick user from list
                 notifiedUserIds.shift();
                 pushNotify.emit('finishContactTrace', sickUser, notifiedUserIds.length);
-                res.json({ pastEvents, notifiedUserIds });
+                res.status(200).json({ pastEvents, notifiedUserIds });
             } else {
                 console.log("no events found...");
                 pushNotify.emit('finishContactTrace', sickUser, 0);
-                res.send("no at risk meet-ups");
+                res.status(200).send("no at risk meet-ups");
                 return;
             }
         });
