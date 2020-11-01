@@ -38,4 +38,4 @@ const meetup = mongoose.Schema({
     },
 })
 
-module.exports = mongoose.model('meetup', meetup);
+module.exports = mongoose.model('meetup', meetup); 

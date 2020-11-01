@@ -2,14 +2,14 @@ const express = require('express');
 const router = express.Router();
 const Event = require('../models/event');
 const User = require('../models/user');
-const pushNotify = require('../emitter')
+const pushNotify = require('../emitter');
 
 // get all events in our db
 router.get('/getAll', (req, res) => {
     console.log('/event GET ALL request');
     Event.find(
         function (err, event) {
-            if (err) {
+            if (err) { 
                 res.send(err);
                 console.log(err);
             } else {
