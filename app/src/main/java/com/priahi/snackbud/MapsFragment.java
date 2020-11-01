@@ -132,6 +132,8 @@ public class MapsFragment extends Fragment {
                 e.printStackTrace();
             }
 
+
+
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
@@ -149,6 +151,8 @@ public class MapsFragment extends Fragment {
                 }
             });
 
+
+
             mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                 @Override
                 public void onMapClick(LatLng latLng) {
@@ -157,13 +161,6 @@ public class MapsFragment extends Fragment {
                 }
             });
 
-
-
-            // this is using a GET request
-            /*
-               mQueue = Volley.newRequestQueue(getContext());
-               jsonParse(RESTAURANTS_URL);
-            */
         }
     };
 

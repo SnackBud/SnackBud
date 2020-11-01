@@ -83,6 +83,26 @@ public class HelloWorldEspressoTest {
     /*
      * Click on verify meetup
      * */
+    @Test
+    public void ClickOnVerifyMeetup() {
+        SwitchPageToProfile();
+        onView(withId(R.id.verify_meetup))
+                .perform(click());
+    }
+
+    /*
+     * Click on event spinner
+     * */
+    /*
+    @Test
+    public void ClickOnEventSpinner() {
+        ClickOnVerifyMeetup();
+        onView(withId(R.id.eventSpinner))
+                .perform(click())
+                .check(matches(isDisplayed()));
+    }
+    */
+
 
 
 
