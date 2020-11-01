@@ -2,6 +2,8 @@ package com.priahi.snackbud;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -97,6 +99,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
         // button to POST the verification code onto the server
         sendCodeButton = view.findViewById(R.id.send_code);
+        sendCodeButton.setEnabled(false);
         sendCodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,15 +123,35 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
         // enter the verification code
         editTextCode = view.findViewById(R.id.verify_meetup_code);
+        editTextCode.setEnabled(false);
+        editTextCode.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                enableSubmitIfReady();
+            }
+        });
 
         // enter code button
         enterCodeButton = view.findViewById(R.id.enter_code);
+        enterCodeButton.setEnabled(false);
         enterCodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                sendCodeButton.setEnabled(true);
                 userInputCode = editTextCode.getText().toString();
             }
         });
+        enableSubmitIfReady();
 
         // A spinner for the events
         final Spinner eventDropdown = requireView().findViewById(R.id.eventSpinner);
@@ -232,6 +255,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                     eventId = eventsIdList.get(position);
                     eventVerifyCode = eventsIdMap.get(eventsIdList.get(position));
                     updateCodeText();
+                    editTextCode.setEnabled(true);
                 }
             }
         }
@@ -287,6 +311,10 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         }
     }
 
+    public void enableSubmitIfReady() {
+        boolean isReady = editTextCode.getText().toString().length() > 2 && editTextCode.getText().toString().length() < 4;
+        enterCodeButton.setEnabled(isReady);
+    }
 
 }
 

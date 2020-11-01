@@ -14,25 +14,25 @@ const pushNotify = new EventEmitter();
 // First listener for new meetup
 pushNotify.on('newMeetup', async function firstListener(event) {
     printToConsole(event);
-    await notifyNewMeetup(event);
+    notifyNewMeetup(event);
 });
 
 // First listener for new meetup
 pushNotify.on('verifyMeetup', async function firstListener(event, guest) {
     printToConsole(event);
-    await notifyVerifyMeetup(event, guest);
+    notifyVerifyMeetup(event, guest);
 });
 
 // First listener for new meetup
 pushNotify.on('noVerifyMeetup', async function firstListener(guest) {
     printToConsole(guest);
-    await notifyNoVerifyMeetup(guest);
+    notifyNoVerifyMeetup(guest);
 });
 
 //listener for guests when the host unlocks the verification code
 pushNotify.on('enterCode', async function firstListener(event) {
     printToConsole(event);
-    await notifyEnterCode(event);
+    notifyEnterCode(event);
 });
 
 //listener for guests when the host unlocks the verification code
@@ -59,7 +59,7 @@ function printToConsole(event) {
     console.log(event);
 }
 
-async function notifyHelper(elem, title, body) {
+function notifyHelper(elem, title, body) {
     try {
     // send messages to guests
     var message = {
@@ -88,11 +88,16 @@ async function notifyHelper(elem, title, body) {
 }
 
 // tell the guests about the meetup creation
-async function notifyNewMeetup(event) {
+function notifyNewMeetup(event) {
     console.log('guests:' + event.guestIds);
 
     // get host name
     User.findOne({ 'userId': event.hostId }, {}, function (err, host) {
+        if (err) {
+            //res.send(err);
+            console.log(err);
+            return;
+        }
         console.log('host is:' + host.userId);
         // get the deviceToken of the guests
         var i;
@@ -112,14 +117,14 @@ async function notifyNewMeetup(event) {
 }
 
 //listener helper for the host to see if the meetup has been verified
-async function notifyNoVerifyMeetup(guest) {
+function notifyNoVerifyMeetup(guest) {
     console.log('No Verify meet for: ' + guest.userId);
         // send messages to guest
         notifyHelper(guest, 'You have entered an invalid code!', 'Please try again');
 }
 
 //listener helper for the host to see if the meetup has been verified
-async function notifyVerifyMeetup(event, guest) {
+function notifyVerifyMeetup(event, guest) {
     console.log('Verify meet for: ' + event.hostId);
     if (event.hostId == guest.userId) {
         console.log("verifying meetup as the host, returning");
@@ -142,7 +147,7 @@ async function notifyVerifyMeetup(event, guest) {
 }
 
 
-async function notifyEnterCode(event) {
+function notifyEnterCode(event) {
     console.log('guests:' + event.guestIds);
     // get host
     User.findOne({ 'userId': event.hostId }, {}, function (err, host) {
@@ -178,4 +183,7 @@ pushNotify.on('error', (err) => {
 });
 
 
-module.exports = pushNotify;
+module.exports = {
+    pushNotify: pushNotify,
+    notifyNewMeetup: notifyNewMeetup,
+};
