@@ -1,13 +1,19 @@
 package com.priahi.snackbud;
 
+import android.widget.DatePicker;
+import android.widget.TimePicker;
+
 import androidx.test.espresso.ViewAssertion;
+import androidx.test.espresso.contrib.PickerActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 
+import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,8 +21,11 @@ import org.junit.runner.RunWith;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
+import static androidx.test.espresso.contrib.PickerActions.*;
+
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -179,16 +188,6 @@ public class HelloWorldEspressoTest {
                 .check(matches(not(isEnabled())));
     }
 
-    /*
-    * Create a meetup without restaurant
-    * */
-    @Test
-    public void CreateMeetUp_NoRest() {
-        SwitchPageToMeetup();
-        onView(withId(R.id.createmeeting))
-                .perform(click())
-                .check(matches(not(isEnabled())));
-    }
 
     /*
      * Create a meetup without guest
@@ -196,6 +195,17 @@ public class HelloWorldEspressoTest {
     @Test
     public void CreateMeetUp_NoGuestID() {
         SwitchPageToMeetup();
+        onView(withId(R.id.btn_date))
+                .perform(click());
+
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName())))
+                .perform(PickerActions.setDate(2021, 11, 10));
+        onView(withText("OK")).perform(click());
+
+        onView(withClassName(Matchers.equalTo(TimePicker.class.getName())))
+                .perform(PickerActions.setTime(12, 0));
+        onView(withText("OK")).perform(click());
+
         onView(withId(R.id.createmeeting))
                 .perform(click())
                 .check(matches(not(isEnabled())));
@@ -208,6 +218,23 @@ public class HelloWorldEspressoTest {
     @Test
     public void CreateMeetUp_NoDate() {
         SwitchPageToMeetup();
+
+        onView(withId(R.id.userSpinner))
+                .perform(click());
+        onData(anything())
+                .atPosition(1)
+                .perform(click());
+
+        onView(withId(R.id.restSpinner))
+                .perform(click());
+        onData(anything())
+                .atPosition(1)
+                .perform(click());
+
+        onView(withClassName(Matchers.equalTo(TimePicker.class.getName())))
+                .perform(PickerActions.setTime(12, 0));
+        onView(withText("OK")).perform(click());
+
         onView(withId(R.id.createmeeting))
                 .perform(click())
                 .check(matches(not(isEnabled())));
@@ -220,12 +247,29 @@ public class HelloWorldEspressoTest {
     @Test
     public void CreateMeetUp_NoTime() {
         SwitchPageToMeetup();
+
+        onView(withId(R.id.userSpinner))
+                .perform(click());
+        onData(anything())
+                .atPosition(1)
+                .perform(click());
+
+        onView(withId(R.id.restSpinner))
+                .perform(click());
+        onData(anything())
+                .atPosition(1)
+                .perform(click());
+
+        onView(withClassName(Matchers.equalTo(DatePicker.class.getName())))
+                .perform(PickerActions.setDate(2021, 11, 10));
+        onView(withText("OK")).perform(click());
+
         onView(withId(R.id.createmeeting))
                 .perform(click())
                 .check(matches(not(isEnabled())));
     }
 
-    
+
 
 
     /* SideNav Testcases */
