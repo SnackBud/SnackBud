@@ -16,6 +16,11 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -164,12 +169,63 @@ public class HelloWorldEspressoTest {
 
 
     /*
-    * Create a meetup
+    * Create a meetup without any inputs
     * */
     @Test
-    public void CreateMeetUp() {
-        
+    public void CreateMeetUp_NoInput() {
+        SwitchPageToMeetup();
+        onView(withId(R.id.createmeeting))
+                .perform(click())
+                .check(matches(not(isEnabled())));
     }
+
+    /*
+    * Create a meetup without restaurant
+    * */
+    @Test
+    public void CreateMeetUp_NoRest() {
+        SwitchPageToMeetup();
+        onView(withId(R.id.createmeeting))
+                .perform(click())
+                .check(matches(not(isEnabled())));
+    }
+
+    /*
+     * Create a meetup without guest
+     * */
+    @Test
+    public void CreateMeetUp_NoGuestID() {
+        SwitchPageToMeetup();
+        onView(withId(R.id.createmeeting))
+                .perform(click())
+                .check(matches(not(isEnabled())));
+    }
+
+
+    /*
+     * Create a meetup without date
+     * */
+    @Test
+    public void CreateMeetUp_NoDate() {
+        SwitchPageToMeetup();
+        onView(withId(R.id.createmeeting))
+                .perform(click())
+                .check(matches(not(isEnabled())));
+    }
+
+
+    /*
+     * Create a meetup without time
+     * */
+    @Test
+    public void CreateMeetUp_NoTime() {
+        SwitchPageToMeetup();
+        onView(withId(R.id.createmeeting))
+                .perform(click())
+                .check(matches(not(isEnabled())));
+    }
+
+    
 
 
     /* SideNav Testcases */
