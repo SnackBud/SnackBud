@@ -125,7 +125,7 @@ class helpers {
                 let userId = event.guestIds[i];
                 User.findOne({ 'userId': userId.guestId }, {}, function (err, guest) {
                     if (err) {
-                        res.send(err);
+                        // res.send(err);
                         console.log(err);
                     }
                     // send messages to guests
