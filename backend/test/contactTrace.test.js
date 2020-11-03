@@ -1,9 +1,9 @@
-const express = require('express');
-const router = express.Router();
-const Event = require('../models/event');
-const User = require('../models/user');
-const pushNotify = require('../emitter');
-const getPhotosByAlbumId = require('./index');
+// const express = require('express');
+// const router = express.Router();
+// const Event = require('../models/event');
+// const User = require('../models/user');
+// const pushNotify = require('../emitter');
+// const getPhotosByAlbumId = require('./index');
 
 // jest.mock('./axiosConfig', () => {
 //     return {
