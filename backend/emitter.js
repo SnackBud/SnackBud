@@ -2,6 +2,8 @@ const { EventEmitter } = require('events');
 const helpers = require('./helper');
 const pushNotify = new EventEmitter();
 
+helper = new helpers();
+
 // First listener for new meetup
 pushNotify.on('newMeetup', function firstListener(event) {
     helper = new helpers();

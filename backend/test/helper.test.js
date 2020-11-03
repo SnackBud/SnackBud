@@ -19,7 +19,7 @@ describe('notifyNoVerifyMeetup tests', () => {
     });
   
     // call notifyNewMeetup
-    helper.notifyNoVerifyMeetup(guest);
+    helper.notifyNoVerifyMeetup(guest, helper);
 
     // The notifyHelper should be called once
     expect(helper.notifyHelper.mock.calls.length).toBe(1);
