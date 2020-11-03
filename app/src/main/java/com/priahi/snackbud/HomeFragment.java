@@ -42,8 +42,8 @@ public class HomeFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+//    private static final String ARG_PARAM1 = "param1";
+//    private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "HomeFragment";
     private static final String url = "http://13.68.137.122:3000";
 //    private static final String url = "http://192.168.1.66:3000";
