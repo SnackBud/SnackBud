@@ -17,7 +17,7 @@ describe('notifyNoVerifyMeetup tests', () => {
       username: "Arnold",
       deviceToken: "x"
     });
-  
+
     // call notifyNewMeetup
     helper.notifyNoVerifyMeetup(guest, helper);
 
