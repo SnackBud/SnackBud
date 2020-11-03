@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Event = require('../models/event');
 const User = require('../models/user');
-const {pushNotify, notifyNewMeetup} = require('../emitter')
+const pushNotify = require('../emitter')
 
 // get all events in our db
 router.get('/getAll', (req, res) => {
