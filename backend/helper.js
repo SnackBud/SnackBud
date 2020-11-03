@@ -8,9 +8,8 @@ admin.initializeApp({
   });
 
 class helpers {
-    
-    getThis(){
-        return this;
+
+    constructor(){
     }
 
     printToConsole(event) {
