@@ -1,18 +1,13 @@
 package com.priahi.snackbud;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -21,7 +16,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -55,15 +49,10 @@ public class LoginActivity extends AppCompatActivity {
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        findViewById(R.id.google_login_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.google_login_btn:
-                        signIn();
-                        break;
-                    // ...
-                }
+        findViewById(R.id.google_login_btn).setOnClickListener(v -> {
+            if (v.getId() == R.id.google_login_btn) {
+                signIn();
+                // ...
             }
         });
     }
@@ -119,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
         else {
             userId = account.getId();
             username = account.getDisplayName();
-            Uri personPhoto = account.getPhotoUrl();
+//            Uri personPhoto = account.getPhotoUrl();
 
             sendRegistrationToServer();
 
@@ -134,45 +123,34 @@ public class LoginActivity extends AppCompatActivity {
         queue = Volley.newRequestQueue(this);
 
         FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-                            return;
-                        }
-
-                        // Get new FCM registration token
-                        String token = task.getResult();
-
-                        HashMap<String, String> params = new HashMap<String, String>();
-                        params.put("userId", userId);
-                        params.put("username", username);
-                        params.put("deviceToken", token);
-
-                        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
-                                url + "/user",
-                                new JSONObject(params),
-                                new Response.Listener<JSONObject>() {
-                                    @Override
-                                    public void onResponse(JSONObject response) {
-                                        try {
-                                            VolleyLog.v("Response:%n %s", response.toString(4));
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                VolleyLog.e("Error: ", error.getMessage());
-                            }
-                        });
-
-                        queue.add(request);
-
-                        Log.d(TAG, "token: " + token);
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                        return;
                     }
+
+                    // Get new FCM registration token
+                    String token = task.getResult();
+
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("userId", userId);
+                    params.put("username", username);
+                    params.put("deviceToken", token);
+
+                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
+                            url + "/user",
+                            new JSONObject(params),
+                            response -> {
+                                try {
+                                    VolleyLog.v("Response:%n %s", response.toString(4));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }, error -> VolleyLog.e("Error: ", error.getMessage()));
+
+                    queue.add(request);
+
+                    Log.d(TAG, "token: " + token);
                 });
 
 

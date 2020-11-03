@@ -15,4 +15,6 @@
     <string name="covid_report">Report Covid Symptoms</string>
     <string name="verify_meetup">Verify Meetup</string>
     <string name="begin_meetup_search">Find Meetup!</string>
+    <string name="userIdNull">UserId: null</string>
+    <string name="nameAnon">Name: Anon</string>
 </resources>

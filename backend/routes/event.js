@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Event = require('../models/event');
 const User = require('../models/user');
-const pushNotify = require('../emitter')
+const pushNotify = require('../emitter');
 
 // get all events in our db
 router.get('/getAll', (req, res) => {
@@ -13,7 +13,7 @@ router.get('/getAll', (req, res) => {
                 res.send(err);
                 console.log(err);
             } else {
-                res.json(event);
+                res.status(200).json(event);
             }
         });
 });
@@ -27,7 +27,7 @@ router.get('/', (req, res) => {
                 res.send(err);
                 console.log(err);
             } else {
-                res.json(event);
+                res.status(200).json(event);
             }
         });
 });
@@ -51,10 +51,10 @@ router.post('/', (req, res) => {
     });
 
     event.save()
-        .then(data => {
-            res.json(data);
+        .then((data) => {
+            res.status(200).json(data);
         })
-        .catch(err => {
+        .catch((err) => {
             console.log(err);
             res.json({ message: err });
         });
@@ -72,7 +72,7 @@ router.delete('/', (req, res) => {
                 res.send(err);
                 console.log(err);
             } else {
-                res.send("delete successful");
+                res.status(200).send("delete successful");
             }
         });
 });
@@ -87,7 +87,7 @@ router.delete('/deleteAll', (req, res) => {
                 res.send(err);
                 console.log(err);
             } else {
-                res.send("delete all successful");
+                res.status(200).send("delete all successful");
             }
         });
 });
@@ -111,90 +111,11 @@ router.put('/', function (req, res) {
                             console.log(err);
                         } else {
                             pushNotify.emit('verifyMeetup', event, guest);
-                            res.send("verify successful");
+                            res.status(200).send("verify successful");
                         }
                     });
             }
         });
-});
-
-// update contact tracing logs
-router.post('/contactTrace', function (req, res) {
-    // find all verified meetups including the sick user that occured in the past 2 weeks
-    // notify in descending date to notify those most at risk first
-    console.log('/event/contactTrace GET request');
-    console.log('sick user:' + req.body.userId);
-    console.log('two weeks ago: ' + req.body.twoWeeksAgo);
-    console.log('time now: ' + req.body.currentDate);
-
-    Event.find({
-            $or: [ { 'hostId': req.body.userId }, { 'guestIds': { $elemMatch: { 'guestId': req.body.userId } } }],
-                    'timeOfMeet': { $gte: req.body.twoWeeksAgo, $lte: req.body.currentDate }, 
-                    // 'isVerified': true
-               },
-        function (err, pastEvents) {
-        if (err) {
-            // error case protected here
-            res.send(err);
-            console.log(err);
-        }
-
-        console.log(pastEvents);
-
-        User.findOne({ 'userId': req.body.userId }, 
-            function (err, sickUser) {
-            if (err) {
-                res.send(err);
-                console.log(err);
-                return;
-            }
-            if (sickUser == null) {
-                res.send("error, no user found by userId");
-                console.log("error, no user found by userId");
-                return;
-            }
-            // no meetups verified yet or 14 days since last meet, 
-            if (pastEvents.length == 0) {
-                console.log("no events found...");
-                pushNotify.emit('finishContactTrace', sickUser, 0);
-                res.send("no at risk meet-ups");
-                return;
-            }
-            let notifiedUserIds = [];
-            notifiedUserIds.push(req.body.userId);
-            pastEvents.forEach(event => {
-                console.log("event restid: " + event.restId);
-                if (!notifiedUserIds.includes(event.hostId)) {
-                    //notify host
-                    console.log(event.hostId);
-                    notifiedUserIds.push(event.hostId);
-                    contactTraceTrigger(sickUser, event.hostId, event);
-                }
-                //notify guests
-                event.guestIds.forEach(atRiskUser => {
-                    if (!notifiedUserIds.includes(atRiskUser.guestId)) {
-                        console.log(atRiskUser.guestId);
-                        contactTraceTrigger(sickUser, atRiskUser.guestId, event);
-                        notifiedUserIds.push(atRiskUser.guestId);
-                    }
-                });
-            });
-            console.log(notifiedUserIds);
-            if (notifiedUserIds.length > 1) {
-                // here we verify that at least one notification has been sent
-                // remove sick user from list
-                notifiedUserIds.shift();
-                pushNotify.emit('finishContactTrace', sickUser, notifiedUserIds.length);
-                res.json({ pastEvents, notifiedUserIds });
-            } else {
-                console.log("no events found...");
-                pushNotify.emit('finishContactTrace', sickUser, 0);
-                res.send("no at risk meet-ups");
-                return;
-            }
-        });
-    });
-
 });
 
 async function contactTraceTrigger(sickUser, atRiskUserId, event) {
@@ -208,4 +129,89 @@ async function contactTraceTrigger(sickUser, atRiskUserId, event) {
         });
 }
 
-module.exports = router
+function findAtRiskUsers(req, res, sickUser, pastEvents) {
+    let notifiedUserIds = [];
+    notifiedUserIds.push(req.body.userId);
+    pastEvents.forEach((event) => {
+        console.log("event restid: " + event.restId);
+        if (!notifiedUserIds.includes(event.hostId)) {
+            //notify host
+            console.log(event.hostId);
+            notifiedUserIds.push(event.hostId);
+            contactTraceTrigger(sickUser, event.hostId, event);
+        }
+        //notify guests
+        event.guestIds.forEach((atRiskUser) => {
+            if (!notifiedUserIds.includes(atRiskUser.guestId)) {
+                console.log(atRiskUser.guestId);
+                contactTraceTrigger(sickUser, atRiskUser.guestId, event);
+                notifiedUserIds.push(atRiskUser.guestId);
+            }
+        });
+    });
+    console.log(notifiedUserIds);
+    if (notifiedUserIds.length > 1) {
+        // here we verify that at least one notification has been sent
+        // remove sick user from list
+        notifiedUserIds.shift();
+        pushNotify.emit('finishContactTrace', sickUser, notifiedUserIds.length);
+        res.status(200).json({ pastEvents, notifiedUserIds });
+    } else {
+        console.log("no events found...");
+        pushNotify.emit('finishContactTrace', sickUser, 0);
+        res.status(200).send("no at risk meet-ups");
+        return;
+    }
+}
+
+// update contact tracing logs
+router.post('/contactTrace', function (req, res) {
+    // find all verified meetups including the sick user that occured in the past 2 weeks
+    // notify in descending date to notify those most at risk first
+    console.log('/event/contactTrace GET request');
+    console.log('sick user:' + req.body.userId);
+    console.log('two weeks ago: ' + req.body.twoWeeksAgo);
+    console.log('time now: ' + req.body.currentDate);
+
+    Event.find({
+        $or: [{ 'hostId': req.body.userId }, { 'guestIds': { $elemMatch: { 'guestId': req.body.userId } } }],
+        'timeOfMeet': { $gte: req.body.twoWeeksAgo, $lte: req.body.currentDate },
+        'isVerified': true
+    },
+        function (err, pastEvents) {
+            if (err) {
+                // error case protected here
+                res.send(err);
+                console.log(err);
+            }
+
+            console.log(pastEvents);
+
+            User.findOne({ 'userId': req.body.userId },
+                function (err, sickUser) {
+                    if (err) {
+                        res.send(err);
+                        console.log(err);
+                        return;
+                    }
+                    if (sickUser == null) {
+                        res.send("error, no user found by userId");
+                        console.log("error, no user found by userId");
+                        return;
+                    }
+                    // no meetups verified yet or 14 days since last meet, 
+                    if (pastEvents.length === 0) {
+                        console.log("no events found...");
+                        pushNotify.emit('finishContactTrace', sickUser, 0);
+                        res.status(200).send("no at risk meet-ups");
+                        return;
+                    }
+                    findAtRiskUsers(req, res, sickUser, pastEvents);
+                });
+        });
+
+});
+
+
+
+module.exports = router;

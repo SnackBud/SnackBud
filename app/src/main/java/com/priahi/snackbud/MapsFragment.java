@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -18,11 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -31,16 +25,16 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import com.squareup.picasso.Picasso;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,15 +42,15 @@ import java.util.Map;
 
 public class MapsFragment extends Fragment {
 
-    private RequestQueue mQueue;
+//    private RequestQueue mQueue;
 
     private GoogleMap mMap;
 
-    final private String RESTAURANTS_URL = "";
-
-    private Button findMeetUp;
-
-    private boolean isMeetUpOn = false;
+//    final private String RESTAURANTS_URL = "";
+//
+//    private Button findMeetUp;
+//
+//    private boolean isMeetUpOn = false;
 
     View mapView;
 
@@ -133,32 +127,24 @@ public class MapsFragment extends Fragment {
             }
 
 
-
-            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(Marker marker) {
-                    LatLng position = marker.getPosition();
-                    CameraPosition cameraPosition = new CameraPosition.Builder()
-                            .target(new LatLng(position.latitude, position.longitude))      // Sets the center of the map to location user
-                            .zoom(15)                   // Sets the zoom
-                            .bearing(0)                // Sets the orientation of the camera to east
-                            .tilt(0)                   // Sets the tilt of the camera to 30 degrees
-                            .build();                  // Creates a CameraPosition from the builder
-                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                    ImageView restaurant_image = mapView.findViewById(R.id.restaurant_image);
-                    Picasso.get().load(restaurantImageUrl.get(marker.getTitle())).into(restaurant_image);
-                    return false;
-                }
+            mMap.setOnMarkerClickListener(marker -> {
+                LatLng position = marker.getPosition();
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(position.latitude, position.longitude))      // Sets the center of the map to location user
+                        .zoom(15)                   // Sets the zoom
+                        .bearing(0)                // Sets the orientation of the camera to east
+                        .tilt(0)                   // Sets the tilt of the camera to 30 degrees
+                        .build();                  // Creates a CameraPosition from the builder
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                ImageView restaurant_image = mapView.findViewById(R.id.restaurant_image);
+                Picasso.get().load(restaurantImageUrl.get(marker.getTitle())).into(restaurant_image);
+                return false;
             });
 
 
-
-            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                @Override
-                public void onMapClick(LatLng latLng) {
-                    ImageView restaurant_image = mapView.findViewById(R.id.restaurant_image);
-                    restaurant_image.setImageBitmap(null);
-                }
+            mMap.setOnMapClickListener(latLng -> {
+                ImageView restaurant_image = mapView.findViewById(R.id.restaurant_image);
+                restaurant_image.setImageBitmap(null);
             });
 
         }
@@ -185,51 +171,51 @@ public class MapsFragment extends Fragment {
     }
 
     public String loadJSONFromAsset() {
-        String json = null;
+        String json;
         try {
             InputStream is = getContext().getAssets().open("restaurants.json");
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            json = new String(buffer, "UTF-8");
+            json = new String(buffer, StandardCharsets.UTF_8);
         } catch (IOException ex) {
             ex.printStackTrace();
             return null;
         }
         return json;
-}
-
-
-    private void jsonParse(String url) {
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONArray jsonArray = response.getJSONArray("data");
-
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject restaurants = jsonArray.getJSONObject(i);
-                        LatLng loc = new LatLng(restaurants.getDouble("lng"), restaurants.getDouble("lat"));
-                        mMap.addMarker(new MarkerOptions().position(loc).title(restaurants.getString("name")));
-                    }
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-            }
-        });
-
-        mQueue.add(jsonObjectRequest);
     }
 
+
+    //    private void jsonParse(String url) {
+//
+//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+//            @Override
+//            public void onResponse(JSONObject response) {
+//                try {
+//                    JSONArray jsonArray = response.getJSONArray("data");
+//
+//                    for (int i = 0; i < jsonArray.length(); i++) {
+//                        JSONObject restaurants = jsonArray.getJSONObject(i);
+//                        LatLng loc = new LatLng(restaurants.getDouble("lng"), restaurants.getDouble("lat"));
+//                        mMap.addMarker(new MarkerOptions().position(loc).title(restaurants.getString("name")));
+//                    }
+//
+//
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                error.printStackTrace();
+//            }
+//        });
+//
+//        mQueue.add(jsonObjectRequest);
+//    }
+//
     private Location getLocation() {
         LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
