@@ -48,8 +48,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private static final String TAG = "MeetingFragment";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+//    private String mParam1;
+//    private String mParam2;
     private String hostId;
     private String guestId;
     private String restId;
