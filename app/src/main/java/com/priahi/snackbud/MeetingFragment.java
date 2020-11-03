@@ -36,11 +36,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MeetingFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
@@ -137,6 +133,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        hostId = Objects.requireNonNull(GoogleSignIn.getLastSignedInAccount(requireActivity())).getId();
+
         btnCreateMeeting = (Button) requireView().findViewById(R.id.createmeeting);
         btnDatePicker = (Button) requireView().findViewById(R.id.btn_date);
         btnTimePicker = (Button) requireView().findViewById(R.id.btn_time);
@@ -188,15 +186,18 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                                 JSONObject object1 = response.getJSONObject(i);
                                 String userId = object1.getString("userId");
                                 String username = object1.getString("username");
-                                if (!userId.equals(hostId)) {
-                                    users.put(username, userId);
-                                    userNames.add(i, username);
-                                }
+
+
+                                users.put(username, userId);
+                                userNames.add(i, username);
+
+
+                                ArrayAdapter<String> userAdapter = new ArrayAdapter<String>(requireContext(),
+                                        android.R.layout.simple_spinner_dropdown_item, userNames);
+                                userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                userDropdown.setAdapter(userAdapter);
+
                             }
-                            ArrayAdapter<String> userAdapter = new ArrayAdapter<String>(requireContext(),
-                                    android.R.layout.simple_spinner_dropdown_item, userNames);
-                            userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                            userDropdown.setAdapter(userAdapter);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
