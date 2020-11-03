@@ -60,8 +60,8 @@ class helpers {
             // get the deviceToken of the guests
             var i;
             for (i = 0; i < event.guestIds.length; i++) {
-                let userId = event.guestIds[i].guestId;
-                User.findOne({ 'userId': userId }, {}, function (err, guest) {
+                let userId = event.guestIds[i];
+                User.findOne({ 'userId': userId.guestId }, {}, function (err, guest) {
                     if (err) {
                         //res.send(err);
                         console.log(err);
@@ -122,7 +122,8 @@ class helpers {
 
             // get the deviceToken of the guests
             for (var i = 0; i < event.guestIds.length; i++) {
-                User.findOne({ 'userId': event.guestIds[i].guestId }, {}, function (err, guest) {
+                let userId = event.guestIds[i];
+                User.findOne({ 'userId': userId.guestId }, {}, function (err, guest) {
                     if (err) {
                         res.send(err);
                         console.log(err);
