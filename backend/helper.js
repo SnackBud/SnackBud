@@ -135,6 +135,4 @@ class helpers {
     }
 }
 
-helper = new helpers();
-
-module.exports = helper;
+module.exports = helpers;
