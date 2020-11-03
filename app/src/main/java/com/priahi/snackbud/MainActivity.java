@@ -1,12 +1,9 @@
 package com.priahi.snackbud;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,19 +11,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.squareup.picasso.Picasso;
-import mehdi.sakout.aboutpage.AboutPage;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -36,8 +25,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     private GoogleSignInClient mGoogleSignInClient;
-    private GoogleSignInAccount acct;
-//    public static RequestQueue queue;
+    //    public static RequestQueue queue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,39 +67,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         // get account info
-        acct = GoogleSignIn.getLastSignedInAccount(this);
+        GoogleSignIn.getLastSignedInAccount(this);
 
     }
 
     //Listener
-    private BottomNavigationView.OnNavigationItemSelectedListener navlistener = new
-            BottomNavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                    Fragment selectedFragment = null;
+    private BottomNavigationView.OnNavigationItemSelectedListener navlistener = item -> {
+        Fragment selectedFragment;
 
-                    switch (item.getItemId()) {
-                        case R.id.profile_view:
-                            selectedFragment = new HomeFragment();
-                            break;
+        switch (item.getItemId()) {
+            case R.id.profile_view:
+                selectedFragment = new HomeFragment();
+                break;
 
-                        case R.id.map_view:
-                            selectedFragment = new MapsFragment();
-                            break;
+            case R.id.map_view:
+                selectedFragment = new MapsFragment();
+                break;
 
-                        case R.id.meetup_view:
-                            selectedFragment = new MeetingFragment();
-                            break;
-                    }
+            case R.id.meetup_view:
+                selectedFragment = new MeetingFragment();
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + item.getItemId());
+        }
 
-                    //Begin Transaction
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_layout, selectedFragment)
-                            .commit();
+        //Begin Transaction
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_layout, selectedFragment)
+                .commit();
 
-                    return true;
-                }
-            };
+        return true;
+    };
 
     /**
      * Called when an item in the navigation menu is selected.
@@ -139,21 +125,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void signOut() {
         mGoogleSignInClient.signOut()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // ...
-                    }
+                .addOnCompleteListener(this, task -> {
+                    // ...
                 });
     }
 
     private void revokeAccess() {
         mGoogleSignInClient.revokeAccess()
-                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // ...
-                    }
+                .addOnCompleteListener(this, task -> {
+                    // ...
                 });
     }
 

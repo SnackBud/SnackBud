@@ -53,4 +53,4 @@ pushNotify.on('error', (err) => {
     console.error('whoops! there was an error bro!' + err);
 });
 
-module.exports = pushNotify
+module.exports = pushNotify;

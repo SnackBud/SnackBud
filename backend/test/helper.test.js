@@ -1,5 +1,5 @@
-const Event = require('../models/event')
-const User = require('../models/user')
+const Event = require('../models/event');
+const User = require('../models/user');
 const helpers = require('../helper');
 
 describe('notifyNoVerifyMeetup tests', () => {

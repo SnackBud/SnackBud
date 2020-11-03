@@ -5,11 +5,11 @@ require('dotenv/config');
 var serviceAccount = require("./snackbud-5911d-firebase-adminsdk-btpru-23d7cc7f93.json");
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-  });
+});
 
 class helpers {
 
-    constructor(){
+    constructor() {
     }
 
     printToConsole(event) {
@@ -19,26 +19,26 @@ class helpers {
 
     notifyHelper(elem, title, body) {
         try {
-        // send messages to guests
-        var message = {
-            notification: {
-                title: title,
-                body: body
-            },
-            token: elem.deviceToken
-        };
-        console.log('sending message to ' + elem.userId + ', message:');
-        console.log(message);
+            // send messages to guests
+            var message = {
+                notification: {
+                    'title': title,
+                    'body': body
+                },
+                token: elem.deviceToken
+            };
+            console.log('sending message to ' + elem.userId + ', message:');
+            console.log(message);
 
-        // registration token.
-        admin.messaging().send(message)
-            .then((response) => {
-                // Response is a message ID string.
-                console.log('Successfully sent message:', response);
-            })
-            .catch((error) => {
-                console.log('Error sending message:', error);
-            });
+            // registration token.
+            admin.messaging().send(message)
+                .then((response) => {
+                    // Response is a message ID string.
+                    console.log('Successfully sent message:', response);
+                })
+                .catch((error) => {
+                    console.log('Error sending message:', error);
+                });
         } catch (err) {
             console.log(err);
             return;
@@ -46,7 +46,7 @@ class helpers {
     }
 
     // tell the guests about the meetup creation
-    notifyNewMeetup(event, helper=this) {
+    notifyNewMeetup(event, helper = this) {
         console.log('guests:' + event.guestIds);
 
         // get host name
@@ -60,7 +60,8 @@ class helpers {
             // get the deviceToken of the guests
             var i;
             for (i = 0; i < event.guestIds.length; i++) {
-                User.findOne({ 'userId': event.guestIds[i].guestId }, {}, function (err, guest) {
+                let userId = event.guestIds[i].guestId;
+                User.findOne({ 'userId': userId }, {}, function (err, guest) {
                     if (err) {
                         //res.send(err);
                         console.log(err);
@@ -75,16 +76,16 @@ class helpers {
     }
 
     //listener helper for the host to see if the meetup has been verified
-    notifyNoVerifyMeetup(guest, helper=this) {
+    notifyNoVerifyMeetup(guest, helper = this) {
         console.log('No Verify meet for: ' + guest.userId);
         // send messages to guest
         helper.notifyHelper(guest, 'You have entered an invalid code!', 'Please try again');
     }
 
     //listener helper for the host to see if the meetup has been verified
-    notifyVerifyMeetup(event, guest, helper=this) {
+    notifyVerifyMeetup(event, guest, helper = this) {
         console.log('Verify meet for: ' + event.hostId);
-        if (event.hostId == guest.userId) {
+        if (event.hostId === guest.userId) {
             console.log("verifying meetup as the host, returning");
             return;
         }
@@ -93,7 +94,8 @@ class helpers {
         // get host 
         User.findOne({ 'userId': event.hostId }, {}, function (err, host) {
             if (err) {
-                res.send(err);
+                //TODO: Cannot use res here safely
+                // res.send(err);
                 console.log(err);
             }
             console.log('host is:' + host.userId);
@@ -105,7 +107,7 @@ class helpers {
     }
 
 
-    notifyEnterCode(event, helper=this) {
+    notifyEnterCode(event, helper = this) {
         console.log('guests:' + event.guestIds);
         // get host
         User.findOne({ 'userId': event.hostId }, {}, function (err, host) {

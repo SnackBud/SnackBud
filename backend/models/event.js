@@ -36,6 +36,6 @@ const meetup = mongoose.Schema({
         type: String,
         default: Math.floor(Math.random() * Math.floor(maxCode))
     },
-})
+});
 
 module.exports = mongoose.model('meetup', meetup); 

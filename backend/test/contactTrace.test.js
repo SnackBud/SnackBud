@@ -33,5 +33,5 @@ jest.mock('./axiosConfig', () => {
                 }
             ]
         }),
-    }
+    };
 });

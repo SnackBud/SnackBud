@@ -52,18 +52,17 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
     private Button sendCodeButton;
     private Button enterCodeButton;
-    private ImageButton closeButton;
     private EditText editTextCode;
     private TextView displayCode;
 
     private String eventVerifyCode;
     private String userInputCode;
     private String eventId;
-    private Map<String, String> hostIdMap = new HashMap<String, String>();
-    private Map<String, String> eventsIdMap = new HashMap<String, String>();
-    private ArrayList<String> eventsIdList = new ArrayList<String>();
-    private ArrayList<String> eventTitle = new ArrayList<String>();
-    private ArrayList<String> guestId = new ArrayList<String>();
+    private Map<String, String> hostIdMap = new HashMap<>();
+    private Map<String, String> eventsIdMap = new HashMap<>();
+    private ArrayList<String> eventsIdList = new ArrayList<>();
+    private ArrayList<String> eventTitle = new ArrayList<>();
+    private ArrayList<String> guestId = new ArrayList<>();
     private RequestQueue queue;
 
 
@@ -99,26 +98,18 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         // button to POST the verification code onto the server
         sendCodeButton = view.findViewById(R.id.send_code);
         sendCodeButton.setEnabled(false);
-        sendCodeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    putRequest();
-                    dismiss();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        sendCodeButton.setOnClickListener(v -> {
+            try {
+                putRequest();
+                dismiss();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         });
 
         // button to close the dialog
-        closeButton = view.findViewById(R.id.close_verify_meetup);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
+        ImageButton closeButton = view.findViewById(R.id.close_verify_meetup);
+        closeButton.setOnClickListener(v -> dismiss());
 
         // enter the verification code
         editTextCode = view.findViewById(R.id.verify_meetup_code);
@@ -126,12 +117,12 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         editTextCode.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                //needs comment for code style
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+                //needs comment for code style
             }
 
             @Override
@@ -143,12 +134,9 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         // enter code button
         enterCodeButton = view.findViewById(R.id.enter_code);
         enterCodeButton.setEnabled(false);
-        enterCodeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendCodeButton.setEnabled(true);
-                userInputCode = editTextCode.getText().toString();
-            }
+        enterCodeButton.setOnClickListener(v -> {
+            sendCodeButton.setEnabled(true);
+            userInputCode = editTextCode.getText().toString();
         });
         enableSubmitIfReady();
 
@@ -172,56 +160,18 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
                 url + "/event/getAll",
                 js,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        Log.w(TAG, "request successful");
-                        try {
-                            VolleyLog.v("Response:%n %s", response.toString(4));
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject object1 = response.getJSONObject(i);
-                                String eventIdString = object1.getString("eventId");
-                                String restName = object1.getString("restName");
-                                long timeOfMeet = object1.getLong("timeOfMeet");
-                                Date meetingTime = new Date(timeOfMeet);
-                                String verifyCode = object1.getString("verifyCode");
-                                String hostId = object1.getString("hostId");
-
-                                JSONArray guestIds = object1.getJSONArray("guestIds");
-                                for (int j = 0; j < guestIds.length(); j++) {
-                                    guestId.add(guestIds.getString(j));
-                                }
-                                
-
-                                eventsIdMap.put(eventIdString, verifyCode);
-                                eventsIdList.add(i, eventIdString);
-
-
-                                hostIdMap.put(verifyCode, hostId);
-
-                                DateFormat dateFormat = new SimpleDateFormat("E, dd MMM HH:mm", Locale.US);
-                                eventTitle.add(i, dateFormat.format(meetingTime) + " at " + restName);
-                            }
-
-                            ArrayAdapter<String> eventAdapter = new ArrayAdapter<String>(requireContext(),
-                                    android.R.layout.simple_spinner_dropdown_item, eventTitle);
-                            eventAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                            eventDropdown.setAdapter(eventAdapter);
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                response -> {
+                    Log.w(TAG, "request successful");
+                    initialRequest(response, eventDropdown);
                 }, new Response.ErrorListener() {
 
 
             /**
              * Callback method that an error has been occurred with the provided error code and optional
              * user-readable message.
-             * @param error
+             * <p>
+             * param error
              */
-
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d(TAG, "Failed with error msg:\t" + error.getMessage());
@@ -244,25 +194,63 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     // for setting the users and restaurants
     @Override
     public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-        if (eventsIdMap != null && eventsIdList != null) {
-            if (parent.getId() == R.id.eventSpinner) {
-                Log.d("eventId", eventsIdList.get(position));
-                Log.d("eventTitle", eventTitle.get(position));
-                Log.d("verificationCode", Objects.requireNonNull(eventsIdMap.get(eventsIdList.get(position))));
-                if (eventsIdList.get(position) != null) {
-                    // get the eventId for selected spinner element
-                    eventId = eventsIdList.get(position);
-                    eventVerifyCode = eventsIdMap.get(eventsIdList.get(position));
-                    updateCodeText();
-                    editTextCode.setEnabled(true);
-                }
+        if (eventsIdMap != null && eventsIdList != null && parent.getId() == R.id.eventSpinner) {
+            Log.d("eventId", eventsIdList.get(position));
+            Log.d("eventTitle", eventTitle.get(position));
+            Log.d("verificationCode", Objects.requireNonNull(eventsIdMap.get(eventsIdList.get(position))));
+            if (eventsIdList.get(position) != null) {
+                // get the eventId for selected spinner element
+                eventId = eventsIdList.get(position);
+                eventVerifyCode = eventsIdMap.get(eventsIdList.get(position));
+                updateCodeText();
+                editTextCode.setEnabled(true);
             }
         }
+
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         // TODO Auto-generated method stub
+    }
+
+    private void initialRequest(JSONArray response, Spinner eventDropdown) {
+        try {
+            VolleyLog.v("Response:%n %s", response.toString(4));
+            for (int i = 0; i < response.length(); i++) {
+                JSONObject object1 = response.getJSONObject(i);
+                String eventIdString = object1.getString("eventId");
+                String restName = object1.getString("restName");
+                long timeOfMeet = object1.getLong("timeOfMeet");
+                Date meetingTime = new Date(timeOfMeet);
+                String verifyCode = object1.getString("verifyCode");
+                String hostId = object1.getString("hostId");
+
+                JSONArray guestIds = object1.getJSONArray("guestIds");
+                for (int j = 0; j < guestIds.length(); j++) {
+                    guestId.add(guestIds.getString(j));
+                }
+
+
+                eventsIdMap.put(eventIdString, verifyCode);
+                eventsIdList.add(i, eventIdString);
+
+
+                hostIdMap.put(verifyCode, hostId);
+
+                DateFormat dateFormat = new SimpleDateFormat("E, dd MMM HH:mm", Locale.US);
+                eventTitle.add(i, dateFormat.format(meetingTime) + " at " + restName);
+            }
+
+            ArrayAdapter<String> eventAdapter = new ArrayAdapter<>(requireContext(),
+                    android.R.layout.simple_spinner_dropdown_item, eventTitle);
+            eventAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            eventDropdown.setAdapter(eventAdapter);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void putRequest() throws JSONException {
@@ -273,7 +261,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
             return;
         }
         Log.e(TAG, "about to PUT");
-        JSONObject eventRequest = new JSONObject("{guestId: "+acct.getId()+", eventId: "+this.eventId+", verifyCode: "+userInputCode+"}");
+        JSONObject eventRequest = new JSONObject("{guestId: " + acct.getId() + ", eventId: " + this.eventId + ", verifyCode: " + userInputCode + "}");
 //        eventRequest.put("guestId", acct.getId());
 //        eventRequest.put("eventId", this.eventId);
 //        eventRequest.put("verifyCode", userInputCode);
@@ -281,31 +269,24 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT,
                 url + "/event",
                 eventRequest,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            VolleyLog.v("Response:%n %s", response.toString(4));
-                            //Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                response -> {
+                    try {
+                        VolleyLog.v("Response:%n %s", response.toString(4));
+                        //Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //Toast.makeText(getContext(), error.toString(), Toast.LENGTH_SHORT).show();
-                VolleyLog.e("Error: ", error.getMessage());
-            }
+                }, error -> {
+            //Toast.makeText(getContext(), error.toString(), Toast.LENGTH_SHORT).show();
+                    VolleyLog.e("Error: ", error.getMessage());
         });
         queue.add(request);
     }
 
     private void updateCodeText() {
-        if (hostIdMap.get(eventVerifyCode).equals(acct.getId())) {
+        if (Objects.equals(hostIdMap.get(eventVerifyCode), acct.getId())) {
             displayCode.setText(eventVerifyCode);
-        }
-        else {
+        } else {
             displayCode.setText("");
         }
     }

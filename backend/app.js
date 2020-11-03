@@ -6,7 +6,7 @@ require('dotenv/config');
 
 app.use(bodyParser.json());
 
-const router = express.Router()
+// const router = express.Router();
 
 //import routes
 const userRoute = require('./routes/user.js');
@@ -28,4 +28,4 @@ mongoose.connect(process.env.DB_CONNECTION,
 //listen on port 3000
 app.listen(3000);
 
-module.exports = app
+module.exports = app;

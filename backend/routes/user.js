@@ -90,4 +90,4 @@ router.delete('/deleteALL', (req, res) => {
 });
 
 
-module.exports = router
+module.exports = router;
