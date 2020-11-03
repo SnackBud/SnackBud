@@ -6,35 +6,30 @@ helper = new helpers();
 
 // First listener for new meetup
 pushNotify.on('newMeetup', function firstListener(event) {
-    helper = new helpers();
     helper.printToConsole(event);
     helper.notifyNewMeetup(event);
 });
 
 // First listener for new meetup
 pushNotify.on('verifyMeetup', function firstListener(event, guest) {
-    helper = new helpers();
     helper.printToConsole(event);
     helper.notifyVerifyMeetup(event, guest);
 });
 
 // First listener for new meetup
 pushNotify.on('noVerifyMeetup', function firstListener(guest) {
-    helper = new helpers();
     helper.printToConsole(guest);
     helper.notifyNoVerifyMeetup(guest);
 });
 
 //listener for guests when the host unlocks the verification code
 pushNotify.on('enterCode', function firstListener(event) {
-    helper = new helpers();
     helper.printToConsole(event);
     helper.notifyEnterCode(event);
 });
 
 //listener for guests when the host unlocks the verification code
 pushNotify.on('contactTrace', function firstListener(sickUser, atRiskUser, event) {
-    helper = new helpers();
     helper.printToConsole(event);
     helper.notifyHelper(atRiskUser, sickUser.username + ' has COVID-19 symptoms! You were in contact with them in the last two weeks!',
         'This was at ' + event.restName + 'on ' + new Date(event.timeOfMeet) + ' or sooner potentially!');
@@ -42,7 +37,6 @@ pushNotify.on('contactTrace', function firstListener(sickUser, atRiskUser, event
 
 //listener for guests when the host unlocks the verification code
 pushNotify.on('finishContactTrace', function firstListener(sickUser, numNotified) {
-    helper = new helpers();
     helper.printToConsole(sickUser);
     if (numNotified > 0) {
         helper.notifyHelper(sickUser, sickUser.username + ', we have notified ' + numNotified + ' people we have on record as having met with you.',

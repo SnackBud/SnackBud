@@ -46,7 +46,7 @@ class helpers {
     }
 
     // tell the guests about the meetup creation
-    notifyNewMeetup(event, helper) {
+    notifyNewMeetup(event, helper=this) {
         console.log('guests:' + event.guestIds);
 
         // get host name
@@ -67,7 +67,7 @@ class helpers {
                         return;
                     }
                     // send messages to guests
-                    helpers.notifyHelper(guest, 'You are invited to a meetup with ' + host.username + '!',
+                    helper.notifyHelper(guest, 'You are invited to a meetup with ' + host.username + '!',
                         'The meetup will be at ' + event.restName + ' at ' + new Date(event.timeOfMeet));
                 });
             }
@@ -75,14 +75,14 @@ class helpers {
     }
 
     //listener helper for the host to see if the meetup has been verified
-    notifyNoVerifyMeetup(guest, helper) {
+    notifyNoVerifyMeetup(guest, helper=this) {
         console.log('No Verify meet for: ' + guest.userId);
         // send messages to guest
-        helpers.notifyHelper(guest, 'You have entered an invalid code!', 'Please try again');
+        helper.notifyHelper(guest, 'You have entered an invalid code!', 'Please try again');
     }
 
     //listener helper for the host to see if the meetup has been verified
-    notifyVerifyMeetup(event, guest) {
+    notifyVerifyMeetup(event, guest, helper=this) {
         console.log('Verify meet for: ' + event.hostId);
         if (event.hostId == guest.userId) {
             console.log("verifying meetup as the host, returning");
@@ -98,14 +98,14 @@ class helpers {
             }
             console.log('host is:' + host.userId);
             // send messages to host
-            helpers.notifyHelper(host, guest.username + ' has verified your meetup with you!', body);
+            helper.notifyHelper(host, guest.username + ' has verified your meetup with you!', body);
             // send messages to guest
-            helpers.notifyHelper(guest, 'You have verified your meetup with ' + host.username + '!', body);
+            helper.notifyHelper(guest, 'You have verified your meetup with ' + host.username + '!', body);
         });
     }
 
 
-    notifyEnterCode(event) {
+    notifyEnterCode(event, helper=this) {
         console.log('guests:' + event.guestIds);
         // get host
         User.findOne({ 'userId': event.hostId }, {}, function (err, host) {
@@ -126,7 +126,7 @@ class helpers {
                         console.log(err);
                     }
                     // send messages to guests
-                    helpers.notifyHelper(guest, host.username + '\'s meetup verification code is unlocked',
+                    helper.notifyHelper(guest, host.username + '\'s meetup verification code is unlocked',
                         'Please get and enter their code to verify the meetup!');
                 });
 
