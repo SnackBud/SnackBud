@@ -37,13 +37,14 @@ pushNotify.on('contactTrace', function firstListener(sickUser, atRiskUser, event
 
 //listener for guests when the host unlocks the verification code
 pushNotify.on('finishContactTrace', function firstListener(sickUser, numNotified) {
+    const body = 'Please do not create any more meetups or leave your home until you are better!';
     helper.printToConsole(sickUser);
     if (numNotified > 0) {
         helper.notifyHelper(sickUser, sickUser.username + ', we have notified ' + numNotified + ' people we have on record as having met with you.',
-            'Please do not create any more meetups or leave your home until you are better!');
+            body);
     } else {
         helper.notifyHelper(sickUser, sickUser.username + ', you have not met with anyone through SnackBud in at least 2 weeks, don\'t worry.',
-            'Please do not create any more meetups or leave your home until you are better!');
+            body);
     }
 });
 
