@@ -93,6 +93,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
 //        if (getArguments() != null) {
 //            mParam1 = getArguments().getString(ARG_PARAM1);
 //            mParam2 = getArguments().getString(ARG_PARAM2);
+        //aaaaaaaaaa
 //        }
 
         // this is using assets locally
