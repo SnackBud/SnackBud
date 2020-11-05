@@ -3,24 +3,28 @@ package com.priahi.snackbud;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
-import androidx.test.espresso.assertion.ViewAssertions;
+
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.actionWithAssertions;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.PickerActions.setDate;
 import static androidx.test.espresso.contrib.PickerActions.setTime;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
-import static androidx.test.espresso.matcher.ViewMatchers.*;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
+import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
@@ -38,7 +42,7 @@ public class HelloWorldEspressoTest {
     public void listGoesOverTheFold() {
         onView(withId(R.id.map_view)).check(matches(isDisplayed()));
         //onView(withId(R.id.profile_view)).perform(click());//a
-        assert (true);
+        Assert.assertTrue(true);
 
     }
 
@@ -53,7 +57,7 @@ public class HelloWorldEspressoTest {
         onView(withId(R.id.profile_view))
                 .perform(click())
                 .check(matches(isDisplayed()));
-        ViewAssertions.matches(isDisplayed());
+        Assert.assertTrue(true);
     }
 
     /*
@@ -66,7 +70,7 @@ public class HelloWorldEspressoTest {
                 .perform(click());
         onView(withText("Are you sure you want to report COVID symptoms?"))
                 .check(matches(isDisplayed()));
-        ViewAssertions.matches(isDisplayed());
+        Assert.assertTrue(true);
     }
 
     /*
@@ -79,7 +83,7 @@ public class HelloWorldEspressoTest {
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()))
                 .perform(click());
-        ViewAssertions.matches(isDisplayed());
+        Assert.assertTrue(true);
     }
 
     /*
@@ -92,7 +96,7 @@ public class HelloWorldEspressoTest {
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()))
                 .perform(click());
-        ViewAssertions.matches(isDisplayed());
+        Assert.assertTrue(true);
     }
 
     /*
@@ -103,7 +107,7 @@ public class HelloWorldEspressoTest {
         switchPageToProfile();
         onView(withId(R.id.verify_meetup))
                 .perform(click());
-        ViewAssertions.matches(isDisplayed());
+        Assert.assertTrue(true);
     }
 
     /*
@@ -133,7 +137,7 @@ public class HelloWorldEspressoTest {
         onView(withId(R.id.map_view))
                 .perform(click())
                 .check(matches(isDisplayed()));
-        ViewAssertions.matches(isDisplayed());
+        Assert.assertTrue(true);
     }
 
 
@@ -156,7 +160,7 @@ public class HelloWorldEspressoTest {
         onView(withId(R.id.meetup_view))
                 .perform(click())
                 .check(matches(isDisplayed()));
-        ViewAssertions.matches(isDisplayed());
+        Assert.assertTrue(true);
     }
 
     /*
@@ -168,7 +172,7 @@ public class HelloWorldEspressoTest {
         onView(withId(R.id.userSpinner))
                 .perform(click())
                 .check(matches(isDisplayed()));
-        ViewAssertions.matches(isDisplayed());
+        Assert.assertTrue(true);
     }
 
     /*
@@ -180,7 +184,7 @@ public class HelloWorldEspressoTest {
         onView(withId(R.id.restSpinner))
                 .perform(click())
                 .check(matches(isDisplayed()));
-        ViewAssertions.matches(isDisplayed());
+        Assert.assertTrue(true);
     }
 
 
@@ -193,7 +197,7 @@ public class HelloWorldEspressoTest {
         onView(withId(R.id.createmeeting))
                 .perform(click())
                 .check(matches(not(isEnabled())));
-        ViewAssertions.matches(isDisplayed());
+        Assert.assertTrue(true);
     }
 
 
@@ -217,7 +221,7 @@ public class HelloWorldEspressoTest {
         onView(withId(R.id.createmeeting))
                 .perform(click())
                 .check(matches(not(isEnabled())));
-        ViewAssertions.matches(isDisplayed());
+        Assert.assertTrue(true);
     }
 
 
@@ -247,7 +251,7 @@ public class HelloWorldEspressoTest {
         onView(withId(R.id.createmeeting))
                 .perform(click())
                 .check(matches(not(isEnabled())));
-        ViewAssertions.matches(isDisplayed());
+        Assert.assertTrue(true);
     }
 
 
@@ -277,7 +281,7 @@ public class HelloWorldEspressoTest {
         onView(withId(R.id.createmeeting))
                 .perform(click())
                 .check(matches(not(isEnabled())));
-        ViewAssertions.matches(isDisplayed());
+        Assert.assertTrue(true);
     }
 
 
