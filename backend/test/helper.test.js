@@ -6,7 +6,7 @@ describe('notifyNoVerifyMeetup tests', () => {
 
   beforeAll(() => {
     // initialize the helper class and mock the notify helper function
-    helper = helpers();
+    helper = new helpers();
     helper.notifyHelper = jest.fn();
   });
 
