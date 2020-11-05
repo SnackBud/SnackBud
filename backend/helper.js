@@ -7,15 +7,15 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
 });
 
-class helpers {
+module.exports = {
 
     constructor() {
-    }
+    },
 
     printToConsole(event) {
         console.log('sending push notification for:');
         console.log(event);
-    }
+    },
 
     notifyHelper(elem, title, body) {
         try {
@@ -43,7 +43,7 @@ class helpers {
             console.log(err);
             return;
         }
-    }
+    },
 
     // tell the guests about the meetup creation
     notifyNewMeetup(event, helper = this) {
@@ -73,14 +73,14 @@ class helpers {
                 });
             }
         });
-    }
+    },
 
     //listener helper for the host to see if the meetup has been verified
     notifyNoVerifyMeetup(guest, helper = this) {
         console.log('No Verify meet for: ' + guest.userId);
         // send messages to guest
         helper.notifyHelper(guest, 'You have entered an invalid code!', 'Please try again');
-    }
+    },
 
     //listener helper for the host to see if the meetup has been verified
     notifyVerifyMeetup(event, guest, helper = this) {
@@ -104,7 +104,7 @@ class helpers {
             // send messages to guest
             helper.notifyHelper(guest, 'You have verified your meetup with ' + host.username + '!', body);
         });
-    }
+    },
 
 
     notifyEnterCode(event, helper = this) {
@@ -135,7 +135,7 @@ class helpers {
 
             }
         });
-    }
-}
+    },
+};
 
-module.exports = helpers;
+// module.exports = helpers;
