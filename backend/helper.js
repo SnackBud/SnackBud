@@ -7,7 +7,7 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
 });
 
-module.exports = {
+const helpers = {
 
     constructor() {
     },
@@ -22,8 +22,8 @@ module.exports = {
             // send messages to guests
             var message = {
                 notification: {
-                    "title": title,
-                    "body": body
+                    title,
+                    body
                 },
                 token: elem.deviceToken
             };
@@ -138,4 +138,4 @@ module.exports = {
     },
 };
 
-// module.exports = helpers;
+module.exports = helpers;
