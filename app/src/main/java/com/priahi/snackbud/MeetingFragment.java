@@ -74,6 +74,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private RequestQueue queue;
 
     public MeetingFragment() {
+        mYear = 2020;
         // Required empty public constructor
     }
 

@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router();
+const router = new express.Router();
 const User = require("../models/user");
 
 //gets the user specified by req.body.userId in our db

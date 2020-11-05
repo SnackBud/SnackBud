@@ -1,12 +1,12 @@
 const Event = require('../models/event');
 const User = require('../models/user');
-const helpers = require('../helper');
+const Helpers = require('../helper');
 
 describe('notifyNoVerifyMeetup tests', () => {
-
+  let helper;
   beforeAll(() => {
     // initialize the helper class and mock the notify helper function
-    helper = new helpers();
+    helper = new Helpers();
     helper.notifyHelper = jest.fn();
   });
 
@@ -33,7 +33,7 @@ describe('notifyNoVerifyMeetup tests', () => {
     // The notifyHelper should be called with a preset string as the body input
     expect(helper.notifyHelper.mock.calls[0][2]).toBe('Please try again');
   });
-
+ 
 });
 
 // beforeAll(() => {

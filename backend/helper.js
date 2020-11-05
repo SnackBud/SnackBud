@@ -18,31 +18,31 @@ class helpers {
     }
 
     notifyHelper(elem, title, body) {
-        try {
-            // send messages to guests
-            var message = {
-                notification: {
-                    'title': title,
-                    'body': body
-                },
-                token: elem.deviceToken
-            };
-            console.log('sending message to ' + elem.userId + ', message:');
-            console.log(message);
+        // try {
+        // send messages to guests
+        var message = {
+            notification: {
+                title,
+                body
+            },
+            token: elem.deviceToken
+        };
+        console.log('sending message to ' + elem.userId + ', message:');
+        console.log(message);
 
-            // registration token.
-            admin.messaging().send(message)
-                .then((response) => {
-                    // Response is a message ID string.
-                    console.log('Successfully sent message:', response);
-                })
-                .catch((error) => {
-                    console.log('Error sending message:', error);
-                });
-        } catch (err) {
-            console.log(err);
-            return;
-        }
+        // registration token.
+        admin.messaging().send(message)
+            .then((response) => {
+                // Response is a message ID string.
+                console.log('Successfully sent message:', response);
+            })
+            .catch((error) => {
+                console.log('Error sending message:', error);
+            });
+        //   } catch (err) {
+        //         console.log(err);
+        //         return;
+        //     }
     }
 
     // tell the guests about the meetup creation
@@ -60,7 +60,7 @@ class helpers {
             // get the deviceToken of the guests
             var i;
             for (i = 0; i < event.guestIds.length; i++) {
-                let userId = event.guestIds[i];
+                let userId = event.guestIds[parseInt(i, 10)];
                 User.findOne({ 'userId': userId.guestId }, {}, function (err, guest) {
                     if (err) {
                         //res.send(err);
@@ -112,7 +112,7 @@ class helpers {
         // get host
         User.findOne({ 'userId': event.hostId }, {}, function (err, host) {
             if (err) {
-                res.send(err);
+                // res.send(err);
                 console.log(err);
             }
             console.log('host is:' + host.userId);
@@ -122,7 +122,7 @@ class helpers {
 
             // get the deviceToken of the guests
             for (var i = 0; i < event.guestIds.length; i++) {
-                let userId = event.guestIds[i];
+                let userId = event.guestIds[parseInt(i, 10)];
                 User.findOne({ 'userId': userId.guestId }, {}, function (err, guest) {
                     if (err) {
                         // res.send(err);
