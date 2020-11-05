@@ -112,7 +112,7 @@ class helpers {
         // get host
         User.findOne({ 'userId': event.hostId }, {}, function (err, host) {
             if (err) {
-                res.send(err);
+                // res.send(err);
                 console.log(err);
             }
             console.log('host is:' + host.userId);
