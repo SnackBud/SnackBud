@@ -3,6 +3,7 @@ const User = require('../models/user');
 const Helpers = require('../helper');
 
 describe('notifyNoVerifyMeetup tests', () => {
+  var helper;
 
   beforeAll(() => {
     // initialize the helper class and mock the notify helper function
