@@ -50,7 +50,7 @@ public class HomeFragment extends Fragment {
 
     private GoogleSignInAccount acct;
     private RequestQueue mQueue;
-
+    private int x_param;
 //    GridLayout gridLayout;
 
     GoogleMap mMap;
@@ -64,6 +64,7 @@ public class HomeFragment extends Fragment {
     AlertDialog.Builder builder;
 
     public HomeFragment() {
+        x_param = 1;
         // Required empty public constructor
     }
 
