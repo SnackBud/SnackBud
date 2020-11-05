@@ -22,8 +22,8 @@ module.exports = {
             // send messages to guests
             var message = {
                 notification: {
-                    title,
-                    body
+                    "title": title,
+                    "body": body
                 },
                 token: elem.deviceToken
             };

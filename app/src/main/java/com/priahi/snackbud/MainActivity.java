@@ -27,52 +27,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private GoogleSignInClient mGoogleSignInClient;
     //    public static RequestQueue queue;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-//        queue = Volley.newRequestQueue(this);
-
-        // side menu
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.side_navigation);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
-
-        // Bottom Navigation
-        BottomNavigationView btmNav = findViewById(R.id.bottom_navigation);
-        btmNav.setOnNavigationItemSelectedListener(navlistener);
-
-        // Fragment One is main
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_layout, new MapsFragment()).commit();
-        btmNav.setSelectedItemId(R.id.map_view);
-
-        // Google data
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-
-        // Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        // get account info
-        GoogleSignIn.getLastSignedInAccount(this);
-
-    }
-
     //Listener
-    private BottomNavigationView.OnNavigationItemSelectedListener navlistener = item -> {
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener = item -> {
         Fragment selectedFragment;
 
         switch (item.getItemId()) {
@@ -99,6 +55,52 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     };
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+//        queue = Volley.newRequestQueue(this);
+
+        // side menu
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.side_navigation);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+
+        // Bottom Navigation
+        BottomNavigationView btmNav = findViewById(R.id.bottom_navigation);
+        btmNav.setOnNavigationItemSelectedListener(navListener);
+
+        // Fragment One is main
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_layout, new MapsFragment()).commit();
+        btmNav.setSelectedItemId(R.id.map_view);
+
+        // Google data
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+
+        // Build a GoogleSignInClient with the options specified by gso.
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        // get account info
+        GoogleSignIn.getLastSignedInAccount(this);
+
+    }
+
+
+
     /**
      * Called when an item in the navigation menu is selected.
      *
@@ -119,6 +121,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(new Intent(MainActivity.this, About.class));
                 break;
 
+            default:
+                throw new IllegalStateException("Unexpected value: " + item.getItemId());
         }
         return false;
     }
