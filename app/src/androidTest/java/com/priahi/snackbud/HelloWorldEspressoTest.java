@@ -39,7 +39,7 @@ public class HelloWorldEspressoTest {
     @Test
     public void listGoesOverTheFold() {
         onView(withId(R.id.map_view)).check(matches(isDisplayed()));
-        //onView(withId(R.id.profile_view)).perform(click());
+        //onView(withId(R.id.profile_view)).perform(click());//a
         assert (true);
 
     }
