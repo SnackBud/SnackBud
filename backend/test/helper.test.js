@@ -3,11 +3,10 @@ const User = require('../models/user');
 const Helpers = require('../helper');
 
 describe('notifyNoVerifyMeetup tests', () => {
-  var helper;
 
   beforeAll(() => {
     // initialize the helper class and mock the notify helper function
-    helper = new Helpers();
+    const helper = new Helpers();
     helper.notifyHelper = jest.fn();
   });
 

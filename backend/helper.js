@@ -18,31 +18,31 @@ class helpers {
     }
 
     notifyHelper(elem, title, body) {
-        try {
-            // send messages to guests
-            var message = {
-                notification: {
-                    title,
-                    body
-                },
-                token: elem.deviceToken
-            };
-            console.log('sending message to ' + elem.userId + ', message:');
-            console.log(message);
+        // try {
+        // send messages to guests
+        var message = {
+            notification: {
+                title,
+                body
+            },
+            token: elem.deviceToken
+        };
+        console.log('sending message to ' + elem.userId + ', message:');
+        console.log(message);
 
-            // registration token.
-            admin.messaging().send(message)
-                .then((response) => {
-                    // Response is a message ID string.
-                    console.log('Successfully sent message:', response);
-                })
-                .catch((error) => {
-                    console.log('Error sending message:', error);
-                });
-        } catch (err) {
-            console.log(err);
-            return;
-        }
+        // registration token.
+        admin.messaging().send(message)
+            .then((response) => {
+                // Response is a message ID string.
+                console.log('Successfully sent message:', response);
+            })
+            .catch((error) => {
+                console.log('Error sending message:', error);
+            });
+        //   } catch (err) {
+        //         console.log(err);
+        //         return;
+        //     }
     }
 
     // tell the guests about the meetup creation
