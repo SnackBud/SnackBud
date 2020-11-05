@@ -22,8 +22,8 @@ module.exports = {
             // send messages to guests
             var message = {
                 notification: {
-                    'title': title,
-                    'body': body
+                    title,
+                    body
                 },
                 token: elem.deviceToken
             };
@@ -112,7 +112,7 @@ module.exports = {
         // get host
         User.findOne({ 'userId': event.hostId }, {}, function (err, host) {
             if (err) {
-                res.send(err);
+                // res.send(err);
                 console.log(err);
             }
             console.log('host is:' + host.userId);
@@ -122,7 +122,7 @@ module.exports = {
 
             // get the deviceToken of the guests
             for (var i = 0; i < event.guestIds.length; i++) {
-                let userId = event.guestIds[i];
+                let userId = event.guestIds[parseInt(i)];
                 User.findOne({ 'userId': userId.guestId }, {}, function (err, guest) {
                     if (err) {
                         // res.send(err);

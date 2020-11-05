@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const maxCode = 999;
-const meetup = mongoose.Schema({
+const meetup = new mongoose.Schema({
     eventId: String,
     hostId: {
         type: String,
@@ -12,7 +12,7 @@ const meetup = mongoose.Schema({
             required: true
         }
     }],
-    restId:  {
+    restId: {
         type: String,
         required: true
     },
@@ -28,11 +28,11 @@ const meetup = mongoose.Schema({
         type: Number,
         default: new Date().getTime()
     },
-    isVerified:  {
+    isVerified: {
         type: Boolean,
         default: false
     },
-    verifyCode:  {
+    verifyCode: {
         type: String,
         default: Math.floor(Math.random() * Math.floor(maxCode))
     },
