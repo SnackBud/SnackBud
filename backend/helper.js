@@ -60,7 +60,7 @@ module.exports = {
             // get the deviceToken of the guests
             var i;
             for (i = 0; i < event.guestIds.length; i++) {
-                let userId = event.guestIds[i];
+                let userId = event.guestIds[parseInt(i, 10)];
                 User.findOne({ 'userId': userId.guestId }, {}, function (err, guest) {
                     if (err) {
                         //res.send(err);
@@ -122,7 +122,7 @@ module.exports = {
 
             // get the deviceToken of the guests
             for (var i = 0; i < event.guestIds.length; i++) {
-                let userId = event.guestIds[parseInt(i)];
+                let userId = event.guestIds[parseInt(i, 10)];
                 User.findOne({ 'userId': userId.guestId }, {}, function (err, guest) {
                     if (err) {
                         // res.send(err);
