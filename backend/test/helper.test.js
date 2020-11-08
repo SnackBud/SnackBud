@@ -2,8 +2,8 @@ const Event = require('../models/event');
 const User = require('../models/user');
 const Helpers = require('../helper');
 
-/*global jest.fn, a*/
-/*eslint no-undef: "error"*/
+/* global jest.fn, a */
+/* eslint no-undef: "error" */
 
 describe('notifyNoVerifyMeetup tests', () => {
   let helper;
@@ -14,11 +14,10 @@ describe('notifyNoVerifyMeetup tests', () => {
   });
 
   test('notifyNewMeetup module test', () => {
-
     const guest = new User({
-      userId: "1",
-      username: "Arnold",
-      deviceToken: "x"
+      userId: '1',
+      username: 'Arnold',
+      deviceToken: 'x',
     });
 
     // call notifyNewMeetup
@@ -36,7 +35,6 @@ describe('notifyNoVerifyMeetup tests', () => {
     // The notifyHelper should be called with a preset string as the body input
     expect(helper.notifyHelper.mock.calls[0][2]).toBe('Please try again');
   });
- 
 });
 
 // beforeAll(() => {
