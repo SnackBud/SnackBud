@@ -2,6 +2,9 @@ const Event = require('../models/event');
 const User = require('../models/user');
 const Helpers = require('../helper');
 
+/*global jest.fn, a*/
+/*eslint no-undef: "error"*/
+
 describe('notifyNoVerifyMeetup tests', () => {
   let helper;
   beforeAll(() => {
