@@ -63,7 +63,6 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private ArrayList<String> restNames = new ArrayList<>();
     private Button btnDatePicker;
     private Button btnTimePicker;
-    private Button btnCreateMeeting;
     private EditText txtDate;
     private EditText txtTime;
     private int mYear;
@@ -146,6 +145,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        Button btnCreateMeeting;
 
         btnCreateMeeting = requireView().findViewById(R.id.createmeeting);
         btnDatePicker = requireView().findViewById(R.id.btn_date);
