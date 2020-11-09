@@ -66,7 +66,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     private RequestQueue queue;
 
 
-    GoogleSignInAccount acct;
+    private GoogleSignInAccount acct;
 
     static VerifyMeetup newInstance() {
         return new VerifyMeetup();

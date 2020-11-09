@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private GoogleSignInClient mGoogleSignInClient;
     private int RC_SIGN_IN = 1;
-    final static String TAG = "LoginActivity";
+    private final static String TAG = "LoginActivity";
 
     private RequestQueue queue;
     private String userId;

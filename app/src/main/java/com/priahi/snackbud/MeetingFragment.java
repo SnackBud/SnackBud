@@ -7,7 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.*;
+
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -52,15 +57,15 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private Calendar timeOfMeet;
     private static final String url = "http://13.68.137.122:3000";
     //    private static final String url = "http://192.168.1.66:3000";
-    Map<String, String> users = new HashMap<>();
-    ArrayList<String> userNames = new ArrayList<>();
-    Map<String, String> restaurants = new HashMap<>();
-    ArrayList<String> restNames = new ArrayList<>();
-    Button btnDatePicker;
-    Button btnTimePicker;
-    Button btnCreateMeeting;
-    EditText txtDate;
-    EditText txtTime;
+    private Map<String, String> users = new HashMap<>();
+    private ArrayList<String> userNames = new ArrayList<>();
+    private Map<String, String> restaurants = new HashMap<>();
+    private ArrayList<String> restNames = new ArrayList<>();
+    private Button btnDatePicker;
+    private Button btnTimePicker;
+    private Button btnCreateMeeting;
+    private EditText txtDate;
+    private EditText txtTime;
     private int mYear;
     private int mMonth;
     private int mDay;

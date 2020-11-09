@@ -52,9 +52,9 @@ public class MapsFragment extends Fragment {
 //
 //    private boolean isMeetUpOn = false;
 
-    View mapView;
+    private View mapView;
 
-    Map<String, String> restaurantImageUrl = new HashMap<>();
+    private Map<String, String> restaurantImageUrl = new HashMap<>();
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 

@@ -52,15 +52,15 @@ public class HomeFragment extends Fragment {
     private RequestQueue mQueue;
 //    GridLayout gridLayout;
 
-    GoogleMap mMap;
+    private GoogleMap mMap;
 
 //    final private String RESTAURANTS_URL = "";
 
 
 //    private int REQUEST_CODE = -1;
 
-    AlertDialog dialog;
-    AlertDialog.Builder builder;
+    private AlertDialog dialog;
+    private AlertDialog.Builder builder;
 
     public HomeFragment() {
         Log.d("1", "1");
