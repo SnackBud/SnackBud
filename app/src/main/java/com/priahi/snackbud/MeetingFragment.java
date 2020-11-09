@@ -283,9 +283,9 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
             mHour = c.get(Calendar.HOUR_OF_DAY);
             mMinute = c.get(Calendar.MINUTE);
             mDay = c.get(Calendar.DAY_OF_MONTH);
-            minHour = 9;
-            maxHour = 22;
-            maxMin = 59;
+            minHour = 8;
+            maxHour = 23;
+            maxMin = 0;
             // Launch Time Picker Dialog
             RangeTimePickerDialog timePickerDialog = new RangeTimePickerDialog(requireContext(),
                     (view, hourOfDay, minute) -> {
@@ -302,8 +302,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                     }, mHour, mMinute, false);
 
             if(Calendar.getInstance().get(Calendar.DAY_OF_YEAR) >= timeOfMeet.get(Calendar.DAY_OF_YEAR)) {
-                minHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-                minMin = Calendar.getInstance().get(Calendar.MINUTE);
+                minHour = Math.max(Calendar.getInstance().get(Calendar.HOUR_OF_DAY), 8);
+                minMin = Math.max(Calendar.getInstance().get(Calendar.MINUTE), 0);
             }
             Log.d("hour", String.valueOf(minHour));
             timePickerDialog.setMin((int) minHour, (int) minMin);
