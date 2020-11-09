@@ -7,11 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -71,6 +67,10 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private int mDay;
     private int mHour;
     private int mMinute;
+    private long minHour;
+    private long maxHour;
+    private long maxMin;
+    private long minMin;
     private RequestQueue queue;
 
     public MeetingFragment() {
@@ -271,7 +271,11 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
 //                            timeOfMeet.set(Calendar.MONTH, monthOfYear);
 //                            timeOfMeet.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                     }, mYear, mMonth, mDay);
+
             datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
+            c.add(Calendar.MONTH, +1);
+            long oneMonthAhead = c.getTimeInMillis();
+            //datePickerDialog.getDatePicker().setMaxDate(oneMonthAhead);
             datePickerDialog.show();
             //TODO: make this timezone invariant
         } else if (v.equals(btnTimePicker)) {
@@ -279,19 +283,32 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
             final Calendar c = Calendar.getInstance();
             mHour = c.get(Calendar.HOUR_OF_DAY);
             mMinute = c.get(Calendar.MINUTE);
+            mDay = c.get(Calendar.DAY_OF_MONTH);
+            minHour = 9;
+            maxHour = 22;
+            maxMin = 59;
             // Launch Time Picker Dialog
-            TimePickerDialog timePickerDialog = new TimePickerDialog(requireContext(),
+            RangeTimePickerDialog timePickerDialog = new RangeTimePickerDialog(requireContext(),
                     (view, hourOfDay, minute) -> {
                         String timeOfDay = String.format("%02d:%02d", hourOfDay, minute);
                         txtTime.setText(timeOfDay);
 
                         // set calendar
+
                         timeOfMeet.set(timeOfMeet.get(Calendar.YEAR),
                                 timeOfMeet.get(Calendar.MONTH),
                                 timeOfMeet.get(Calendar.DATE),
                                 hourOfDay, minute);
 //                            timeOfMeet.set(Calendar.MINUTE, minute);
                     }, mHour, mMinute, false);
+
+            if(Calendar.getInstance().get(Calendar.DAY_OF_YEAR) >= timeOfMeet.get(Calendar.DAY_OF_YEAR)) {
+                minHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+                minMin = Calendar.getInstance().get(Calendar.MINUTE);
+            }
+            Log.d("hour", String.valueOf(minHour));
+            timePickerDialog.setMin((int) minHour, (int) minMin);
+            timePickerDialog.setMax((int) maxHour, (int) maxMin);
             timePickerDialog.show();
         }
 
