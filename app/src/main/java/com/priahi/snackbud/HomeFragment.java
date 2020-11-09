@@ -23,7 +23,6 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.maps.GoogleMap;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
