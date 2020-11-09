@@ -308,7 +308,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                     }, mHour, mMinute, false);
 
             if(Calendar.getInstance().get(Calendar.DAY_OF_YEAR) >= timeOfMeet.get(Calendar.DAY_OF_YEAR)) {
-                minHour = Math.max(Calendar.getInstance().get(Calendar.HOUR_OF_DAY), 8);
+                minHour = Math.max(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1, 8);
                 minMin = Math.max(Calendar.getInstance().get(Calendar.MINUTE), 0);
             }
             Log.d("hour", String.valueOf(minHour));
