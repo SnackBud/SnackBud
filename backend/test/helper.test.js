@@ -1,11 +1,11 @@
-const Event = require('../models/event');
-const User = require('../models/user');
-const Helpers = require('../helper');
+const Event = require("../models/event");
+const User = require("../models/user");
+const Helpers = require("../helper");
 
 /* global jest.fn, a */
 /* eslint no-undef: "error" */
 
-describe('notifyNoVerifyMeetup tests', () => {
+describe("notifyNoVerifyMeetup tests", () => {
   let helper;
   beforeAll(() => {
     // initialize the helper class and mock the notify helper function
@@ -13,11 +13,11 @@ describe('notifyNoVerifyMeetup tests', () => {
     helper.notifyHelper = jest.fn();
   });
 
-  test('notifyNewMeetup module test', () => {
+  test("notifyNewMeetup module test", () => {
     const guest = new User({
-      userId: '1',
-      username: 'Arnold',
-      deviceToken: 'x',
+      userId: "1",
+      username: "Arnold",
+      deviceToken: "x",
     });
 
     // call notifyNewMeetup
@@ -30,18 +30,18 @@ describe('notifyNoVerifyMeetup tests', () => {
     expect(helper.notifyHelper.mock.calls[0][0]).toBe(guest);
 
     // The notifyHelper should be called with a preset string as the title input
-    expect(helper.notifyHelper.mock.calls[0][1]).toBe('You have entered an invalid code!');
+    expect(helper.notifyHelper.mock.calls[0][1]).toBe("You have entered an invalid code!");
 
     // The notifyHelper should be called with a preset string as the body input
-    expect(helper.notifyHelper.mock.calls[0][2]).toBe('Please try again');
+    expect(helper.notifyHelper.mock.calls[0][2]).toBe("Please try again");
   });
 });
 
 // beforeAll(() => {
 //   // mock the mongoose findOne function
 //   User.findOne = jest.fn().mockResolvedValue([{
-//           userId: '1',
-//           username: 'Arnold',
+//           userId: "1",
+//           username: "Arnold",
 //           deviceToken: "x"
 //       },
 //   ]);
