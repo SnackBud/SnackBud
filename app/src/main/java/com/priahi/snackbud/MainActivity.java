@@ -20,10 +20,6 @@ import com.google.android.material.navigation.NavigationView;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    private DrawerLayout drawerLayout;
-    private Toolbar toolbar;
-
-
     private GoogleSignInClient mGoogleSignInClient;
     //    public static RequestQueue queue;
 
@@ -61,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
 //        queue = Volley.newRequestQueue(this);
+        DrawerLayout drawerLayout;
+        Toolbar toolbar;
 
         // side menu
         toolbar = findViewById(R.id.toolbar);
