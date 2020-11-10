@@ -30,8 +30,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -148,6 +146,17 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         eventDropdown.setOnItemSelectedListener(this);
 
 
+        // display verification code
+        displayCode = view.findViewById(R.id.display_code);
+        displayCode.setText(eventVerifyCode);
+
+        // queue to hold the volley requests
+        queue = Volley.newRequestQueue(requireContext());
+
+        getUserEvents(eventDropdown);
+    }
+
+    private void getUserEvents(Spinner eventDropdown) {
         // JSON array to get event ID's
         JSONArray array = new JSONArray();
         JSONObject user = new JSONObject();
@@ -158,15 +167,6 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
             Log.e(TAG, e.toString());
         }
         array.put(user);
-
-        // display verification code
-        displayCode = view.findViewById(R.id.display_code);
-        displayCode.setText(eventVerifyCode);
-
-        // queue to hold the volley requests
-        queue = Volley.newRequestQueue(requireContext());
-
-        Log.d(TAG, array.toString());
 
         // request all events on App
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.POST,

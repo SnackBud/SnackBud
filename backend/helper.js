@@ -20,6 +20,11 @@ class helpers {
 
   notifyHelper(elem, title, body) {
     // try {
+
+    // check for bad calls
+    if (elem == null) {
+      return;
+    }
     // send messages to guests
     const message = {
       notification: {
