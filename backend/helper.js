@@ -71,10 +71,14 @@ class helpers {
             return;
           }
           // send messages to guests
-          helper.notifyHelper(guest, "You are invited to a meetup with ${host.username}!",
-            "The meetup will be at " + event.restName + " at " + new Date(event.timeOfMeet));
+          helper.notifyHelper(guest, "You are invited to a meetup with " + host.username +
+            ", The meetup will be at " + event.restName + " at " + new Date(event.timeOfMeet));
         });
       }
+
+      // send messages to host
+      helper.notifyHelper(guest, "Your meetup at " + event.restName + " at " + 
+      new Date(event.timeOfMeet) + " has been created!");
     });
   }
 
