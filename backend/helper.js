@@ -72,7 +72,7 @@ class helpers {
           }
           // send messages to guests
           helper.notifyHelper(guest, "You are invited to a meetup with ${host.username}!",
-            "The meetup will be at ${event.restName} at ${new Date(event.timeOfMeet)}");
+            "The meetup will be at " + event.restName + " at " + new Date(event.timeOfMeet));
         });
       }
     });
