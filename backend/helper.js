@@ -89,7 +89,8 @@ class helpers {
   notifyNoVerifyMeetup(guest, helper = this) {
     // console.log("No Verify meet for: " + guest.userId);
     // send messages to guest
-    helper.notifyHelper(guest, "You have entered an invalid code!", "Please try again");
+    helper.notifyHelper(guest, "You have failed to verify this meetup!", 
+    "Either your verify code is wrong or you are the host! Please try again");
   }
 
   // listener helper for the host to see if the meetup has been verified

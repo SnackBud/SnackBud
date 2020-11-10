@@ -269,14 +269,14 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireActivity());
         if (acct == null) {
-            Log.e(TAG, "error, no google sign in");
+            Log.w(TAG, "error, no google sign in");
             return;
         }
-        Log.e(TAG, "about to PUT");
-        JSONObject eventRequest = new JSONObject("{guestId: " + acct.getId() + ", eventId: " + this.eventId + ", verifyCode: " + userInputCode + "}");
-//        eventRequest.put("guestId", acct.getId());
-//        eventRequest.put("eventId", this.eventId);
-//        eventRequest.put("verifyCode", userInputCode);
+        Log.e(TAG, Objects.requireNonNull(acct.getId()));
+        JSONObject eventRequest = new JSONObject();
+        eventRequest.put("guestId", acct.getId());
+        eventRequest.put("eventId", this.eventId);
+        eventRequest.put("verifyCode", userInputCode);
         Log.e(TAG, eventRequest.toString());
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT,
                 url + "/event",

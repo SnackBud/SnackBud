@@ -79,6 +79,14 @@ router.post("/", (req, res) => {
     verifyCode: _.verifyCode,
   });
 
+  var i;
+  for (i = 0; i < event.guestIds.length; i++) {
+    if (event.guestIds[i].guestId === event.hostId) {
+      res.json({ message: "host cannot create meetup with themselves" });
+      return;
+    }
+  }
+
   event.save()
     .then((data) => {
       res.status(200).json(data);
@@ -125,15 +133,41 @@ router.delete("/deleteAll", (req, res) => {
 router.put("/", (req, res) => {
   // update the meetup to show verified if the codes match, else fail
   Event.findOneAndUpdate(
-    { eventId: req.body.eventId, verifyCode: req.body.verifyCode },
+    { 
+      eventId: req.body.eventId, 
+      guestIds: { $elemMatch: {guestId: req.body.guestId} },
+      verifyCode: req.body.verifyCode, 
+      isVerified: false 
+    },
     { isVerified: true },
     (err, event) => {
       if (err) {
         res.send(err);
         // console.log(err);
+      } else if (event == null) {
+
+        // if we cannot verify the event we send error messages and notifications
+        User.findOne(
+          { userId: req.body.guestId },
+          (err, guest) => {
+            if (err) {
+              res.send(err);
+              // console.log(err);
+            } else {
+              if (guest == null) {
+                res.send("user not in database");
+                return;
+              }
+              res.send("user cannot verify this meetup");
+              pushNotify.emit("noVerifyMeetup", guest);
+            }
+          },
+        );
+
       } else {
+
+        // console.log(req.body.guestId);
         
-        // console.log(event);
         User.findOne(
           { userId: event.guestIds[0].guestId },
           (err, guest) => {
@@ -141,6 +175,9 @@ router.put("/", (req, res) => {
               res.send(err);
               // console.log(err);
             } else {
+              if (guest == null) {
+                return;
+              }
               // console.log(guest);
               pushNotify.emit("verifyMeetup", event, guest);
               res.status(200).send("verify successful");
