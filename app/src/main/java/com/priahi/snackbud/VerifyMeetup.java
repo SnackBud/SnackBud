@@ -48,8 +48,8 @@ import java.util.Objects;
 public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "VerifyMeetup";
-    private static final String url = "http://13.77.158.161:3000";
-//    private static final String url = "http://192.168.1.66:3000";
+//    private static final String url = "http://13.77.158.161:3000";
+    private static final String url = "http://192.168.1.66:3000";
 
     private Button sendCodeButton;
     private Button enterCodeButton;

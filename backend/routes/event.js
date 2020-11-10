@@ -29,8 +29,8 @@ router.post("/getUser", (req, res) => {
     {$and: [
       {$or: [
         { hostId: req.body[0].userId },
-        { guestIds: { guestId: req.body[0].userId } }   
-      ]}, 
+        { guestIds: { $elemMatch: {guestId: req.body[0].userId} } }   
+      ]},
       {isVerified: false}
   ]},
     
