@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const maxCode = 999;
 const meetup = new mongoose.Schema({
@@ -39,4 +39,4 @@ const meetup = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('meetup', meetup);
+module.exports = mongoose.model("meetup", meetup);

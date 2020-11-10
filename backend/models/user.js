@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
   userId: {
@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   },
   username: {
     type: String,
-    default: 'unknown user',
+    default: "unknown user",
   },
   deviceToken: {
     type: String,
@@ -19,4 +19,4 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model('user', userSchema);
+module.exports = mongoose.model("user", userSchema);

@@ -4,24 +4,24 @@ const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 require("dotenv/config");
-const winston = require("winston")
-const consoleTransport = new winston.transports.Console()
-const myWinstonOptions = {
+const winston = require("winston");
+const consoleTransport = new winston.transports.Console();
+const MyWinstonOptions = {
   transports: [consoleTransport]
-}
-const logger = new winston.createLogger(myWinstonOptions)
+};
+const logger = new winston.createLogger(MyWinstonOptions);
 
 function logRequest(req, res, next) {
-  logger.info(req.url)
-  next()
+  logger.info(req.url);
+  next();
 }
-app.use(logRequest)
+app.use(logRequest);
 
 function logError(err, req, res, next) {
-  logger.error(err)
-  next()
+  logger.error(err);
+  next();
 }
-app.use(logError)
+app.use(logError);
 
 app.use(bodyParser.json());
 
