@@ -71,14 +71,12 @@ class helpers {
             return;
           }
           // send messages to guests
-          helper.notifyHelper(guest, "You are invited to a meetup with " + host.username +
-            ", The meetup will be at " + event.restName + " at " + new Date(event.timeOfMeet));
+          helper.notifyHelper(guest, `You are invited to a meetup with ${host.username}, The meetup will be at ${event.restName} at ${new Date(event.timeOfMeet)}`);
         });
       }
 
       // send messages to host
-      helper.notifyHelper(guest, "Your meetup at " + event.restName + " at " + 
-      new Date(event.timeOfMeet) + " has been created!");
+      helper.notifyHelper(host, `Your meetup at ${event.restName} has been created!`);
     });
   }
 
@@ -94,6 +92,8 @@ class helpers {
     // console.log("Verify meet for: " + event.hostId);
     if (event.hostId === guest.userId) {
       // console.log("verifying meetup as the host, returning");
+      helper.notifyHelper(host, `${host.username} you cannot verify your own event!`, 
+      `Please send the verification code to your friends so they can verify!`);
       return;
     }
     const body = `We hope you enjoyed ${event.restName} today! Thanks for using SnackBud!`;

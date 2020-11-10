@@ -20,6 +20,32 @@ router.get("/getAll", (req, res) => {
   );
 });
 
+// get all events that the user is in and is not verified in our db
+router.post("/getUser", (req, res) => {
+  // console.log("/event GET ALL request");
+  // console.log(req.body);
+  // console.log(req.body[0].userId);
+  Event.find( 
+    {$and: [
+      {$or: [
+        { hostId: req.body[0].userId },
+        { guestIds: { guestId: req.body[0].userId } }   
+      ]}, 
+      {isVerified: false}
+  ]},
+    
+    (err, event) => {
+      if (err) {
+        res.send(err);
+        // console.log(err);
+      } else {
+        // console.log(event);
+        res.status(200).json(event);
+      }
+    },
+  );
+});
+
 // get specific events in our db
 router.get("/", (req, res) => {
   // console.log("/event GET request");
@@ -29,6 +55,7 @@ router.get("/", (req, res) => {
         res.send(err);
         // console.log(err);
       } else {
+        console.log(event);
         res.status(200).json(event);
       }
     });
@@ -105,13 +132,16 @@ router.put("/", (req, res) => {
         res.send(err);
         // console.log(err);
       } else {
+        
+        // console.log(event);
         User.findOne(
-          { userId: req.body.guestId },
+          { userId: event.guestIds[0].guestId },
           (err, guest) => {
             if (err) {
               res.send(err);
               // console.log(err);
             } else {
+              // console.log(guest);
               pushNotify.emit("verifyMeetup", event, guest);
               res.status(200).send("verify successful");
             }

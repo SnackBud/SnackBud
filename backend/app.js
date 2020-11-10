@@ -9,16 +9,16 @@ const consoleTransport = new winston.transports.Console();
 const MyWinstonOptions = {
   transports: [consoleTransport]
 };
-const logger = new winston.createLogger(MyWinstonOptions);
+const Logger = new winston.createLogger(MyWinstonOptions);
 
 function logRequest(req, res, next) {
-  logger.info(req.url);
+  Logger.info(req.url);
   next();
 }
 app.use(logRequest);
 
 function logError(err, req, res, next) {
-  logger.error(err);
+  Logger.error(err);
   next();
 }
 app.use(logError);
