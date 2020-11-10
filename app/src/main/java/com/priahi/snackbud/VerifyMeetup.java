@@ -30,6 +30,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,7 +50,8 @@ import java.util.Objects;
 public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "VerifyMeetup";
-    private static final String url = "http://13.77.158.161:3000";
+//    private static final String url = "http://13.77.158.161:3000";
+    private static final String url = "http://192.168.1.66:3000";
 
     private Button sendCodeButton;
     private Button enterCodeButton;
@@ -68,7 +71,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
     private GoogleSignInAccount acct;
 
-    static VerifyMeetup newInstance() {
+    public static VerifyMeetup newInstance() {
         return new VerifyMeetup();
     }
 
@@ -146,8 +149,15 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
 
         // JSON array to get event ID's
-        JSONArray js = new JSONArray();
-
+        JSONArray array = new JSONArray();
+        JSONObject user = new JSONObject();
+        try {
+            user.put("userId", Objects.requireNonNull(GoogleSignIn.getLastSignedInAccount(requireContext())).getId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, e.toString());
+        }
+        array.put(user);
 
         // display verification code
         displayCode = view.findViewById(R.id.display_code);
@@ -156,10 +166,12 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         // queue to hold the volley requests
         queue = Volley.newRequestQueue(requireContext());
 
+        Log.d(TAG, array.toString());
+
         // request all events on App
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
-                url + "/event/getAll",
-                js,
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.POST,
+                url + "/event/getUser",
+                array,
                 response -> {
                     Log.w(TAG, "request successful");
                     initialRequest(response, eventDropdown);

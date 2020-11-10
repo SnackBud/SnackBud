@@ -55,7 +55,7 @@ router.get("/", (req, res) => {
         res.send(err);
         // console.log(err);
       } else {
-        console.log(event);
+        // console.log(event);
         res.status(200).json(event);
       }
     });

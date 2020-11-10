@@ -58,8 +58,8 @@ public class HomeFragment extends Fragment {
 
 //    private int REQUEST_CODE = -1;
 
-    AlertDialog dialog;
-    AlertDialog.Builder builder;
+    private AlertDialog dialog;
+    private AlertDialog.Builder builder;
 
     public HomeFragment() {
         Log.d("1", "1");

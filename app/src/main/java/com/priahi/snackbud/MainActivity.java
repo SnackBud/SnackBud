@@ -20,8 +20,8 @@ import com.google.android.material.navigation.NavigationView;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
-    DrawerLayout drawerLayout;
-    Toolbar toolbar;
+    private DrawerLayout drawerLayout;
+    private Toolbar toolbar;
 
 
     private GoogleSignInClient mGoogleSignInClient;
