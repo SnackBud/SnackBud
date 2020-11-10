@@ -44,7 +44,7 @@ public class HomeFragment extends Fragment {
 //    private static final String ARG_PARAM1 = "param1";
 //    private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "HomeFragment";
-    private static final String url = "http://13.68.137.122:3000";
+    private static final String url = "http://13.77.158.161:3000";
 //    private static final String url = "http://192.168.1.66:3000";
 
     private GoogleSignInAccount acct;

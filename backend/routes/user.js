@@ -1,11 +1,11 @@
-const express = require('express');
+const express = require("express");
 
 const router = new express.Router();
-const User = require('../models/user');
+const User = require("../models/user");
 
 // gets the user specified by req.body.userId in our db
-router.get('/', async (req, res) => {
-  // console.log('/user GET request');
+router.get("/", async (req, res) => {
+  // console.log("/user GET request");
 
   User.findOne({ userId: req.body.userId },
     (err, user) => {
@@ -19,8 +19,8 @@ router.get('/', async (req, res) => {
 });
 
 // gets all users in our db
-router.get('/getAll', async (req, res) => {
-  // console.log('/user GETALL request');
+router.get("/getAll", async (req, res) => {
+  // console.log("/user GETALL request");
 
   User.find({},
     (err, user) => {
@@ -35,8 +35,8 @@ router.get('/getAll', async (req, res) => {
 });
 
 // posts a user json file to the database
-router.post('/', (req, res) => {
-  // console.log('/user POST request');
+router.post("/", (req, res) => {
+  // console.log("/user POST request");
   const user = new User({
     userId: req.body.userId,
     username: req.body.username,
@@ -60,8 +60,8 @@ router.post('/', (req, res) => {
 });
 
 // delete a specific user in our db
-router.delete('/', (req, res) => {
-  // console.log('/user DELETE request');
+router.delete("/", (req, res) => {
+  // console.log("/user DELETE request");
 
   User.deleteOne({ userId: req.body.userId },
     (err) => {
@@ -69,14 +69,14 @@ router.delete('/', (req, res) => {
         res.send(err);
         // console.log(err);
       } else {
-        res.send('delete successful');
+        res.send("delete successful");
       }
     });
 });
 
 // delete all entries in the user folder
-router.delete('/deleteALL', (req, res) => {
-  // console.log('/event DELETE request');
+router.delete("/deleteALL", (req, res) => {
+  // console.log("/event DELETE request");
 
   Event.deleteMany({},
     (err) => {
@@ -84,7 +84,7 @@ router.delete('/deleteALL', (req, res) => {
         res.send(err);
         // console.log(err);
       } else {
-        res.send('deleteALL successful');
+        res.send("deleteALL successful");
       }
     });
 });
