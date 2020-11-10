@@ -81,7 +81,7 @@ router.post("/", (req, res) => {
 
   var i;
   for (i = 0; i < event.guestIds.length; i++) {
-    if (event.guestIds[i].guestId === event.hostId) {
+    if (event.guestIds[parseInt(i)].guestId === event.hostId) {
       res.json({ message: "host cannot create meetup with themselves" });
       return;
     }
