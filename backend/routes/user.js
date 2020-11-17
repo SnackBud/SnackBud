@@ -6,7 +6,6 @@ const User = require("../models/user");
 // gets the user specified by req.body.userId in our db
 router.get("/", async (req, res) => {
   // console.log("/user GET request");
-  console.log(req.body);
   if (req.body.userId == null) {
     res.status(400).send("bad input")
     return;
@@ -15,7 +14,7 @@ router.get("/", async (req, res) => {
   User.findOne({ userId: req.body.userId },
     (err, user) => {
       if (err) {
-        res.status(404).send(err);
+        res.status(404).json(err);
         return;
       } else {
         if (user == null) {
@@ -57,6 +56,7 @@ router.post("/", (req, res) => {
     req.body.deviceToken == null || 
     req.body.date == null) {
       res.status(400).send("bad input")
+      return
     }
 
   const user = new User({
@@ -74,10 +74,12 @@ router.post("/", (req, res) => {
     (err, doc) => {
       if (err) {
         res.status(404).send(err);
+        return
         // console.log(err);
         // console.log(doc);
       }
       res.status(201).json(user);
+      return
     });
 });
 
@@ -86,34 +88,23 @@ router.delete("/", (req, res) => {
   // console.log("/user DELETE request");
   if (req.body.userId == null) {
     res.status(400).send("bad input")
+    return;
   }
 
   User.deleteOne({ userId: req.body.userId },
     (err, d) => {
       if (err) {
         res.send(err);
+        return;
         // console.log(err);
-      } else if (d.acknowledged && d.deletedCount == 1)
+      } else if (d.acknowledged && d.deletedCount == 1){
         res.status(200).send("delete successful");
-      else
+        return;
+      } else {
         res.status(410).send("already deleted");
+        return;
+      }
     });
 });
-
-// delete all entries in the user folder
-// router.delete("/deleteALL", (req, res) => {
-//   // console.log("/event DELETE request");
-
-//   Event.deleteMany({},
-//     (err, d) => {
-//       if (err) {
-//         res.send(err);
-//         // console.log(err);
-//       } else if (d.acknowledged && d.deletedCount == 1)
-//         res.status(200).send("delete all successful");
-//       else
-//         res.status(410).send("already deleted all");
-//     });
-// });
 
 module.exports = router;

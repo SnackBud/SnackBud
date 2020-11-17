@@ -63,18 +63,22 @@ router.get("/", (req, res) => {
   // console.log("/event GET request");
   if (req.body.eventId == null) {
     res.status(400).send("bad input")
+    return
   }
 
   Event.findOne({ eventId: req.body.eventId },
     (err, event) => {
       if (err) {
+        console.log(err);
         res.status(404).send(err);
-        // console.log(err);
+        return
       } else {
         if (event == null) {
           res.status(204).send(null);
+          return
         } else {
           res.status(200).json(event);
+          return
         }
         // console.log(event);
       }
@@ -86,13 +90,13 @@ router.post("/", (req, res) => {
   // console.log("/event POST request");
   const _ = req.body;
 
-  if (_.userId == null ||
-    _.hostId == null ||
+  if (_.hostId == null ||
     _.guestIds == null ||
     _.restId == null ||
     _.restName == null ||
     _.timeOfMeet == null) {
     res.status(400).send("bad input")
+    return;
   }
 
 
@@ -111,6 +115,7 @@ router.post("/", (req, res) => {
 
   if (event.guestIds.length >= 7) {
     res.status(431).send("Request header field too large");
+    return;
   }
 
   var i;
@@ -124,10 +129,12 @@ router.post("/", (req, res) => {
   event.save()
     .then((data) => {
       res.status(201).json(data);
+      return;
     })
     .catch((err) => {
-      // console.log(err);
+      console.log(err);
       res.status(502).json({ message: err });
+      return;
     });
 
   pushNotify.emit("newMeetup", event);
