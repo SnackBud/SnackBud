@@ -29,8 +29,10 @@ router.post("/getUser", (req, res) => {
   // console.log("/event GET ALL request");
   // console.log(req.body);
   // console.log(req.body[0].userId);
-  if (req.body[0].userId == null) {
+  if (req.body == null || 
+    req.body[0].userId == null) {
     res.status(400).send("bad input")
+    return;
   }
 
   Event.find(
@@ -49,10 +51,12 @@ router.post("/getUser", (req, res) => {
     (err, event) => {
       if (err) {
         res.status(404).send(err);
+        return;
         // console.log(err);
       } else {
         // console.log(event);
         res.status(200).json(event);
+        return;
       }
     },
   );
@@ -88,6 +92,11 @@ router.get("/", (req, res) => {
 // post an event in our db
 router.post("/", (req, res) => {
   // console.log("/event POST request");
+  if (req.body == null) {
+    res.status(400).send("bad input")
+    return;    
+  }
+
   const _ = req.body;
 
   if (_.hostId == null ||
@@ -132,7 +141,7 @@ router.post("/", (req, res) => {
       return;
     })
     .catch((err) => {
-      console.log(err);
+      // console.log(err);
       res.status(502).json({ message: err });
       return;
     });
@@ -181,6 +190,7 @@ router.put("/", (req, res) => {
     req.body.verifyCode == null ||
     req.body.guestId == null) {
     res.status(400).send("bad input")
+    return;
   }
 
 
@@ -196,6 +206,7 @@ router.put("/", (req, res) => {
     (err, event) => {
       if (err) {
         res.status(404).send(err);
+        return;
         // console.log(err);
       } else if (event == null) {
         // if we cannot verify the event we send error messages and notifications
@@ -204,6 +215,7 @@ router.put("/", (req, res) => {
           (err, guest) => {
             if (err) {
               res.status(404).send(err);
+              return;
               // console.log(err);
             } else {
               if (guest == null) {
@@ -212,6 +224,7 @@ router.put("/", (req, res) => {
               }
               res.status(304).send("meetup not modified");
               pushNotify.emit("noVerifyMeetup", guest);
+              return;
             }
           },
         );

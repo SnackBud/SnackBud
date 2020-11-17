@@ -78,7 +78,7 @@ router.post("/", (req, res) => {
         // console.log(err);
         // console.log(doc);
       }
-      res.status(201).json(user);
+      res.status(200).json(user);
       return
     });
 });
@@ -94,7 +94,7 @@ router.delete("/", (req, res) => {
   User.deleteOne({ userId: req.body.userId },
     (err, d) => {
       if (err) {
-        res.send(err);
+        res.status(404).send(err);
         return;
         // console.log(err);
       } else if (d.acknowledged && d.deletedCount == 1){
