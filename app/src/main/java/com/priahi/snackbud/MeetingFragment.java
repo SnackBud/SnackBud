@@ -26,6 +26,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -146,6 +147,21 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("220578639199-rv1vof8saj5d8b31fk2tp76hi8d9jv80.apps.googleusercontent.com")
+                .requestProfile()
+                .requestId()
+                .requestEmail()
+                .build();
+
+        // Build a GoogleSignInClient with the options specified by gso.
+        GoogleSignIn.getClient(requireContext(), gso);
+
+        // get account info
+        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireContext());
+        
+        hostId = acct.getId();
+
         Button btnCreateMeeting;
 
         btnCreateMeeting = requireView().findViewById(R.id.createmeeting);
@@ -190,13 +206,15 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                     Log.w(TAG, "/user/getAll request successful");
                     try {
                         VolleyLog.v("Response:%n %s", response.toString(4));
+                        int j=0;
                         for (int i = 0; i < response.length(); i++) {
                             JSONObject object1 = response.getJSONObject(i);
                             String userId = object1.getString("userId");
                             String username = object1.getString("username");
                             if (!userId.equals(hostId)) {
                                 users.put(username, userId);
-                                userNames.add(i, username);
+                                userNames.add(j, username);
+                                j++;
                             }
                         }
                         ArrayAdapter<String> userAdapter = new ArrayAdapter<>(requireContext(),

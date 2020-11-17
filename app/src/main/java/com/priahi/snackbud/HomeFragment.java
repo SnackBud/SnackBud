@@ -162,19 +162,19 @@ public class HomeFragment extends Fragment {
         TextView name = view.findViewById(R.id.person_name_google);
         String displayName = acct.getDisplayName();
         if (displayName != null) {
-            name.setText(String.format("Name: %s", displayName));
+            name.setText(String.format("%s", displayName));
         } else {
             name.setText(R.string.nameAnon);
         }
 
-        // UserId
-        TextView id = view.findViewById(R.id.person_user_id_google);
-        String userId = acct.getId();
-        if (userId != null) {
-            id.setText(String.format("UserId: %s", userId));
-        } else {
-            id.setText(R.string.userIdNull);
-        }
+//        // UserId
+//        TextView id = view.findViewById(R.id.person_user_id_google);
+//        String userId = acct.getId();
+//        if (userId != null) {
+//            id.setText(String.format("UserId: %s", userId));
+//        } else {
+//            id.setText(R.string.userIdNull);
+//        }
 
         // Inflate the layout for this fragment
         return view;
