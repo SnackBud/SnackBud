@@ -7,14 +7,19 @@ const mockingoose = require('mockingoose').default;
 
 describe("notifyHelper tests", () => {
   let helper = new Helpers();
+  let send_stub, message_stub;
 
-  // mock the firebase admin class called by the helper
-  let send_stub = jest.spyOn(admin.messaging(), "send");
-  let message_stub = jest.spyOn(admin, "messaging");
+  beforeEach(() => {
+    // mock the firebase admin class called by the helper
+    send_stub = jest.spyOn(admin.messaging(), "send");
+    message_stub = jest.spyOn(admin, "messaging");
+  });
 
   // make sure the call count is cleared after each test
   afterEach(() => {
     jest.clearAllMocks();
+    send_stub.mockRestore();
+    message_stub.mockRestore();
   });
 
   it("notifyHelper simple call", () => {
