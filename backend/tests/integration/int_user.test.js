@@ -128,12 +128,12 @@ describe("testing-user-routes", () => {
         expect(body.statusCode).toEqual(200);
 
         //SHOULD BE DELETED, GET ERROR CASE OF DOUBLE DELETE
-        let { body } = await request(app).delete("/user",
+        let { body2 } = await request(app).delete("/user",
             {
                 userId: "12345678",
             }); //uses the request function that calls on express app instance
-        expect(body).toEqual("already deleted");
-        expect(body.statusCode).toEqual(410);
+        expect(body2).toEqual("already deleted");
+        expect(body2.statusCode).toEqual(410);
     });
 
     it("DELETE /user/ - fail - bad input", async () => {

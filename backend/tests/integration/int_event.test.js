@@ -240,23 +240,23 @@ describe("testing-event-routes", () => {
             restName: "Loafe Cafe",
             timeOfMeet: 1605787405385
         }];
-        let { body } = await request(app).post("/event", event);
-        expect(body).toEqual(event);
-        expect(body.statusCode).toEqual(201);
+        let { body1 } = await request(app).post("/event", event);
+        expect(body1).toEqual(event);
+        expect(body1.statusCode).toEqual(201);
 
         //DELETE ONCE
-        let { body } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
-        expect(body).toEqual("delete successful");
-        expect(body.statusCode).toEqual(200);
+        let { body2 } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
+        expect(body2).toEqual("delete successful");
+        expect(body2.statusCode).toEqual(200);
 
         //Check for missing resource
-        let { body } = await request(app).get("/event", event); //uses the request function that calls on express app instance
-        expect(body.statusCode).toEqual(204);
+        let { body3 } = await request(app).get("/event", event); //uses the request function that calls on express app instance
+        expect(body3.statusCode).toEqual(204);
 
         //SHOULD BE DELETED, GET ERROR CASE OF DOUBLE DELETE
-        let { body } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
-        expect(body).toEqual("already deleted");
-        expect(body.statusCode).toEqual(410);
+        let { body4 } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
+        expect(body4).toEqual("already deleted");
+        expect(body4.statusCode).toEqual(410);
     });
 
     it("DELETE /event - fail null id", async () => {
@@ -311,18 +311,18 @@ describe("testing-event-routes", () => {
         expect(body.statusCode).toEqual(201);
 
         //VERIFY MEETUP for first time, but wrong user
-        let { body } = await request(app).put("/event", event);
-        expect(body).toEqual("user not in database");
-        expect(body.statusCode).toEqual(410);
+        let { body2 } = await request(app).put("/event", event);
+        expect(body2).toEqual("user not in database");
+        expect(body2.statusCode).toEqual(410);
         //Meetup already verified, but wrong user
-        let { body } = await request(app).put("/event", event);
-        expect(body).toEqual("user not in database");
-        expect(body.statusCode).toEqual(410);
+        let { body3 } = await request(app).put("/event", event);
+        expect(body3).toEqual("user not in database");
+        expect(body3.statusCode).toEqual(410);
 
         //DELETE ONCE CREATED
-        let { body } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
-        expect(body).toEqual("delete successful");
-        expect(body.statusCode).toEqual(200);
+        let { body4 } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
+        expect(body4).toEqual("delete successful");
+        expect(body4.statusCode).toEqual(200);
     });
 
     it("POST & PUT & DELETE /event - success", async () => {
@@ -348,14 +348,14 @@ describe("testing-event-routes", () => {
         expect(body.statusCode).toEqual(201);
 
         //VERIFY MEETUP, but wrong user
-        let { body } = await request(app).put("/event", event);
-        expect(body).toEqual("verify successful");
-        expect(body.statusCode).toEqual(200);
+        let { body2 } = await request(app).put("/event", event);
+        expect(body2).toEqual("verify successful");
+        expect(body2.statusCode).toEqual(200);
 
         //DELETE ONCE VERIFED
-        let { body } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
-        expect(body).toEqual("delete successful");
-        expect(body.statusCode).toEqual(200);
+        let { body3 } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
+        expect(body3).toEqual("delete successful");
+        expect(body3.statusCode).toEqual(200);
     });
 
 
