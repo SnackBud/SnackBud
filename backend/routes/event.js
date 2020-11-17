@@ -138,12 +138,10 @@ router.post("/", (req, res) => {
   event.save()
     .then((data) => {
       res.status(201).json(data);
-      return;
     })
     .catch((err) => {
       // console.log(err);
       res.status(502).json({ message: err });
-      return;
     });
 
   pushNotify.emit("newMeetup", event);
