@@ -3,7 +3,7 @@ const User = require("../../models/user");
 const Helpers = require("../../helper");
 
 /* global jest.fn, a */
-/* eslint no-undef: "error" */
+/* eslint no-undef: "error"  */
 
 describe("User route tests", () => {
     let user;
