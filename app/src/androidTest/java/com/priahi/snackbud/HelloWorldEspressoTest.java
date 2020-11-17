@@ -316,7 +316,7 @@ public class HelloWorldEspressoTest {
     }
 
     /*
-     * Create a meetup without time
+     * Create a meetup with valid inputs
      * */
     @Test
     public void createMeetUp() {
