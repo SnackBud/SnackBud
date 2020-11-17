@@ -240,21 +240,21 @@ describe("testing-event-routes", () => {
             restName: "Loafe Cafe",
             timeOfMeet: 1605787405385
         }];
-        const { body } = await request(app).post("/event", event);
+        let { body } = await request(app).post("/event", event);
         expect(body).toEqual(event);
         expect(body.statusCode).toEqual(201);
 
         //DELETE ONCE
-        const { body } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
+        let { body } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
         expect(body).toEqual("delete successful");
         expect(body.statusCode).toEqual(200);
 
         //Check for missing resource
-        const { body } = await request(app).get("/event", event); //uses the request function that calls on express app instance
+        let { body } = await request(app).get("/event", event); //uses the request function that calls on express app instance
         expect(body.statusCode).toEqual(204);
 
         //SHOULD BE DELETED, GET ERROR CASE OF DOUBLE DELETE
-        const { body } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
+        let { body } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
         expect(body).toEqual("already deleted");
         expect(body.statusCode).toEqual(410);
     });
@@ -306,21 +306,21 @@ describe("testing-event-routes", () => {
             guestId: "3",
 
         }];
-        const { body } = await request(app).post("/event", event);
+        let { body } = await request(app).post("/event", event);
         expect(body).toEqual(event);
         expect(body.statusCode).toEqual(201);
 
         //VERIFY MEETUP for first time, but wrong user
-        const { body } = await request(app).put("/event", event);
+        let { body } = await request(app).put("/event", event);
         expect(body).toEqual("user not in database");
         expect(body.statusCode).toEqual(410);
         //Meetup already verified, but wrong user
-        const { body } = await request(app).put("/event", event);
+        let { body } = await request(app).put("/event", event);
         expect(body).toEqual("user not in database");
         expect(body.statusCode).toEqual(410);
 
         //DELETE ONCE CREATED
-        const { body } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
+        let { body } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
         expect(body).toEqual("delete successful");
         expect(body.statusCode).toEqual(200);
     });
@@ -343,17 +343,17 @@ describe("testing-event-routes", () => {
             guestId: "109786710572605387609"
         },
         ];
-        const { body } = await request(app).post("/event", event);
+        let { body } = await request(app).post("/event", event);
         expect(body).toEqual(event);
         expect(body.statusCode).toEqual(201);
 
         //VERIFY MEETUP, but wrong user
-        const { body } = await request(app).put("/event", event);
+        let { body } = await request(app).put("/event", event);
         expect(body).toEqual("verify successful");
         expect(body.statusCode).toEqual(200);
 
         //DELETE ONCE VERIFED
-        const { body } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
+        let { body } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
         expect(body).toEqual("delete successful");
         expect(body.statusCode).toEqual(200);
     });

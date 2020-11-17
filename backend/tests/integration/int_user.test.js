@@ -120,7 +120,7 @@ describe("testing-user-routes", () => {
         expect(body.statusCode).toEqual(201);
 
         //DELETE ONCE
-        const { body } = await request(app).delete("/user",
+        let { body } = await request(app).delete("/user",
             {
                 userId: "12345678",
             }); //uses the request function that calls on express app instance
@@ -128,7 +128,7 @@ describe("testing-user-routes", () => {
         expect(body.statusCode).toEqual(200);
 
         //SHOULD BE DELETED, GET ERROR CASE OF DOUBLE DELETE
-        const { body } = await request(app).delete("/user",
+        let { body } = await request(app).delete("/user",
             {
                 userId: "12345678",
             }); //uses the request function that calls on express app instance
