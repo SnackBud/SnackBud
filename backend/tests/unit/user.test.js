@@ -1,6 +1,6 @@
-const Event = require("../models/event");
-const User = require("../models/user");
-const Helpers = require("../helper");
+const Event = require("../../models/event");
+const User = require("../../models/user");
+const Helpers = require("../../helper");
 
 /* global jest.fn, a */
 /* eslint no-undef: "error" */

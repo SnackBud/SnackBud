@@ -1,12 +1,11 @@
 const express = require("express"); // import express
 const request = require("supertest"); // supertest is a framework that allows to easily test web apis
 
-const userRoute = require("../routes/user.js");
-const eventRoute = require("../routes/event.js");
+const eventRoute = require("../../routes/event.js");
 
 const app = express(); //an instance of an express app, a 'fake' express app
 app.use("/event", eventRoute);
-const Event = require("../models/event");
+const Event = require("../../models/event");
 
 describe("testing-event-routes", () => {
     beforeAll(() => {

@@ -1,12 +1,11 @@
 const express = require("express"); // import express
 const request = require("supertest"); // supertest is a framework that allows to easily test web apis
 
-const userRoute = require("../routes/user.js");
-const eventRoute = require("../routes/event.js");
+const userRoute = require("../../routes/user.js");
 
 const app = express(); //an instance of an express app, a 'fake' express app
 app.use("/user", userRoute);
-const User = require("../models/user");
+const User = require("../../models/user");
 
 describe("testing-user-routes", () => {
     beforeAll(() => {
@@ -102,7 +101,7 @@ describe("testing-user-routes", () => {
     });
 
     it("POST & DELETE /user/ - success - new user", async () => { // we can create a new user as long as we delete it after
-        const { body } = await request(app).post("/user",
+        let { body } = await request(app).post("/user",
             {
                 username: "I should be deleted soon",
                 date: "2020-11-03T02:33:32.515Z",
@@ -120,20 +119,20 @@ describe("testing-user-routes", () => {
         expect(body.statusCode).toEqual(201);
 
         //DELETE ONCE
-        let { body } = await request(app).delete("/user",
-            {
-                userId: "12345678",
-            }); //uses the request function that calls on express app instance
-        expect(body).toEqual("delete successful");
-        expect(body.statusCode).toEqual(200);
-
-        //SHOULD BE DELETED, GET ERROR CASE OF DOUBLE DELETE
         let { body2 } = await request(app).delete("/user",
             {
                 userId: "12345678",
             }); //uses the request function that calls on express app instance
-        expect(body2).toEqual("already deleted");
-        expect(body2.statusCode).toEqual(410);
+        expect(body2).toEqual("delete successful");
+        expect(body2.statusCode).toEqual(200);
+
+        //SHOULD BE DELETED, GET ERROR CASE OF DOUBLE DELETE
+        let { body23 } = await request(app).delete("/user",
+            {
+                userId: "12345678",
+            }); //uses the request function that calls on express app instance
+        expect(body23).toEqual("already deleted");
+        expect(body23.statusCode).toEqual(410);
     });
 
     it("DELETE /user/ - fail - bad input", async () => {
