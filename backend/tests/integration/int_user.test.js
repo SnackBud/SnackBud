@@ -1,100 +1,68 @@
 
-const dbHandler = require('../db/db-handler');
-const User = require('../../models/user');
+const mockingoose = require('mockingoose').default;
+const User = require("../../models/user");
 
-const express = require("express"); // import express
-const userRoute = require("../../routes/user.js");
-const app = express(); //an instance of an express app, a 'fake' express app
-app.use("/user", userRoute);
-const request = require("supertest");
+const app = require('../../app') // Link to your server file
+const supertest = require("supertest"); // supertest is a framework that allows to easily test web apis
+const request = supertest(app)
 
+describe("testing-user-routes", () => {
 
-describe('User Model Test', () => {
-    
-    /**
-     * Pre-defined test models
-     */
+    // mongoose mocked ret values
     const guest1 = new User({
-        userId: "1",
-        username: "Arnold",
-        deviceToken: "x"
+      userId: "1",
+      username: "Arnold",
+      deviceToken: "x"
     });
     const guest2 = new User({
-        userId: "2",
-        username: "Parsa",
-        deviceToken: "y"
+      userId: "2",
+      username: "Parsa",
+      deviceToken: "y"
     });
 
-    /**
-     * Connect to a new in-memory database before running any tests.
-     */
-    beforeAll(async () => await dbHandler.connect());
+    beforeEach(() => {
+        mockingoose(User).toReturn(guest1, 'findOne');
+        mockingoose(User).toReturn([guest1, guest2], 'find');
+    });
 
-    /**
-     * Clear all test data after every test.
-     */
-    afterEach(async () => await dbHandler.clearDatabase());
+    it("GET / - success", async done => {
+        const res = await request.get("/"); //uses the request function that calls on express app instance
 
-    /**
-     * Remove and close the db and server.
-     */
-    afterAll(async () => await dbHandler.closeDatabase());
-
-    /**
-     * /user gets a specific user specified by the request body
-     */
-    it("GET /user - success", async done => {
-
-        // create two entries in the local data server
-        await User.create(guest1);
-        await User.create(guest2);
-
-        // call our backend api to see if it returns one of the users
-        const res = await request(app).get("/").send({ userId: "2" })
+        expect(res.body).toBe("home");
         expect(res.status).toBe(200);
-        expect(res.body).toBeTruthy();
-        expect(res.body.length).toBe(1);
-        expect(res.body[0].userId).toBe(guest2.userId);
         done();
     });
 
-    /**
-     * /user/getAll gets all the user in the db
-     */
     it("GET /user/getAll - success", async done => {
-
-        // create two entries in the local data server
-        await User.create(guest1);
-        await User.create(guest2);
-
-        const res = await request(app).get("/user/getAll"); 
+        const res = await request.get("/user/getAll"); //uses the request function that calls on express app instance
+        // expect(res.body).toBe([
+        //     guest1,
+        //     guest2
+        // ])
         expect(res.status).toBe(200);
         expect(res.body).toBeTruthy();
-        expect(res.body.length).toBe(2);
-        expect(res.body[0].userId).toBe(guest1.userId);
         done();
     });
 
     // it("GET /user/getAll - error 404", async () => {
-    //     const res = await request.get("/users/getAll"); 
-    //     new Error('My Error')
+    //     const res = await request.get("/user/getAll"); 
     //     expect(res.status).toBe(404);
     // });
 
-    // it("GET /user/ - success", async done => {
-    //     const res = await request.get("/user").send({ userId: "109786710572605387609" }); //uses the request function that calls on express app instance
+    it("GET /user/ - success", async done => {
+        const res = await request.get("/user").send({ userId: "109786710572605387609" }); //uses the request function that calls on express app instance
         
-    //     expect(res.status).toBe(200);
-    //     expect(res.body).toBeTruthy();
-    //     // expect(res.body).toBe([
-    //         // {
-    //         //     userId: "1",
-    //         //     username: "Arnold",
-    //         //     deviceToken: "x"
-    //         // },
-    //     // ]);
-    //     done();
-    // });
+        expect(res.status).toBe(200);
+        expect(res.body).toBeTruthy();
+        // expect(res.body).toBe([
+            // {
+            //     userId: "1",
+            //     username: "Arnold",
+            //     deviceToken: "x"
+            // },
+        // ]);
+        done();
+    });
 
     // it("GET /user/ - null userId", async () => {
     //     const res = await request.get("/user", { userId: null }); //uses the request function that calls on express app instance
@@ -166,5 +134,7 @@ describe('User Model Test', () => {
     //     const res = await request.delete("/user");
     //     expect(body.statusCode).toEqual(400);
     // });
-    
-})
+
+
+});
+
