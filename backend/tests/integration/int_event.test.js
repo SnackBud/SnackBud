@@ -358,6 +358,12 @@ describe("testing-event-routes", () => {
     });
 
 
+    it("PUT /event/ - fail null id", async () => {
+        const { body } = await request(app).put("/event");
+        expect(body).toEqual("bad input");
+        expect(body.statusCode).toEqual(400);
+    });
+
     it("POST /event/contactTrace - fail null id", async () => {
         const { body } = await request(app).post("/event/contactTrace");
         expect(body).toEqual("bad input");
