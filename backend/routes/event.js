@@ -14,7 +14,11 @@ router.get("/getAll", (req, res) => {
         res.status(404).send(err);
         // console.log(err);
       } else {
-        res.status(200).json(event);
+        if (event == null) {
+          res.status(204).send(null);
+        } else {
+          res.status(200).json(event);
+        }
       }
     },
   );
@@ -64,7 +68,7 @@ router.get("/", (req, res) => {
         // console.log(err);
       } else {
         if (event == null) {
-          res.status(204).json(event);
+          res.status(204).send(null);
         } else {
           res.status(200).json(event);
         }
@@ -101,6 +105,10 @@ router.post("/", (req, res) => {
     verifyCode: _.verifyCode,
   });
 
+  if (event.guestIds.length >= 7) {
+    res.status(431).send("Request header field too large");
+  }
+
   var i;
   for (i = 0; i < event.guestIds.length; i++) {
     if (event.guestIds[parseInt(i, 10)].guestId === event.hostId) {
@@ -115,7 +123,7 @@ router.post("/", (req, res) => {
     })
     .catch((err) => {
       // console.log(err);
-      res.status(503).json({ message: err });
+      res.status(502).json({ message: err });
     });
 
   pushNotify.emit("newMeetup", event);
@@ -191,7 +199,7 @@ router.put("/", (req, res) => {
                 res.status(410).send("user not in database");
                 return;
               }
-              res.send("user cannot verify this meetup");
+              res.status(304).send("meetup not modified");
               pushNotify.emit("noVerifyMeetup", guest);
             }
           },
@@ -206,7 +214,7 @@ router.put("/", (req, res) => {
               // console.log(err);
             } else {
               if (guest == null) {
-                res.status(410).send(null);
+                res.status(410).send("user not in database");
                 return;
               }
               // console.log(guest);
@@ -297,12 +305,12 @@ router.post("/contactTrace", (req, res) => {
     User.findOne({ userId: req.body.userId },
       (err, sickUser) => {
         if (err) {
-          res.send(err);
+          res.status(404).send(err);
           // console.log(err);
           return;
         }
         if (sickUser == null) {
-          res.status(404).send("error, no user found by userId");
+          res.status(410).send("error, no user found by userId");
           // console.log("error, no user found by userId");
           return;
         }
