@@ -6,20 +6,24 @@ const User = require("../models/user");
 // gets the user specified by req.body.userId in our db
 router.get("/", async (req, res) => {
   // console.log("/user GET request");
+  console.log(req.body);
   if (req.body.userId == null) {
     res.status(400).send("bad input")
+    return;
   }
 
   User.findOne({ userId: req.body.userId },
     (err, user) => {
       if (err) {
         res.status(404).send(err);
-        // console.log(err);
+        return;
       } else {
         if (user == null) {
           res.status(204).json(user);
+          return;
         } else {
           res.status(200).json(user);
+          return;
         }
       }
     });
@@ -40,7 +44,7 @@ router.get("/getAll", async (req, res) => {
         } else {
           res.status(200).json(users);
         }
-        // //console.log(user);
+        //console.log(user);
       }
     });
 });

@@ -35,7 +35,7 @@ app.use("/user", userRoute);
 app.use("/event", eventRoute);
 
 app.get("/", (req, res) => {
-  res.send("home");
+  res.status(200).json("home");
   // console.log("home accessed");
 });
 
@@ -44,8 +44,5 @@ mongoose.connect(process.env.DB_CONNECTION,
   { useNewUrlParser: true, useUnifiedTopology: true }, () => {
   // console.log("connected to db");
   });
-
-// listen on port 3000
-app.listen(3000);
 
 module.exports = app;
