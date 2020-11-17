@@ -5,9 +5,9 @@ android {
     signingConfigs {
         release {
             storeFile file('C:\\UBC\\Third Year\\Cpen321\\SnackBud\\keystore\\keystore.jks')
-            storePassword '123123'
-            keyAlias 'key0'
-            keyPassword '123123'
+            storePassword 'snackbud'
+            keyAlias 'snackbud'
+            keyPassword 'snackbud'
         }
     }
     compileSdkVersion 29
