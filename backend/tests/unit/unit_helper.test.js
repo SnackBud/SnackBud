@@ -144,7 +144,7 @@ describe("notifyVerifyMeetup tests", () => {
   helper.notifyHelper = jest.fn();
   
   // set up mockingoose for mocking the mongoose functions
-  beforeAll(() => {
+  beforeEach(() => {
     const guest = new User({
       userId: "1",
       username: "Arnold",
@@ -223,6 +223,11 @@ describe("notifyVerifyMeetup tests", () => {
       restName: "The Nest"
     });
 
+    const guest = new User({
+      userId: "1",
+      username: "Arnold",
+      deviceToken: "x"
+    });
     // call notifyNewMeetup with null event and guest
     helper.notifyVerifyMeetup(null_event, null_guest);
 
@@ -231,6 +236,11 @@ describe("notifyVerifyMeetup tests", () => {
 
     // notifyHelper should not be called
     expect(helper.notifyHelper).toHaveBeenCalledTimes(0); 
+    
+    
+    mockingoose(User).toReturn(new Error('error'), 'findOne');
+    
+    helper.notifyVerifyMeetup(event, guest);
   });
 });
 
@@ -283,7 +293,7 @@ describe("notifyEnterCode tests", () => {
   helper.notifyHelper = jest.fn();
   
   // set up mockingoose for mocking the mongoose functions
-  beforeAll(() => {
+  beforeEach(() => {
     const guest = new User({
       userId: "1",
       username: "Arnold",
@@ -320,11 +330,24 @@ describe("notifyEnterCode tests", () => {
 
   it("notifyEnterCode bad call", () => {
     const null_event = null
-
     // call notifyNewMeetup
     helper.notifyEnterCode(null_event);
 
     // notify helper should not be called
+    expect(helper.notifyHelper).toHaveBeenCalledTimes(0);
+
+    
+    // error return from User.findone
+    mockingoose(User).toReturn(new Error('error'), 'findOne');
+    const event = new Event({
+      hostId: "1",
+      guestIds: [
+        {guestId: "2"},
+        {guestId: "3"}
+      ],
+      restName: "The Nest"
+    });
+    helper.notifyEnterCode(event);
     expect(helper.notifyHelper).toHaveBeenCalledTimes(0);
   });
 });

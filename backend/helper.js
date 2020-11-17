@@ -12,12 +12,6 @@ class helpers {
 //   constructor() {
 //   }
 
-  printToConsole(event) {
-    // console.log("sending push notification for:");
-    // console.log(event);
-    return;
-  }
-
   notifyHelper(elem, title, body) {
     // try {
 

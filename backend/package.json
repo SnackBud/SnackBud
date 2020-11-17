@@ -14,7 +14,7 @@
     "test:unit_event": "jest --coverage -- unit_event.test.js",
     "test:unit_helper": "jest --coverage -- unit_helper.test.js",
     "test:int_user": "jest --coverage -- int_user.test.js",
-    "test:int_event": "jest -- int_event.test.js",
+    "test:int_event": "jest --coverage -- int_event.test.js",
     "lint": "eslint --fix --ext .js,.jsx .",
     "eslint": "eslint --fix \"**/*.js\" --ignore-pattern node_modules/"
   },

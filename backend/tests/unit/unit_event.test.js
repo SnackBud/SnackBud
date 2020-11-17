@@ -196,32 +196,50 @@ describe("Event Model bad / improper calls", () => {
   });
 
   it("Event POST /getUser error response from mongoose", async () => {
-    const guest = new User();
 
+    mockingoose(Event).toReturn(new Error('error'), 'find');
     const res = await request.post("/event/getUser").send([{
-      userId: null,
+      userId: "not null",
       username: "Arnold",
       deviceToken: "x",
     }]);
 
     expect(res.body).toBeTruthy();
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(404);
   });
 
-  it("Event GET /", async () => {
+  it("Event GET / null input", async () => {
     const res = await request.get("/event").send({
-      eventId: "1",
+      eventId: null,
     }); 
 
     expect(res.body).toBeTruthy();
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(400);
   });  
   
-  it("Event POST /", async () => {
+  it("Event GET / error input", async () => {
+    // error
+    mockingoose(Event).toReturn(new Error('error'), 'findOne');
+    const res = await request.get("/event").send({
+      eventId: "not null",
+    }); 
 
-    const res = await request.post("/event").send({
-      userId: "1",
-      hostId: "xd",
+    expect(res.body).toBeTruthy();
+    expect(res.status).toBe(404);
+
+    // null
+    mockingoose(Event).toReturn(null, 'findOne');
+    const resn = await request.get("/event").send({
+      eventId: "not null",
+    }); 
+
+    expect(resn.body).toBeTruthy();
+    expect(resn.status).toBe(204);
+  });  
+
+  it("Event POST / null input", async () => {
+    const resn = await request.post("/event").send({
+      hostId: null,
       guestIds: [
         {guestid: "2"}
       ],
@@ -230,42 +248,128 @@ describe("Event Model bad / improper calls", () => {
       timeOfMeet: 1827192837,
     }); 
 
-    expect(pushNotify.emit).toHaveBeenCalledTimes(1);
-    expect(res.body).toBeTruthy();
-    expect(res.status).toBe(502);
+    expect(resn.body).toBeTruthy();
+    expect(resn.status).toBe(400);
   }); 
   
-  it("Event DELETE /", async () => {
+  it("Event POST / bad inputs", async () => {
+    // too many guests
+    const res = await request.post("/event").send({
+      hostId: "not null",
+      guestIds: [
+        {guestid: "2"}, {guestid: "2"}, {guestid: "2"}, {guestid: "2"}, {guestid: "2"}, {guestid: "2"}, {guestid: "2"}, {guestid: "2"}, 
+      ],
+      restId: "fake restaurant",
+      restName: "fake name",
+      timeOfMeet: 1827192837,
+    }); 
+
+    expect(res.body).toBeTruthy();
+    expect(res.status).toBe(431);
+
+    // host in the guest list
+    const resn = await request.post("/event").send({
+      hostId: "not null",
+      guestIds: [
+        {guestId: "not null"}, {guestId: "2"}, 
+      ],
+      restId: "fake restaurant",
+      restName: "fake name",
+      timeOfMeet: 1827192837,
+    }); 
+
+    expect(resn.body).toBeTruthy();
+    expect(resn.status).toBe(405);
+    
+  }); 
+
+  it("Event DELETE / null input", async () => {
 
     const res = await request.delete("/event").send({
-      eventId: "69"
+      eventId: null
+    }); 
+
+    expect(res.body).toBeTruthy();
+    expect(res.status).toBe(400);
+  });
+
+  it("Event DELETE / error and null mongoose response", async () => {
+    // error
+    mockingoose(Event).toReturn(new Error('error'), 'deleteOne');
+    const res = await request.delete("/event").send({
+      eventId: "not null"
     }); 
 
     expect(res.body).toBeTruthy();
     expect(res.status).toBe(404);
+
+    // null
+    mockingoose(Event).toReturn(null, 'deleteOne');
+    const resn = await request.delete("/event").send({
+      eventId: "not null"
+    }); 
+
+    expect(resn.body).toBeTruthy();
+    expect(resn.status).toBe(204);
   });
 
-  it("Event PUT /", async () => {
+  it("Event PUT / null input", async () => {
 
     const res = await request.put("/event").send({
-      eventId: "69",
+      eventId: null,
       verifyCode: "420",
       guestId: "69420"
     }); 
 
     expect(res.body).toBeTruthy();
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(400);
   });
 
-  it("Event POST /contactTrace", async () => {
+  it("Event PUT / error and null mongoose response", async () => {
 
-    const res = await request.post("/event/contactTrace").send({
-      userId: "69",
-      twoWeeksAgo: 21312378273,
-      currentDate: 21312378273
+    // error response
+    mockingoose(Event).toReturn(new Error('error'), 'findOneAndUpdate');
+    const res = await request.put("/event").send({
+      eventId: "not null",
+      verifyCode: "420",
+      guestId: "69420"
     }); 
 
     expect(res.body).toBeTruthy();
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(404);
+    
+    // null response
+    mockingoose(Event).toReturn(null, 'findOneAndUpdate');
+    const res1 = await request.put("/event").send({
+      eventId: "not null",
+      verifyCode: "420",
+      guestId: "69420"
+    }); 
+
+    expect(res1.body).toBeTruthy();
+    expect(res1.status).toBe(404);
+
+    // // findOne null response
+    // mockingoose(User).toReturn(null, 'findOne');
+    // const res2 = await request.put("/event").send({
+    //   eventId: "not null",
+    //   verifyCode: "420",
+    //   guestId: "69420"
+    // }); 
+
+    // expect(res2.body).toBeTruthy();
+    // expect(res2.status).toBe(410);
+
+    // // findOne error response
+    // mockingoose(User).toReturn(new Error('error'), 'findOne');
+    // const res3 = await request.put("/event").send({
+    //   eventId: "not null",
+    //   verifyCode: "420",
+    //   guestId: "69420"
+    // }); 
+
+    // expect(res3.body).toBeTruthy();
+    // expect(res3.status).toBe(404);
+    
   });
 });

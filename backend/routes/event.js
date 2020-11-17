@@ -92,14 +92,9 @@ router.get("/", (req, res) => {
 // post an event in our db
 router.post("/", (req, res) => {
   // console.log("/event POST request");
-  if (req.body == null) {
-    res.status(400).send("bad input")
-    return;    
-  }
-
   const _ = req.body;
 
-  if (_.hostId == null ||
+  if (req.body == null || _.hostId == null ||
     _.guestIds == null ||
     _.restId == null ||
     _.restName == null ||
@@ -129,7 +124,7 @@ router.post("/", (req, res) => {
 
   var i;
   for (i = 0; i < event.guestIds.length; i++) {
-    if (event.guestIds[parseInt(i, 10)].guestId === event.hostId) {
+    if (event.guestIds[parseInt(i, 10)].guestId == event.hostId) {
       res.status(405).json({ message: "host cannot create meetup with themselves" });
       return;
     }
@@ -152,17 +147,22 @@ router.delete("/", (req, res) => {
   // console.log("/event DELETE request");
   if (req.body.eventId == null) {
     res.status(400).send("bad input")
+    return;
   }
 
   Event.deleteOne({ eventId: req.body.eventId, isVerified: false },
     (err, d) => {
       if (err, d) {
         res.status(404).send(err);
+        return;
         // console.log(err);
-      } else if (d.acknowledged && d.deletedCount == 1)
+      } else if (d.acknowledged && d.deletedCount == 1) {
         res.status(200).send("delete successful");
-      else
+        return;
+      } else {
         res.status(410).send("already deleted");
+        return;
+      }
     });
 });
 

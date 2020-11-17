@@ -15,14 +15,14 @@ describe('User Model Test', () => {
     
     let helper = new Helpers();
     helper.notifyHelper = jest.fn();
+    const guest = new User({
+      userId: "1",
+      username: "Arnold",
+      deviceToken: "x",
+    });
     
     // set up mockingoose for mocking the mongoose functions
     beforeEach(() => {
-        const guest = new User({
-          userId: "1",
-          username: "Arnold",
-          deviceToken: "x",
-        });
         const delete1 = {
           acknolwedged: true,
           deletedCount: 1
@@ -43,7 +43,7 @@ describe('User Model Test', () => {
             userId: "2023290329"
         });
 
-        expect(res.body).toBeTruthy();
+        expect(res.body.userId).toBe(guest.userId);
         expect(res.status).toBe(200);
     });
 
@@ -51,7 +51,8 @@ describe('User Model Test', () => {
 
         const res = await request.get("/user/getAll"); 
 
-        expect(res.body).toBeTruthy();
+        expect(res.body.length).toBe(1);
+        expect(res.body[0].userId).toBe(guest.userId);
         expect(res.status).toBe(200);
     });
     
@@ -149,7 +150,7 @@ describe('User Model Test bad calls', () => {
         expect(res.status).toBe(404);
     });
 
-    it("User GET / null response from mongoose", async () => {
+    it("User GET /getall null response from mongoose", async () => {
 
         mockingoose(User).toReturn(null, 'find');
         const res = await request.get("/user/getAll"); 
@@ -171,7 +172,7 @@ describe('User Model Test bad calls', () => {
         expect(res.status).toBe(400);
     });
     
-    it("User POST / null input", async () => {
+    it("User POST / error response from mongoose", async () => {
 
         mockingoose(User).toReturn(new Error('error'), 'updateOne');
         const res = await request.post("/user").send({
