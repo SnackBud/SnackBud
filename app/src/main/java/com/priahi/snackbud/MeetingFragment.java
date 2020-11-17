@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -178,6 +180,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         btnCreateMeeting.setOnClickListener(view1 -> {
             try {
                 postRequest();
+                Toast.makeText(getContext(), "Meeting successfully created", Toast.LENGTH_LONG).show();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
