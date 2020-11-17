@@ -25,6 +25,7 @@ class helpers {
     if (elem == null) {
       return;
     }
+
     // send messages to guests
     const message = {
       notification: {
@@ -33,43 +34,40 @@ class helpers {
       },
       token: elem.deviceToken,
     };
-    // console.log("sending message to " + elem.userId + ", message:");
-    // console.log(message);
 
     // registration token.
     admin.messaging().send(message)
       .then((response) => {
-        // Response is a message ID string.
-        // console.log("Successfully sent message:", response);
         return;
       })
       .catch((error) => {
-        // console.log("Error sending message:", error);
         return;
       });
-    //   } catch (err) {
-    //         console.log(err);
-    //         return;
-    //     }
   }
 
   // tell the guests about the meetup creation
   notifyNewMeetup(event, helper = this) {
-    // console.log("guests:" + event.guestIds);
+    
+    // check for bad calls
+    if (typeof event === 'undefined' || event == null) {
+      return;
+    } else if (typeof event.hostId === 'undefined') {
+      return;
+    } else if (event.guestIds.length == 0) {
+      return;
+    }
 
     // get host name
     User.findOne({ userId: event.hostId }, {}, (err, host) => {
       if (err) {
-        // res.send(err);
-        // console.log(err);
+        res.send(err);
         return;
       }
-      // console.log("host is:" + host.userId);
       // get the deviceToken of the guests
       let i;
       for (i = 0; i < event.guestIds.length; i++) {
-        const userId = event.guestIds[parseInt(i, 10)];
-        User.findOne({ userId: userId.guestId }, {}, (err, guest) => {
+        const user = event.guestIds[parseInt(i, 10)];
+        User.findOne({ userId: user.guestId }, {}, (err, guest) => {
           if (err) {
             // res.send(err);
             // console.log(err);
@@ -89,13 +87,24 @@ class helpers {
   notifyNoVerifyMeetup(guest, helper = this) {
     // console.log("No Verify meet for: " + guest.userId);
     // send messages to guest
+    if (typeof guest === 'undefined' || guest == null) {
+      return;
+    }
+
     helper.notifyHelper(guest, "You have failed to verify this meetup!", 
     "Either your verify code is wrong or you are the host! Please try again");
   }
 
   // listener helper for the host to see if the meetup has been verified
   notifyVerifyMeetup(event, guest, helper = this) {
-    // console.log("Verify meet for: " + event.hostId);
+
+    // check for bad calls
+    if (typeof event === 'undefined' || event == null) {
+      return;
+    } else if (typeof guest === 'undefined' || guest == null) {
+      return;
+    }
+
     if (event.hostId === guest.userId) {
       // console.log("verifying meetup as the host, returning");
       User.findOne({ userId: event.hostId }, {}, (err, host) => {
@@ -137,7 +146,7 @@ class helpers {
       }
       // console.log("host is:" + host.userId);
       // send messages to host
-      this.notifyHelper(host, `Your meetup verification code is ${event.verifyCode}`,
+      helper.notifyHelper(host, `Your meetup verification code is ${event.verifyCode}`,
         "Please have the guests enter this code to verify the meetup!");
 
       // get the deviceToken of the guests
