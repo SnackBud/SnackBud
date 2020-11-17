@@ -64,6 +64,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private ArrayList<String> restNames = new ArrayList<>();
     private Button btnDatePicker;
     private Button btnTimePicker;
+    private Button btnCreateMeeting;
     private EditText txtDate;
     private EditText txtTime;
     private int mYear;
@@ -162,8 +163,6 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         
         hostId = acct.getId();
 
-        Button btnCreateMeeting;
-
         btnCreateMeeting = requireView().findViewById(R.id.createmeeting);
         btnDatePicker = requireView().findViewById(R.id.btn_date);
         btnTimePicker = requireView().findViewById(R.id.btn_time);
@@ -171,6 +170,10 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         txtTime = requireView().findViewById(R.id.in_time);
         btnDatePicker.setOnClickListener(this);
         btnTimePicker.setOnClickListener(this);
+
+        btnTimePicker.setEnabled(false);
+        btnCreateMeeting.setEnabled(false);
+
 
         btnCreateMeeting.setOnClickListener(view1 -> {
             try {
@@ -301,6 +304,9 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
             datePickerDialog.getDatePicker().setMaxDate(oneMonthAhead);
             datePickerDialog.show();
             //TODO: make this timezone invariant
+
+            btnTimePicker.setEnabled(true);
+
         } else if (v.equals(btnTimePicker)) {
             // Get Current Time
             final Calendar c = Calendar.getInstance();
@@ -333,6 +339,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
             timePickerDialog.setMin((int) minHour, (int) minMin);
             timePickerDialog.setMax((int) maxHour, (int) maxMin);
             timePickerDialog.show();
+
+            btnCreateMeeting.setEnabled(true);
         }
 
 //                String.format("%d-%02d-%02dT%02d:%02d:00Z", mYear, mMonth + 1, mDay, mHour, mMinute);
