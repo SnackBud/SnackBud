@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     private RequestQueue queue;
     private String userId;
     private String username;
-    private static final String url = "http://13.68.137.122:3000";
+    private static final String url = "http://13.77.158.161:3000";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
