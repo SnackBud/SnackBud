@@ -1,11 +1,8 @@
 const Event = require("../../models/event");
 const User = require("../../models/user");
-const admin = require("firebase-admin");
 const Helpers = require("../../helper");
+const admin = require("firebase-admin");
 const mockingoose = require('mockingoose').default;
-
-
-
 
 
 describe("notifyHelper tests", () => {
@@ -62,9 +59,6 @@ describe("notifyHelper tests", () => {
     expect(send_stub).toHaveBeenCalledTimes(0); 
   });
 });
-
-
-
 
 
 describe("notifyNewMeetup tests", () => {
@@ -136,8 +130,6 @@ describe("notifyNewMeetup tests", () => {
     expect(helper.notifyHelper).toHaveBeenCalledTimes(0); 
   });
 });
-
-
 
 
 describe("notifyVerifyMeetup tests", () => {
@@ -238,8 +230,6 @@ describe("notifyVerifyMeetup tests", () => {
 });
 
 
-
-
 describe("notifyNoVerifyMeetup tests", () => {
 
   // initialize the helper class and mock the notify helper function
@@ -279,7 +269,6 @@ describe("notifyNoVerifyMeetup tests", () => {
     expect(helper.notifyHelper).toHaveBeenCalledTimes(0);
   });
 });
-
 
 
 describe("notifyEnterCode tests", () => {
@@ -325,10 +314,10 @@ describe("notifyEnterCode tests", () => {
   });
 
   it("notifyEnterCode bad call", () => {
-    const guest = null
+    const null_event = null
 
     // call notifyNewMeetup
-    helper.notifyNoVerifyMeetup(guest, helper);
+    helper.notifyEnterCode(null_event);
 
     // notify helper should not be called
     expect(helper.notifyHelper).toHaveBeenCalledTimes(0);

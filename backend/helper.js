@@ -136,7 +136,11 @@ class helpers {
   }
 
   notifyEnterCode(event, helper = this) {
-    // console.log("guests:" + event.guestIds);
+
+    if (typeof event === 'undefined' || event == null) {
+      return;
+    }
+
     // get host
     User.findOne({ userId: event.hostId }, {}, function (err, host) {
       if (err) {
