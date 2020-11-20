@@ -1,6 +1,10 @@
 package com.priahi.snackbud;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -30,6 +34,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,7 +49,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Matcher;
+
+//import MapsFragment;
 
 public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSelectedListener {
 
@@ -66,6 +72,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     private ArrayList<String> eventTitle = new ArrayList<>();
     private ArrayList<String> guestId = new ArrayList<>();
     private RequestQueue queue;
+    private static double distance_tolerance = 200.0;
 
 
     private GoogleSignInAccount acct;
@@ -291,7 +298,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                     }
                 }, error -> {
             //Toast.makeText(getContext(), error.toString(), Toast.LENGTH_SHORT).show();
-                    VolleyLog.e("Error: ", error.getMessage());
+            VolleyLog.e("Error: ", error.getMessage());
         });
         queue.add(request);
     }
@@ -305,9 +312,52 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     }
 
     public void enableSubmitIfReady() {
+        //TODO: pass the actual restaurant name here
+//        boolean isReady = (distToRestaurant("restname") <= distance_tolerance) && editTextCode.getText().toString().length() > 2 && editTextCode.getText().toString().length() < 4;
         boolean isReady = editTextCode.getText().toString().length() > 2 && editTextCode.getText().toString().length() < 4;
         enterCodeButton.setEnabled(isReady);
     }
+
+    private double distToRestaurant(String rest_name) {
+        LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        try {
+            LatLng rest_loc = null;
+            Location currloc = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+            MapsFragment temp = new MapsFragment();
+            JSONObject obj = new JSONObject(temp.loadJSONFromAsset());
+            JSONArray restaurantsArray = obj.getJSONArray("data");
+            // implement for loop for getting users list data
+            for (int i = 0; i < restaurantsArray.length(); i++) {
+                JSONObject restaurant = restaurantsArray.getJSONObject(i);
+                if (restaurant.getString("name").equals(rest_name)) {
+                    rest_loc = new LatLng(restaurant.getDouble("lng"), restaurant.getDouble("lat"));
+                    break;
+                }
+            }
+
+            float pk = (float) (180.f / Math.PI);
+
+            if (currloc == null) throw new Exception("location not found");
+            float a1 = (float) (currloc.getLatitude() / pk);
+            float a2 = (float) (currloc.getLongitude() / pk);
+            assert rest_loc != null;
+            float b1 = (float) rest_loc.latitude / pk;
+            float b2 = (float) rest_loc.longitude / pk;
+
+            double t1 = Math.cos(a1) * Math.cos(a2) * Math.cos(b1) * Math.cos(b2);
+            double t2 = Math.cos(a1) * Math.sin(a2) * Math.cos(b1) * Math.sin(b2);
+            double t3 = Math.sin(a1) * Math.sin(b1);
+            double tt = Math.acos(t1 + t2 + t3);
+
+            return 6366000 * tt;
+        } catch (Exception err) {
+            return distance_tolerance;
+        }
+
+    }
+
+
 }
 
 
