@@ -40,6 +40,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,6 +76,9 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     private ArrayList<String> guestId = new ArrayList<>();
     private RequestQueue queue;
     private static double distance_tolerance = 200.0;
+
+    private String restName;
+    private ArrayList<String> restList = new ArrayList<>();
 
 
     private GoogleSignInAccount acct;
@@ -218,12 +224,16 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
             Log.d("eventId", eventsIdList.get(position));
             Log.d("eventTitle", eventTitle.get(position));
             Log.d("verificationCode", Objects.requireNonNull(eventsIdMap.get(eventsIdList.get(position))));
+            Log.d("restName", restList.get(position));
+            Log.d("dist:", String.valueOf(distToRestaurant()));
             if (eventsIdList.get(position) != null) {
                 // get the eventId for selected spinner element
                 eventId = eventsIdList.get(position);
+                restName = restList.get(position);
                 eventVerifyCode = eventsIdMap.get(eventsIdList.get(position));
                 updateCodeText();
                 editTextCode.setEnabled(true);
+                editTextCode.setText("");
             }
         }
 
@@ -255,6 +265,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                 eventsIdMap.put(eventIdString, verifyCode);
                 eventsIdList.add(i, eventIdString);
 
+                restList.add(i, restName);
 
                 hostIdMap.put(verifyCode, hostId);
 
@@ -313,24 +324,26 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
     public void enableSubmitIfReady() {
         //TODO: pass the actual restaurant name here
-//        boolean isReady = (distToRestaurant("restname") <= distance_tolerance) && editTextCode.getText().toString().length() > 2 && editTextCode.getText().toString().length() < 4;
-        boolean isReady = editTextCode.getText().toString().length() > 2 && editTextCode.getText().toString().length() < 4;
+        boolean isReady = (distToRestaurant() < distance_tolerance)
+                            && editTextCode.getText().toString().length() > 2
+                            && editTextCode.getText().toString().length() < 4;
+
         enterCodeButton.setEnabled(isReady);
     }
 
-    private double distToRestaurant(String rest_name) {
-        LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+    private double distToRestaurant() {
+        Location location = getLocation();
+
         Criteria criteria = new Criteria();
         try {
             LatLng rest_loc = null;
-            Location currloc = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
-            MapsFragment temp = new MapsFragment();
-            JSONObject obj = new JSONObject(temp.loadJSONFromAsset());
+            JSONObject obj = new JSONObject(loadJSONFromAsset());
             JSONArray restaurantsArray = obj.getJSONArray("data");
             // implement for loop for getting users list data
             for (int i = 0; i < restaurantsArray.length(); i++) {
                 JSONObject restaurant = restaurantsArray.getJSONObject(i);
-                if (restaurant.getString("name").equals(rest_name)) {
+                String rest = restaurant.getString("name");
+                if (rest.equals(restName)) {
                     rest_loc = new LatLng(restaurant.getDouble("lng"), restaurant.getDouble("lat"));
                     break;
                 }
@@ -338,9 +351,8 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
             float pk = (float) (180.f / Math.PI);
 
-            if (currloc == null) throw new Exception("location not found");
-            float a1 = (float) (currloc.getLatitude() / pk);
-            float a2 = (float) (currloc.getLongitude() / pk);
+            float a1 = (float) (location.getLatitude() / pk);
+            float a2 = (float) (location.getLongitude() / pk);
             assert rest_loc != null;
             float b1 = (float) rest_loc.latitude / pk;
             float b2 = (float) rest_loc.longitude / pk;
@@ -352,9 +364,33 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
             return 6366000 * tt;
         } catch (Exception err) {
+            err.printStackTrace();
             return distance_tolerance;
         }
 
+    }
+
+    private Location getLocation() {
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+
+        return locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+    }
+
+    public String loadJSONFromAsset() {
+        String json;
+        try {
+            InputStream is = getContext().getAssets().open("restaurants.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
     }
 
 
