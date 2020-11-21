@@ -1,6 +1,7 @@
 package com.priahi.snackbud;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +19,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -26,6 +30,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -48,9 +54,11 @@ public class MapsFragment extends Fragment {
 
 //    final private String RESTAURANTS_URL = "";
 //
-//    private Button findMeetUp;
+    private Button findMeetUp;
 //
 //    private boolean isMeetUpOn = false;
+
+    private Map<String, Integer> restaurantPosition = new HashMap<>();
 
     private View mapView;
 
@@ -68,6 +76,7 @@ public class MapsFragment extends Fragment {
          * user has installed Google Play services and returned to the app.
          */
 
+        @SuppressLint("WrongConstant")
         @Override
         public void onMapReady(GoogleMap googleMap) {
             mMap = googleMap;
@@ -118,8 +127,18 @@ public class MapsFragment extends Fragment {
                 for (int i = 0; i < restaurantsArray.length(); i++) {
                     JSONObject restaurants = restaurantsArray.getJSONObject(i);
                     LatLng loc = new LatLng(restaurants.getDouble("lng"), restaurants.getDouble("lat"));
-                    MarkerOptions marker = new MarkerOptions().position(loc).title(restaurants.getString("name"));
+                    String snippet = "cuisine: " + restaurants.getString("cuisine") + "\n"
+                                    + "rating: " + restaurants.getString("rating") + "\n"
+                                    + "weekdays: " + restaurants.getString("Monday_Open_Time")
+                                    + " - " + restaurants.getString("Monday_Close_Time") + "\n"
+                                    + "weekends: " + restaurants.getString("Saturday_Open_Time")
+                                    + " - " + restaurants.getString("Saturday_Close_Time");
+                    MarkerOptions marker = new MarkerOptions()
+                                                .position(loc)
+                                                .title(restaurants.getString("name"))
+                                                .snippet(snippet);
                     restaurantImageUrl.put(marker.getTitle(), restaurants.getString("imageUrl"));
+                    restaurantPosition.put(marker.getTitle(), i);
                     mMap.addMarker(marker);
                 }
             } catch (JSONException e) {
@@ -136,16 +155,26 @@ public class MapsFragment extends Fragment {
                         .tilt(0)                   // Sets the tilt of the camera to 30 degrees
                         .build();                  // Creates a CameraPosition from the builder
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                ImageView restaurant_image = mapView.findViewById(R.id.restaurant_image);
-                Picasso.get().load(restaurantImageUrl.get(marker.getTitle())).into(restaurant_image);
+                findMeetUp.setVisibility(View.VISIBLE);
+
+                findMeetUp.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MeetingFragment meetingFragment = new MeetingFragment(restaurantPosition.get(marker.getTitle()));
+                        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment_layout, meetingFragment).commit();
+                    }
+                });
+
+
                 return false;
             });
 
-
             mMap.setOnMapClickListener(latLng -> {
-                ImageView restaurant_image = mapView.findViewById(R.id.restaurant_image);
-                restaurant_image.setImageBitmap(null);
+                findMeetUp.setVisibility(View.INVISIBLE);
             });
+
+            mMap.setInfoWindowAdapter(new CustomWindowAdapter(getContext(), restaurantImageUrl));
 
         }
     };
@@ -155,6 +184,7 @@ public class MapsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.fragment_maps, container, false);
     }
 
@@ -166,6 +196,9 @@ public class MapsFragment extends Fragment {
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
+
+        findMeetUp = view.findViewById(R.id.map_btn);
+        findMeetUp.setVisibility(View.INVISIBLE);
 
         mapView = view;
     }

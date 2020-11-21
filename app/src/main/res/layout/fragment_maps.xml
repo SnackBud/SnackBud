@@ -14,12 +14,14 @@
               tools:context=".MapsFragment"
               android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
-    <ImageView android:layout_width="match_parent"
-               android:layout_height="200dp"
-               android:id="@+id/restaurant_image"
-               tools:context=".MapsFragment"
-               android:contentDescription="TODO"/>
-
+    <Button android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/create_meeting"
+            android:id="@+id/map_btn"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="132dp"/>
 
 
 </RelativeLayout>

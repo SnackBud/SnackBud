@@ -80,10 +80,18 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private long minMin;
     private RequestQueue queue;
 
+    Integer pos = 0;
+
     public MeetingFragment() {
+
         mYear = 2020;
         // Required empty public constructor
     }
+
+    public MeetingFragment(Integer pos) {
+        this.pos = pos;
+    }
+
 
 //    public static MeetingFragment newInstance(String param1, String param2) {
 //        MeetingFragment fragment = new MeetingFragment();
@@ -200,6 +208,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         restAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         restDropdown.setAdapter(restAdapter);
         restDropdown.setOnItemSelectedListener(this);
+        restDropdown.setSelection(pos);
+        if(pos != 0) restDropdown.setEnabled(false);
 
         JSONArray js = new JSONArray();
 

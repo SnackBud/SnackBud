@@ -12,13 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -235,6 +229,12 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                 editTextCode.setEnabled(true);
                 editTextCode.setText("");
             }
+            if(distToRestaurant() >= distance_tolerance) {
+                Toast.makeText(getActivity(), "Please reach the restaurant to verify!", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(getActivity(), "You can verify now!", Toast.LENGTH_SHORT).show();
+            }
         }
 
     }
@@ -260,7 +260,6 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
                 for (int j = 0; j < guestIds.length(); j++) {
                     guestId.add(guestIds.getString(j));
                 }
-
 
                 eventsIdMap.put(eventIdString, verifyCode);
                 eventsIdList.add(i, eventIdString);
