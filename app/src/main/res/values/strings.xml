@@ -17,4 +17,21 @@
     <string name="begin_meetup_search">Find Meetup!</string>
     <string name="userIdNull">UserId: null</string>
     <string name="nameAnon">Name: Anon</string>
+    <string name="permission_request">Permission Request</string>
+    <string name="need_device_location_to_provide_required_services">Need device location to provide required services
+    </string>
+    <string name="snackbud_logo">snackbud logo</string>
+    <string name="grant_permission">GRANT PERMISSION</string>
+    <string name="verify_meetup_profile">Verify MeetUp</string>
+    <string name="enter_code">Enter</string>
+    <string name="eventid_verify_meetup">EventId:</string>
+    <string name="enter_code_text">Enter Code:</string>
+    <string name="exit_icon">exit icon</string>
+    <string name="logout">Logout</string>
+    <string name="about">About</string>
+    <string name="todo">TODO</string>
+    <string name="select_time">SELECT TIME</string>
+    <string name="choose_guest">Choose Guest:</string>
+    <string name="choose_restaurant">Choose Restaurant:</string>
+    <string name="select_date">SELECT DATE</string>
 </resources>
