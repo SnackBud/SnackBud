@@ -5,14 +5,17 @@
             <menu>
                 <item
                         android:id="@+id/nav_logout"
-                        android:title="Logout"
+                        android:title="@string/logout"
                         android:icon="@drawable/ic_logout"/>
-
-                <item
-                        android:id="@+id/nav_about_us"
-                        android:title="About"
-                        android:icon="@drawable/ic_about_us"/>
             </menu>
+    </item>
+    <item android:title="">
+        <menu>
+            <item
+                    android:id="@+id/nav_about_us"
+                    android:title="@string/about"
+                    android:icon="@drawable/ic_about_us"/>
+        </menu>
     </item>
     </group>
 </menu>

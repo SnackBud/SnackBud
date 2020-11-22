@@ -4,12 +4,14 @@
                                                    xmlns:tools="http://schemas.android.com/tools"
                                                    android:layout_width="match_parent"
                                                    android:layout_height="match_parent"
-                                                   tools:context=".HomeFragment">
+                                                   tools:context=".main.profile.HomeFragment">
 
     <LinearLayout android:layout_width="match_parent"
                   android:layout_height="0dp"
                   app:layout_constraintTop_toTopOf="parent"
-                  android:orientation="horizontal" android:id="@+id/linearLayout2">
+                  android:orientation="horizontal"
+                  android:id="@+id/linearLayout2"
+                  android:baselineAligned="false">
 
         <LinearLayout
                 android:layout_width="0dp"
@@ -17,7 +19,8 @@
                 android:layout_margin="0dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="vertical" tools:ignore="UseCompoundDrawables">
+                android:orientation="vertical"
+                tools:ignore="UseCompoundDrawables,UselessParent">
 
             <androidx.cardview.widget.CardView android:layout_width="match_parent"
                                                android:layout_marginTop="0dp"
@@ -38,7 +41,8 @@
                             tools:ignore="UnknownId"
                             app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toTopOf="@+id/person_name_google"/>
+                            app:layout_constraintBottom_toTopOf="@+id/person_name_google"
+                            android:contentDescription="@string/todo"/>
 
                 </androidx.cardview.widget.CardView>
 

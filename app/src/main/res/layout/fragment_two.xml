@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MeetingFragment">
+    tools:context=".main.meeting.MeetingFragment">
 
     <Button
         android:id="@+id/createmeeting"
@@ -44,17 +44,17 @@
         app:layout_constraintVertical_bias="0.612" />
 
     <EditText
-        android:id="@+id/in_date"
-        android:layout_width="127dp"
-        android:layout_height="44dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="256dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.2"
-        app:layout_constraintStart_toEndOf="@+id/btn_date"
-        app:layout_constraintTop_toTopOf="@+id/userSpinner" />
+            android:id="@+id/in_date"
+            android:layout_width="127dp"
+            android:layout_height="44dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="256dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.2"
+            app:layout_constraintStart_toEndOf="@+id/btn_date"
+            app:layout_constraintTop_toTopOf="@+id/userSpinner" android:autofillHints=""
+            android:inputType="" tools:ignore="LabelFor,TextFields"/>
 
     <Button
         android:id="@+id/btn_date"
@@ -62,26 +62,26 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/in_date"
         android:layout_marginStart="44dp"
-        android:layout_marginLeft="44dp"
         android:layout_toEndOf="@+id/in_date"
-        android:layout_toRightOf="@+id/in_date"
-        android:text="SELECT DATE"
+        android:text="@string/select_date"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/in_date" />
 
     <EditText
-        android:id="@+id/in_time"
-        android:layout_width="128dp"
-        android:layout_height="43dp"
-        android:layout_below="@+id/in_date"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        app:layout_constraintBottom_toTopOf="@+id/createmeeting"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.207"
-        app:layout_constraintStart_toEndOf="@+id/btn_time"
-        app:layout_constraintTop_toBottomOf="@+id/in_date"
-        app:layout_constraintVertical_bias="0.487" />
+            android:id="@+id/in_time"
+            android:layout_width="128dp"
+            android:layout_height="43dp"
+            android:layout_below="@+id/in_date"
+            android:layout_alignParentStart="true"
+            app:layout_constraintBottom_toTopOf="@+id/createmeeting"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.207"
+            app:layout_constraintStart_toEndOf="@+id/btn_time"
+            app:layout_constraintTop_toBottomOf="@+id/in_date"
+            app:layout_constraintVertical_bias="0.487"
+            android:autofillHints=""
+            android:inputType=""
+            tools:ignore="LabelFor"/>
 
     <Button
         android:id="@+id/btn_time"
@@ -89,10 +89,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/btn_date"
         android:layout_alignStart="@+id/btn_date"
-        android:layout_alignLeft="@+id/btn_date"
         android:layout_marginStart="44dp"
-        android:layout_marginLeft="44dp"
-        android:text="SELECT TIME"
+        android:text="@string/select_time"
         app:layout_constraintBottom_toTopOf="@+id/createmeeting"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_date"
@@ -103,8 +101,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="44dp"
-        android:layout_marginLeft="44dp"
-        android:text="Choose Guest:"
+        android:text="@string/choose_guest"
         app:layout_constraintBottom_toTopOf="@+id/userSpinner"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -115,8 +112,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="44dp"
-        android:layout_marginLeft="44dp"
-        android:text="Choose Restaurant:"
+        android:text="@string/choose_restaurant"
         app:layout_constraintBottom_toTopOf="@+id/restSpinner"
         app:layout_constraintStart_toStartOf="parent" />
 

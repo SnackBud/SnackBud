@@ -2,16 +2,15 @@
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".VerifyMeetup">
+        tools:context=".main.profile.verifymeetup.VerifyMeetup">
 
     <Button
             android:id="@+id/send_code"
             android:layout_width="208dp"
             android:layout_height="62dp"
-            android:text="Verify MeetUp"
+            android:text="@string/verify_meetup_profile"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="100dp"
             android:layout_alignParentEnd="true"
@@ -21,7 +20,7 @@
             android:id="@+id/enter_code"
             android:layout_width="100dp"
             android:layout_height="62dp"
-            android:text="Enter"
+            android:text="@string/enter_code"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="200dp"
             android:layout_alignParentEnd="true"
@@ -43,7 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
-            android:text="EventId:"
+            android:text="@string/eventid_verify_meetup"
             android:layout_marginTop="180dp"
             android:layout_alignParentTop="true"
             android:layout_marginEnd="300dp"
@@ -55,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
-            android:text="Enter Code:"
+            android:text="@string/enter_code_text"
             android:layout_marginTop="380dp"
             android:layout_alignParentTop="true"
             android:layout_marginEnd="270dp"
@@ -68,7 +67,9 @@
               android:layout_marginTop="400dp"
               android:layout_alignParentTop="true"
               android:layout_marginEnd="42dp"
-              android:layout_alignParentEnd="true" />
+              android:layout_alignParentEnd="true"
+              android:autofillHints=""
+              tools:ignore="LabelFor"/>
 
 
     <TextView android:layout_width="200dp"
@@ -89,6 +90,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="10dp"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp"
+            android:contentDescription="@string/exit_icon"/>
 
 </RelativeLayout>
