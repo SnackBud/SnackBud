@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const maxCode = 999;
+const maxCode = 899;
 const meetup = new mongoose.Schema({
   eventId: String,
   hostId: {
@@ -35,7 +35,7 @@ const meetup = new mongoose.Schema({
   },
   verifyCode: {
     type: String,
-    default: Math.floor(Math.random() * Math.floor(maxCode)),
+    default: Math.floor(Math.random() * maxCode + 100),
   },
 });
 

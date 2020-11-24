@@ -93,4 +93,18 @@
             android:layout_marginTop="10dp"
             android:contentDescription="@string/exit_icon"/>
 
+    <TextView
+        android:id="@+id/verifyStatus"
+        android:layout_width="381dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="88dp"
+        android:layout_marginEnd="15dp"
+        android:text="@string/verifyText"
+        android:textAlignment="center"
+        android:textStyle="bold" />
+
 </RelativeLayout>

@@ -50,7 +50,7 @@ router.get("/getAll", async (req, res) => {
 
 // posts a user json file to the database
 router.post("/", (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
 
   if (req.body.userId == null ||  
     req.body.deviceToken == null) {
@@ -64,6 +64,7 @@ router.post("/", (req, res) => {
     username: req.body.username,
     deviceToken: req.body.deviceToken,
   });
+
 
   User.updateOne({ userId: user.userId },
     { $set: { username: user.username, deviceToken: user.deviceToken, date: user.date } },
