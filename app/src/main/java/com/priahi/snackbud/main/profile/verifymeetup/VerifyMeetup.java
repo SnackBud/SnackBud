@@ -69,6 +69,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     private Button enterCodeButton;
     private EditText editTextCode;
     private TextView displayCode;
+    private TextView verifyStatus;
 
     private String eventVerifyCode;
     private String userInputCode;
@@ -126,6 +127,10 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
             }
         });
 
+        // verify status text
+        verifyStatus = view.findViewById(R.id.verifyStatus);
+        verifyStatus.setText(R.string.verifyText);
+
         // button to close the dialog
         ImageButton closeButton = view.findViewById(R.id.close_verify_meetup);
         closeButton.setOnClickListener(v -> dismiss());
@@ -162,7 +167,6 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         // A spinner for the events
         final Spinner eventDropdown = requireView().findViewById(R.id.eventSpinner);
         eventDropdown.setOnItemSelectedListener(this);
-
 
         // display verification code
         displayCode = view.findViewById(R.id.display_code);
@@ -334,10 +338,19 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     public void enableSubmitIfReady() {
         //TODO: pass the actual restaurant name here
         boolean isReady = (distToRestaurant() < distance_tolerance)
-                            && editTextCode.getText().toString().length() > 2
-                            && editTextCode.getText().toString().length() < 4;
+                && editTextCode.getText().toString().length() > 2
+                && editTextCode.getText().toString().length() < 4;
 
         enterCodeButton.setEnabled(isReady);
+
+        if (distToRestaurant() >= distance_tolerance) {
+            verifyStatus.setText(R.string.locationWarning);
+        } else if (editTextCode.getText().toString().length() != 3) {
+            verifyStatus.setText(R.string.verifyWarning);
+        } else {
+            verifyStatus.setText(R.string.enter);
+        }
+
     }
 
     private double distToRestaurant() {

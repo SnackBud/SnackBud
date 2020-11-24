@@ -1,4 +1,9 @@
 <resources>
+
+    <!--    backend url for both local backend and azure backend-->
+    <string name="backend_url">http://13.77.158.161:3000</string>
+    <!--    <string name="backend_url">http://192.168.1.66:3000</string>-->
+
     <string name="app_name">SnackBud</string>
     <string name="title_activity_maps">Map</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -35,7 +40,8 @@
     <string name="choose_restaurant">Choose Restaurant:</string>
     <string name="select_date">SELECT DATE</string>
 
-<!--    backend url for both local backend and azure backend-->
-    <string name="backend_url">http://13.77.158.161:3000</string>
-<!--    <string name="backend_url">http://192.168.1.66:3000</string>-->
+    <string name="verifyText">Please select an Event to verify</string>
+    <string name="locationWarning">Please get to the restaurant to verify!</string>
+    <string name="verifyWarning">Please enter a valid verify code (it must be 3 digits)</string>
+    <string name="enter">Press enter and then verify meetup to verify</string>
 </resources>
