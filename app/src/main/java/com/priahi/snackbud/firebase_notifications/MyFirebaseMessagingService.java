@@ -16,7 +16,6 @@ import com.priahi.snackbud.R;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static String TAG = "PushNotification";
-    public static String deviceToken;
 
     private static final String CHANNEL_ID = "xd";
     private static final int NOTIFICATION_ID = 826;
@@ -25,9 +24,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
         Log.d(TAG, "Refreshed token: " + token);
-
-        // update global token variable
-        MyFirebaseMessagingService.deviceToken=token;
     }
 
     @Override

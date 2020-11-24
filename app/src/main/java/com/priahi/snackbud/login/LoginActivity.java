@@ -131,7 +131,6 @@ public class LoginActivity extends AppCompatActivity {
 
                     // Get new FCM registration token
                     String token = task.getResult();
-
                     HashMap<String, String> params = new HashMap<>();
                     params.put("userId", userId);
                     params.put("username", username);
@@ -149,7 +148,7 @@ public class LoginActivity extends AppCompatActivity {
                             }, error -> VolleyLog.e("Error: ", error.getMessage()));
 
                     queue.add(request);
-
+                    Log.d(TAG, getString(R.string.backend_url) + "/user");
                     Log.d(TAG, "token: " + token);
                 });
 

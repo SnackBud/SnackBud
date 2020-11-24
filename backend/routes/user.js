@@ -50,23 +50,18 @@ router.get("/getAll", async (req, res) => {
 
 // posts a user json file to the database
 router.post("/", (req, res) => {
-  // console.log("/user POST request");
-  if (req.body.userId == null || 
-    req.body.username == null || 
-    req.body.deviceToken == null || 
-    req.body.date == null) {
+  if (req.body.userId == null ||  
+    req.body.deviceToken == null) {
       res.status(400).send("bad input")
       return
     }
+
 
   const user = new User({
     userId: req.body.userId,
     username: req.body.username,
     deviceToken: req.body.deviceToken,
-    date: req.body.date,
   });
-
-  // console.log(user);
 
   User.updateOne({ userId: user.userId },
     { $set: { username: user.username, deviceToken: user.deviceToken, date: user.date } },
