@@ -50,6 +50,8 @@ router.get("/getAll", async (req, res) => {
 
 // posts a user json file to the database
 router.post("/", (req, res) => {
+  console.log(req.body);
+
   if (req.body.userId == null ||  
     req.body.deviceToken == null) {
       res.status(400).send("bad input")
