@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.Editable;
@@ -40,6 +41,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.maps.model.LatLng;
 
 import com.priahi.snackbud.R;
+import com.priahi.snackbud.main.MainActivity;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,7 +62,7 @@ import java.util.Objects;
 
 //import MapsFragment;
 
-public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSelectedListener {
+public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSelectedListener, LocationListener {
 
     private static final String TAG = "VerifyMeetup";
 //    private static final String url = "http://13.77.158.161:3000";
@@ -70,6 +73,8 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     private EditText editTextCode;
     private TextView displayCode;
     private TextView verifyStatus;
+
+    private Location currentLocation;
 
     private String eventVerifyCode;
     private String userInputCode;
@@ -114,6 +119,9 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // update current location
+        getLocation();
 
         // button to POST the verification code onto the server
         sendCodeButton = view.findViewById(R.id.send_code);
@@ -337,15 +345,15 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
     public void enableSubmitIfReady() {
         //TODO: pass the actual restaurant name here
-        boolean isReady = (distToRestaurant() < distance_tolerance)
-                && editTextCode.getText().toString().length() > 2
+        boolean inRange = (distToRestaurant() < distance_tolerance);
+        boolean validCode = editTextCode.getText().toString().length() > 2
                 && editTextCode.getText().toString().length() < 4;
 
-        enterCodeButton.setEnabled(isReady);
+        enterCodeButton.setEnabled(inRange && validCode);
 
-        if (distToRestaurant() >= distance_tolerance) {
+        if (!inRange) {
             verifyStatus.setText(R.string.locationWarning);
-        } else if (editTextCode.getText().toString().length() != 3) {
+        } else if (!validCode) {
             verifyStatus.setText(R.string.verifyWarning);
         } else {
             verifyStatus.setText(R.string.enter);
@@ -354,9 +362,10 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     }
 
     private double distToRestaurant() {
-        Location location = getLocation();
+        getLocation();
 
-        Criteria criteria = new Criteria();
+        Location location = currentLocation;
+
         try {
             LatLng rest_loc = null;
             JSONObject obj = new JSONObject(loadJSONFromAsset());
@@ -392,11 +401,15 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
     }
 
-    private Location getLocation() {
+    private void getLocation() {
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
 
-        return locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
+        currentLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+
+
+//        return locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
     }
 
     public String loadJSONFromAsset() {
@@ -415,7 +428,25 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         return json;
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        currentLocation = location;
+    }
 
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
+    }
 }
 
 
