@@ -81,6 +81,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private long minMin;
     private RequestQueue queue;
     private Integer pos = 0;
+    private int dayOfMonth;
 
     public MeetingFragment() {
 
@@ -309,6 +310,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                         String date = String.format("%d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
                         txtDate.setText(date);
 
+                        this.dayOfMonth = dayOfMonth;
+
                         // set calendar
                         timeOfMeet.set(year, monthOfYear, dayOfMonth);
 //                            timeOfMeet.set(Calendar.MONTH, monthOfYear);
@@ -340,13 +343,14 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
             // bug fixed for m10
             if(mHour == 23) mDay += 1;
 
-            if(mHour == 23) {
+            if(mHour == 23
+                    || mHour < 7
+                    || mDay != dayOfMonth) {
                 mHour = 8;
                 mMinute = 0;
             }
             else {
-                mHour = Math.max(mHour + 1, 8);
-                if(mHour == 8) mMinute = 0;
+                mHour = mHour + 1;
             }
 
             // Launch Time Picker Dialog
@@ -365,8 +369,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                     }, mHour, mMinute, false);
 
             if(Calendar.getInstance().get(Calendar.DAY_OF_YEAR) >= timeOfMeet.get(Calendar.DAY_OF_YEAR)) {
-                minHour = Math.max(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1, 8);
-                minMin = Math.max(Calendar.getInstance().get(Calendar.MINUTE), 0);
+                minHour = mHour; //Math.max(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1, 8);
+                minMin = mMinute; //Math.max(Calendar.getInstance().get(Calendar.MINUTE), 0);
             }
             Log.d("hour", String.valueOf(minHour));
             timePickerDialog.setMin((int) minHour, (int) minMin);
