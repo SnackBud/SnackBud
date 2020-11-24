@@ -46,7 +46,7 @@ public class HomeFragment extends Fragment {
 //    private static final String ARG_PARAM1 = "param1";
 //    private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "HomeFragment";
-    private static final String url = "http://13.77.158.161:3000";
+//    private static final String url = "http://13.77.158.161:3000";
 //    private static final String url = "http://192.168.1.66:3000";
 
     private GoogleSignInAccount acct;
@@ -206,7 +206,7 @@ public class HomeFragment extends Fragment {
         Log.w(TAG, String.valueOf(twoWeeksAgo));
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
-                url + "/event/contactTrace",
+                getString(R.string.backend_url) + "/event/contactTrace",
                 covidRequest,
                 response -> {
                     try {

@@ -60,7 +60,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private String restId;
     private String restName;
     private Calendar timeOfMeet;
-    private static final String url = "http://13.77.158.161:3000";
+//    private static final String url = "http://13.77.158.161:3000";
     //        private static final String url = "http://192.168.1.66:3000";
     private Map<String, String> users = new HashMap<>();
     private ArrayList<String> userNames = new ArrayList<>();
@@ -217,7 +217,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         queue = Volley.newRequestQueue(requireContext());
         // Get all users
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
-                url + "/user/getAll",
+                getString(R.string.backend_url) + "/user/getAll",
                 js,
                 response -> {
                     Log.w(TAG, "/user/getAll request successful");
@@ -406,7 +406,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         eventRequest.put("timeOfMeet", timeOfMeet.getTimeInMillis());
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
-                url + "/event",
+                getString(R.string.backend_url) + "/event",
                 eventRequest,
                 response -> {
                     try {
