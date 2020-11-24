@@ -5,7 +5,7 @@
   "main": "start.js",
   "scripts": {
     "start": "nodemon start.js",
-    "test": "jest --forceExit",
+    "test": "jest --coverage --forceExit",
     "test:test": "jest -t /user/getAll - success",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",

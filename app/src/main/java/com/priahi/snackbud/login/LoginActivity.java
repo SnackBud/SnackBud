@@ -34,13 +34,12 @@ public class LoginActivity extends AppCompatActivity {
     private RequestQueue queue;
     private String userId;
     private String username;
-    private static final String url = "http://13.77.158.161:3000";
+//    private static final String url = "http://13.77.158.161:3000";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.google_login);
-
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -139,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
                     params.put("deviceToken", token);
 
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
-                            url + "/user",
+                            getString(R.string.backend_url) + "/user",
                             new JSONObject(params),
                             response -> {
                                 try {

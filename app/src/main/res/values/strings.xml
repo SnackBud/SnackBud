@@ -34,4 +34,8 @@
     <string name="choose_guest">Choose Guest:</string>
     <string name="choose_restaurant">Choose Restaurant:</string>
     <string name="select_date">SELECT DATE</string>
+
+<!--    backend url for both local backend and azure backend-->
+    <string name="backend_url">http://13.77.158.161:3000</string>
+<!--    <string name="backend_url">http://192.168.1.66:3000</string>-->
 </resources>

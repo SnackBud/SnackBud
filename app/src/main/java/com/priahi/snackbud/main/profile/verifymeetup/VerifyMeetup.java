@@ -62,7 +62,7 @@ import java.util.Objects;
 public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "VerifyMeetup";
-    private static final String url = "http://13.77.158.161:3000";
+//    private static final String url = "http://13.77.158.161:3000";
 //    private static final String url = "http://192.168.1.66:3000";
 
     private Button sendCodeButton;
@@ -188,7 +188,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
         // request all events on App
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.POST,
-                url + "/event/getUser",
+                getString(R.string.backend_url) + "/event/getUser",
                 array,
                 response -> {
                     Log.w(TAG, "request successful");
@@ -307,7 +307,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         eventRequest.put("verifyCode", userInputCode);
         Log.e(TAG, eventRequest.toString());
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT,
-                url + "/event",
+                getString(R.string.backend_url) + "/event",
                 eventRequest,
                 response -> {
                     try {
