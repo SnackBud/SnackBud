@@ -13,7 +13,7 @@ class helpers {
 //   }
 
   notifyHelper(elem, title, body) {
-    // try {
+    // console.log("notifyHelper called");
 
     // check for bad calls
     if (elem == null) {
@@ -28,6 +28,7 @@ class helpers {
       },
       token: elem.deviceToken,
     };
+    // console.log(message);
 
     // registration token.
     admin.messaging().send(message)
@@ -53,7 +54,7 @@ class helpers {
 
     // get host name
     User.findOne({ userId: event.hostId }, {}, (err, host) => {
-      if (err) {
+      if (err || host == null) {
         res.send(err);
         return;
       }
