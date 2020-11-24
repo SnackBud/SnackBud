@@ -37,14 +37,13 @@ router.post("/getUser", (req, res) => {
 
   Event.find(
     {
-      $and: [
+      isVerified: false,
+      $or: [
+        { hostId: req.body[0].userId },
         {
-          $or: [
-            { hostId: req.body[0].userId },
-            { guestIds: { $elemMatch: { guestId: req.body[0].userId } } }
-          ]
-        },
-        { isVerified: false }
+          guestIds: { $elemMatch: { guestId: req.body[0].userId } } ,
+          notVerified: { $elemMatch: { guestId: req.body[0].userId } } 
+        }
       ]
     },
 
@@ -95,7 +94,7 @@ router.post("/", (req, res) => {
   const _ = req.body;
 
   if (req.body == null || _.hostId == null ||
-    _.guestIds == null ||
+    _.guestIds == null || 
     _.restId == null ||
     _.restName == null ||
     _.timeOfMeet == null) {
@@ -113,7 +112,7 @@ router.post("/", (req, res) => {
     timeOfMeet: _.timeOfMeet,
     // optional params which are set automatically
     timeOfCreation: _.timeOfCreation,
-    isVerified: _.isVerified,
+    notVerified: _.guestIds,
     verifyCode: _.verifyCode,
   });
 
@@ -150,7 +149,7 @@ router.delete("/", (req, res) => {
     return;
   }
 
-  Event.deleteOne({ eventId: req.body.eventId, isVerified: false },
+  Event.deleteOne({ eventId: req.body.eventId },
     (err, d) => {
       if (err, d) {
         res.status(404).send(err);
@@ -195,12 +194,13 @@ router.put("/", (req, res) => {
   // update the meetup to show verified if the codes match, else fail
   Event.findOneAndUpdate(
     {
+      isVerified: false,
       eventId: req.body.eventId,
       guestIds: { $elemMatch: { guestId: req.body.guestId } },
       verifyCode: req.body.verifyCode,
-      isVerified: false
+      notVerified: { $elemMatch: { guestId: req.body.guestId } }
     },
-    { isVerified: true },
+    { notVerified: { $pull: { guestId: req.body.guestId } } },
     (err, event) => {
       if (err) {
         res.status(404).send(err);
@@ -228,6 +228,17 @@ router.put("/", (req, res) => {
         );
 
       } else {
+
+        // if everyone have verified, then change the isVerified status
+        if (event.notVerified.length == 0) {
+
+          event.isVerified = true;
+          event.save(function (err) {
+            if (err) return;
+            // saved!
+          });
+        }
+
         User.findOne(
           { userId: event.guestIds[0].guestId },
           (err, guest) => {
@@ -314,7 +325,7 @@ router.post("/contactTrace", (req, res) => {
   Event.find({
     $or: [{ hostId: req.body.userId }, { guestIds: { $elemMatch: { guestId: req.body.userId } } }],
     timeOfMeet: { $gte: req.body.twoWeeksAgo, $lte: req.body.currentDate },
-    isVerified: true,
+    notVerified: { },
   },
     (err, pastEvents) => {
       if (err) {

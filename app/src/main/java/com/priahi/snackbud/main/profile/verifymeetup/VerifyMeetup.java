@@ -344,7 +344,6 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
     }
 
     public void enableSubmitIfReady() {
-        //TODO: pass the actual restaurant name here
         boolean inRange = (distToRestaurant() < distance_tolerance);
         boolean validCode = editTextCode.getText().toString().length() > 2
                 && editTextCode.getText().toString().length() < 4;

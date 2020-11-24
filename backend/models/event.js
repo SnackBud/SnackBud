@@ -29,7 +29,13 @@ const meetup = new mongoose.Schema({
     type: Number,
     default: new Date().getTime(),
   },
-  isVerified: {
+  notVerified: [{
+    guestId: {
+      type: String,
+      required: true,
+    },
+  }],
+  isVerified:{
     type: Boolean,
     default: false,
   },
