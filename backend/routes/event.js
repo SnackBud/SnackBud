@@ -230,8 +230,15 @@ router.put("/", (req, res) => {
       } else {
 
         // if everyone have verified, then change the isVerified status
-        if (event.notVerified.length == 0) {
+        var count = 0;
 
+        for (var i = 0; i < event.notVerified.length; i++) {
+          if (event.notVerified[i].guestId != null) {
+            count++;
+          }
+        }
+
+        if (count == 0) {
           event.isVerified = true;
           event.save(function (err) {
             if (err) return;
