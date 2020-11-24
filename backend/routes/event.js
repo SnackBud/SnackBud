@@ -166,20 +166,20 @@ router.delete("/", (req, res) => {
 });
 
 // // delete a specific event in our db
-// router.delete("/deleteAll", (req, res) => {
-//   // console.log("/event DELETE request");
+router.delete("/deleteAll", (req, res) => {
+  // console.log("/event DELETE request");
 
-//   Event.deleteMany({},
-//     (err, d) => {
-//       if (err) {
-//         res.status(404).send(err);
-//         // console.log(err);
-//       } else if (d.acknowledged && d.deletedCount == 1)
-//         res.status(200).send("delete all successful");
-//       else
-//         res.status(410).send("already deleted all");
-//     });
-// });
+  Event.deleteMany({},
+    (err, d) => {
+      if (err) {
+        res.status(404).send(err);
+        // console.log(err);
+      } else if (d.acknowledged && d.deletedCount == 1)
+        res.status(200).send("delete all successful");
+      else
+        res.status(410).send("already deleted all");
+    });
+});
 
 // verify meetup, with error case
 router.put("/", (req, res) => {
@@ -200,7 +200,9 @@ router.put("/", (req, res) => {
       verifyCode: req.body.verifyCode,
       notVerified: { $elemMatch: { guestId: req.body.guestId } }
     },
-    { notVerified: { $pull: { guestId: req.body.guestId } } },
+    { notVerified: { $pullAll: { guestId: req.body.guestId } } }, 
+    // returns the updated document
+    {new: true}, 
     (err, event) => {
       if (err) {
         res.status(404).send(err);
@@ -231,17 +233,24 @@ router.put("/", (req, res) => {
 
         // if everyone have verified, then change the isVerified status
         var count = 0;
+        console.log(event.notVerified);
 
         for (var i = 0; i < event.notVerified.length; i++) {
+          console.log(event.notVerified[i]);
           if (event.notVerified[i].guestId != null) {
+            console.log(count);
             count++;
           }
         }
 
         if (count == 0) {
+          console.log("check")
           event.isVerified = true;
           event.save(function (err) {
-            if (err) return;
+            if (err) {
+              console.log(err);
+              return;
+            }
             // saved!
           });
         }

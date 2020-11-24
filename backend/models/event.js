@@ -32,7 +32,6 @@ const meetup = new mongoose.Schema({
   notVerified: [{
     guestId: {
       type: String,
-      required: true,
     },
   }],
   isVerified:{
