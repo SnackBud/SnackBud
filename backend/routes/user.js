@@ -55,7 +55,7 @@ router.post("/", (req, res) => {
   if (req.body.userId == null ||  
     req.body.deviceToken == null) {
       res.status(400).send("bad input")
-      return
+      return;
     }
 
 

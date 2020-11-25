@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
+const mongoose = require("mongoose");
+const { MongoMemoryServer } = require("mongodb-memory-server");
 
 const mongod = new MongoMemoryServer();
 
@@ -34,7 +34,7 @@ module.exports.clearDatabase = async () => {
     const collections = mongoose.connection.collections;
 
     for (const key in collections) {
-        const collection = collections[key];
+        const collection = collections[parseInt(key)];
         await collection.deleteMany();
     }
 }

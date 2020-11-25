@@ -2,24 +2,24 @@ const Event = require("../../models/event");
 const User = require("../../models/user");
 const Helpers = require("../../helper");
 const admin = require("firebase-admin");
-const mockingoose = require('mockingoose').default;
+const mockingoose = require("mockingoose").default;
 
 
 describe("notifyHelper tests", () => {
   let helper = new Helpers();
-  let send_stub, message_stub;
+  let sendStub, messageStub;
 
   beforeEach(() => {
     // mock the firebase admin class called by the helper
-    send_stub = jest.spyOn(admin.messaging(), "send");
-    message_stub = jest.spyOn(admin, "messaging");
+    sendStub = jest.spyOn(admin.messaging(), "send");
+    messageStub = jest.spyOn(admin, "messaging");
   });
 
   // make sure the call count is cleared after each test
   afterEach(() => {
     jest.clearAllMocks();
-    send_stub.mockRestore();
-    message_stub.mockRestore();
+    sendStub.mockRestore();
+    messageStub.mockRestore();
   });
 
   it("notifyHelper simple call", () => {
@@ -45,14 +45,14 @@ describe("notifyHelper tests", () => {
     helper.notifyHelper(guest, title, body);
 
     // admin.messaging().send() checks
-    expect(message_stub).toHaveBeenCalledTimes(1); 
-    expect(send_stub).toHaveBeenCalledTimes(1); 
-    expect(send_stub).toHaveBeenCalledWith(message);
+    expect(messageStub).toHaveBeenCalledTimes(1); 
+    expect(sendStub).toHaveBeenCalledTimes(1); 
+    expect(sendStub).toHaveBeenCalledWith(message);
   });
   
   it("notifyHelper bad call", () => {
     // input
-    const guest = null
+    const guest = null;
     const title = "this is the title";
     const body = "this is the body";
 
@@ -60,8 +60,8 @@ describe("notifyHelper tests", () => {
     helper.notifyHelper(guest, title, body);
 
     // admin.messaging().send() should not be called
-    expect(message_stub).toHaveBeenCalledTimes(0); 
-    expect(send_stub).toHaveBeenCalledTimes(0); 
+    expect(messageStub).toHaveBeenCalledTimes(0); 
+    expect(sendStub).toHaveBeenCalledTimes(0); 
   });
 });
 
@@ -77,12 +77,12 @@ describe("notifyNewMeetup tests", () => {
       username: "Arnold",
       deviceToken: "x",
     });
-    mockingoose(User).toReturn(guest, 'findOne');
+    mockingoose(User).toReturn(guest, "findOne");
   });
 
   afterAll(() => {  
     mockingoose.resetAll();
-  })
+  });
 
   // make sure the call count is cleared after each test
   afterEach(() => {
@@ -150,7 +150,7 @@ describe("notifyVerifyMeetup tests", () => {
       username: "Arnold",
       deviceToken: "x",
     });
-    mockingoose(User).toReturn(guest, 'findOne');
+    mockingoose(User).toReturn(guest, "findOne");
   });
 
   afterAll(() => {  
@@ -238,7 +238,7 @@ describe("notifyVerifyMeetup tests", () => {
     expect(helper.notifyHelper).toHaveBeenCalledTimes(0); 
     
     
-    mockingoose(User).toReturn(new Error('error'), 'findOne');
+    mockingoose(User).toReturn(new Error("error"), "findOne");
     
     helper.notifyVerifyMeetup(event, guest);
   });
@@ -299,7 +299,7 @@ describe("notifyEnterCode tests", () => {
       username: "Arnold",
       deviceToken: "x",
     });
-    mockingoose(User).toReturn(guest, 'findOne');
+    mockingoose(User).toReturn(guest, "findOne");
   });
 
   afterAll(() => {  
@@ -329,7 +329,7 @@ describe("notifyEnterCode tests", () => {
   });
 
   it("notifyEnterCode bad call", () => {
-    const null_event = null
+    const null_event = null;
     // call notifyNewMeetup
     helper.notifyEnterCode(null_event);
 
@@ -338,7 +338,7 @@ describe("notifyEnterCode tests", () => {
 
     
     // error return from User.findone
-    mockingoose(User).toReturn(new Error('error'), 'findOne');
+    mockingoose(User).toReturn(new Error("error"), "findOne");
     const event = new Event({
       hostId: "1",
       guestIds: [

@@ -3,7 +3,7 @@ const request = require("supertest"); // supertest is a framework that allows to
 
 const eventRoute = require("../../routes/event.js");
 
-const app = express(); //an instance of an express app, a 'fake' express app
+const app = express(); //an instance of an express app, a ""fake" express app
 app.use("/event", eventRoute);
 const Event = require("../../models/event");
 
@@ -188,9 +188,13 @@ describe("testing-event-routes", () => {
             hostId: "1",
             guestIds: [
                 {
-                    guestId: "2",
-                    guestId: "1",
-                    guestId: "3",
+                    guestId: "2"
+                },
+                {
+                    guestId: "1"
+                },
+                {
+                    guestId: "3"
                 }
             ],
             restId: "3",
@@ -207,13 +211,25 @@ describe("testing-event-routes", () => {
             hostId: "1",
             guestIds: [
                 {
-                    guestId: "2",
-                    guestId: "1",
-                    guestId: "3",
-                    guestId: "4",
-                    guestId: "5",
-                    guestId: "6",
-                    guestId: "7",
+                    guestId: "2"
+                },
+                {
+                    guestId: "1"
+                },
+                {
+                    guestId: "3"
+                },
+                {
+                    guestId: "4"
+                },
+                {
+                    guestId: "5"
+                },
+                {
+                    guestId: "6"
+                },
+                {
+                    guestId: "7"
                 }
             ],
             restId: "3",
@@ -369,7 +385,7 @@ describe("testing-event-routes", () => {
             twoWeeksAgo: 1605009501688,
             timeOfMeet: 1605787406390,
             hostId: "105664700188784427014",
-        }]
+        }];
         const events = [{
             timeOfCreation: 1605009601688,
             isVerified: false,

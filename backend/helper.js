@@ -9,8 +9,8 @@ admin.initializeApp({
 });
 
 class helpers {
-//   constructor() {
-//   }
+  //   constructor() {
+  //   }
 
   notifyHelper(elem, title, body) {
     // console.log("notifyHelper called");
@@ -42,11 +42,11 @@ class helpers {
 
   // tell the guests about the meetup creation
   notifyNewMeetup(event, helper = this) {
-    
+
     // check for bad calls
-    if (typeof event === 'undefined' || event == null) {
+    if (typeof event === "undefined" || event == null) {
       return;
-    } else if (typeof event.hostId === 'undefined') {
+    } else if (typeof event.hostId === "undefined") {
       return;
     } else if (event.guestIds.length == 0) {
       return;
@@ -82,21 +82,21 @@ class helpers {
   notifyNoVerifyMeetup(guest, helper = this) {
     // console.log("No Verify meet for: " + guest.userId);
     // send messages to guest
-    if (typeof guest === 'undefined' || guest == null) {
+    if (typeof guest === "undefined" || guest == null) {
       return;
     }
 
-    helper.notifyHelper(guest, "You have failed to verify this meetup!", 
-    "Either your verify code is wrong or you are the host! Please try again");
+    helper.notifyHelper(guest, "You have failed to verify this meetup!",
+      "Either your verify code is wrong or you are the host! Please try again");
   }
 
   // listener helper for the host to see if the meetup has been verified
   notifyVerifyMeetup(event, guest, helper = this) {
 
     // check for bad calls
-    if (typeof event === 'undefined' || event == null) {
+    if (typeof event === "undefined" || event == null) {
       return;
-    } else if (typeof guest === 'undefined' || guest == null) {
+    } else if (typeof guest === "undefined" || guest == null) {
       return;
     }
 
@@ -107,8 +107,8 @@ class helpers {
           return;
         }
         // send messages to host
-        helper.notifyHelper(host, `${host.username} you cannot verify your own event!`, 
-        "Please send the verification code to your friends so they can verify!");
+        helper.notifyHelper(host, `${host.username} you cannot verify your own event!`,
+          "Please send the verification code to your friends so they can verify!");
       });
       return;
     }
@@ -132,7 +132,7 @@ class helpers {
 
   notifyEnterCode(event, helper = this) {
 
-    if (typeof event === 'undefined' || event == null) {
+    if (typeof event === "undefined" || event == null) {
       return;
     }
 
