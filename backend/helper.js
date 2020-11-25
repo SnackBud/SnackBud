@@ -40,13 +40,20 @@ class helpers {
       });
   }
 
+  checkParamNewMeet(event) {
+    if (typeof event === "undefined" || event == null
+      || typeof event.hostId === "undefined"
+      || event.guestIds.length === 0) {
+      return true;
+    }
+    return false;
+  }
+
   // tell the guests about the meetup creation
   notifyNewMeetup(event, helper = this) {
 
     // check for bad calls
-    if (typeof event === "undefined" || event == null 
-    || typeof event.hostId === "undefined" 
-    || event.guestIds.length === 0) {
+    if (this.checkParamNewMeet(event)) {
       return;
     }
 
@@ -57,8 +64,7 @@ class helpers {
         return;
       }
       // get the deviceToken of the guests
-      let i;
-      for (i = 0; i < event.guestIds.length; i++) {
+      for (let i = 0; i < event.guestIds.length; i++) {
         const user = event.guestIds[parseInt(i, 10)];
         User.findOne({ userId: user.guestId }, {}, (err, guest) => {
           if (err) {
@@ -88,12 +94,21 @@ class helpers {
       "Either your verify code is wrong or you are the host! Please try again");
   }
 
+
+  checkParamVerifyMeet(event, guest) {
+    // check for bad calls
+    if (typeof event === "undefined" || event == null
+      || typeof guest === "undefined" || guest == null) {
+      return true;
+    }
+    return false;
+  }
+
   // listener helper for the host to see if the meetup has been verified
   notifyVerifyMeetup(event, guest, helper = this) {
 
     // check for bad calls
-    if (typeof event === "undefined" || event == null 
-    || typeof guest === "undefined" || guest == null) {
+    if (this.checkParamVerifyMeet(event, guest)) {
       return;
     }
 

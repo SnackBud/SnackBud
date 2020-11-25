@@ -88,30 +88,21 @@ router.get("/", (req, res) => {
     });
 });
 
-function checkParam(val) {
-  if (val == null) {
-    return true;
-  }
-  return false;
-}
-
 function checkParams(req, res) {
   const _ = req.body;
-  if (checkParam(_)) {
+  if (_ == null) {
     res.status(400).send("bad input");
   }
-  var nullExists = checkParam(_.hostId)
-    || checkParam(_.hostId)
-    || checkParam(_.guestIds)
-    || checkParam(_.restId)
-    || checkParam(_.restName)
-    || checkParam(_.timeOfMeet);
+  var nullExists = (_.hostId == null ||
+    _.guestIds == null ||
+    _.restId == null ||
+    _.restName == null ||
+    _.timeOfMeet == null);
   if (nullExists) {
     res.status(400).send("bad input");
   }
+
 }
-
-
 
 // post an event in our db
 router.post("/", (req, res) => {

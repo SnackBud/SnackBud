@@ -54,7 +54,7 @@ router.post("/", (req, res) => {
 
   if (req.body.userId == null ||  
     req.body.deviceToken == null) {
-      res.status(400).send("bad input")
+      res.status(400).send("bad input");
       return;
     }
 
@@ -77,7 +77,7 @@ router.post("/", (req, res) => {
         // console.log(doc);
       }
       res.status(200).json(user);
-      return
+      return;
     });
 });
 

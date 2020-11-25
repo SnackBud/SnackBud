@@ -227,4 +227,4 @@ describe("User Model Test bad calls", () => {
         expect(res.body).toBeTruthy();
         expect(res.status).toBe(404);
     });
-})
+});

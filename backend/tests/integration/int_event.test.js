@@ -77,7 +77,7 @@ describe("testing-event-routes", () => {
             ],
             restId: "3",
             restName: "Loafe Cafe",
-            timeOfMeet: 1605787405385
+            timeOfMeet: 1605787405385n
         }]);
         // expect(body.statusCode).toEqual(200);
     });
@@ -111,7 +111,7 @@ describe("testing-event-routes", () => {
             timeOfMeet: 1605787405385n
         },
         {
-            timeOfCreation: 1605009601689,
+            timeOfCreation: 1605009601689n,
             isVerified: false,
             verifyCode: "124",
             eventId: "r4h2t1605787405386",
@@ -123,7 +123,7 @@ describe("testing-event-routes", () => {
             ],
             restId: "4",
             restName: "Tim Hortons",
-            timeOfMeet: 1605787405386
+            timeOfMeet: 1605787405386n
         }
         ];
         Event.find = jest.fn().mockResolvedValue(events);
@@ -134,7 +134,7 @@ describe("testing-event-routes", () => {
 
     it("POST /event/getUser - success", async () => {
         const events = [{
-            timeOfCreation: 1605009601688,
+            timeOfCreation: 1605009601688n,
             isVerified: false,
             verifyCode: "123",
             eventId: "r3h1t1605787405385",
@@ -146,10 +146,10 @@ describe("testing-event-routes", () => {
             ],
             restId: "3",
             restName: "Loafe Cafe",
-            timeOfMeet: 1605787405385
+            timeOfMeet: 1605787405385n
         },
         {
-            timeOfCreation: 1605009601689,
+            timeOfCreation: 1605009601689n,
             isVerified: false,
             verifyCode: "124",
             eventId: "r4h2t1605787405386",
@@ -161,7 +161,7 @@ describe("testing-event-routes", () => {
             ],
             restId: "4",
             restName: "Tim Hortons",
-            timeOfMeet: 1605787405386
+            timeOfMeet: 1605787405386n
         }
         ];
 
@@ -199,7 +199,7 @@ describe("testing-event-routes", () => {
             ],
             restId: "3",
             restName: "Loafe Cafe",
-            timeOfMeet: 1605787405385
+            timeOfMeet: 1605787405385n
         }];
         const { body } = await request(app).post("/event", event);
         expect(body).toEqual({ message: "host cannot create meetup with themselves" });
@@ -234,7 +234,7 @@ describe("testing-event-routes", () => {
             ],
             restId: "3",
             restName: "Loafe Cafe",
-            timeOfMeet: 1605787405385
+            timeOfMeet: 1605787405385n
         }];
         const { body } = await request(app).post("/event", event);
         expect(body).toEqual("Request header field too large");
@@ -255,7 +255,7 @@ describe("testing-event-routes", () => {
             ],
             restId: "3",
             restName: "Loafe Cafe",
-            timeOfMeet: 1605787405385
+            timeOfMeet: 1605787405385n
         }];
         let { body1 } = await request(app).post("/event", event);
         expect(body1).toEqual(event);
@@ -284,7 +284,7 @@ describe("testing-event-routes", () => {
 
     it("PUT /event - fail, already verified meetup", async () => {
         const event = [{
-            timeOfCreation: 1605009601688,
+            timeOfCreation: 1605009601688n,
             isVerified: true,
             verifyCode: "436",
             eventId: "r1000h105664700188784427014t1605787405385",
@@ -296,7 +296,7 @@ describe("testing-event-routes", () => {
             ],
             restId: "1000",
             restName: "Loafe Cafe",
-            timeOfMeet: 1605787405385,
+            timeOfMeet: 1605787405385n,
             guestId: "109786710572605387609"
         },
         ];
@@ -311,13 +311,15 @@ describe("testing-event-routes", () => {
             hostId: "1",
             guestIds: [
                 {
-                    guestId: "2",
-                    guestId: "3",
-                }
+                    guestId: "2"
+                },
+                {
+                    guestId: "3"
+                },
             ],
             restId: "3",
             restName: "Loafe Cafe",
-            timeOfMeet: 1605787405385,
+            timeOfMeet: 1605787405385n,
             verifyCode: "111",
             isVerified: false,
             guestId: "3",
@@ -344,7 +346,7 @@ describe("testing-event-routes", () => {
 
     it("POST & PUT & DELETE /event - success", async () => {
         const event = [{
-            timeOfCreation: 1605009601688,
+            timeOfCreation: 1605009601688n,
             isVerified: false,
             verifyCode: "436",
             eventId: "r1000h105664700188784427014t1605787405390",
@@ -356,7 +358,7 @@ describe("testing-event-routes", () => {
             ],
             restId: "1000",
             restName: "Loafe Cafe",
-            timeOfMeet: 1605787405390,
+            timeOfMeet: 1605787405390n,
             guestId: "109786710572605387609"
         },
         ];
@@ -384,12 +386,12 @@ describe("testing-event-routes", () => {
 
     it("POST /event/contactTrace - success with no meetups", async () => {
         const info = [{
-            twoWeeksAgo: 1605009501688,
-            timeOfMeet: 1605787406390,
+            twoWeeksAgo: 1605009501688n,
+            timeOfMeet: 1605787406390n,
             hostId: "105664700188784427014",
         }];
         const events = [{
-            timeOfCreation: 1605009601688,
+            timeOfCreation: 1605009601688n,
             isVerified: false,
             verifyCode: "436",
             eventId: "r1000h105664700188784427014t1605787405390",
@@ -401,7 +403,7 @@ describe("testing-event-routes", () => {
             ],
             restId: "1000",
             restName: "Loafe Cafe",
-            timeOfMeet: 1605787405390,
+            timeOfMeet: 1605787405390n,
         }];
         Event.find = jest.fn().mockResolvedValue(events);
         const { body } = await request(app).post("/event/contactTrace", info);
@@ -411,12 +413,12 @@ describe("testing-event-routes", () => {
 
     it("POST /event/contactTrace - success with reports", async () => {
         const info = [{
-            twoWeeksAgo: 1605009501688,
-            timeOfMeet: 1605787406390,
+            twoWeeksAgo: 1605009501688n,
+            timeOfMeet: 1605787406390n,
             hostId: "105664700188784427014",
         }];
         const events = [{
-            timeOfCreation: 1605009601688,
+            timeOfCreation: 1605009601688n,
             isVerified: true,
             verifyCode: "436",
             eventId: "r1000h105664700188784427014t1605787405390",
@@ -428,10 +430,10 @@ describe("testing-event-routes", () => {
             ],
             restId: "1000",
             restName: "Loafe Cafe",
-            timeOfMeet: 1605787405390,
+            timeOfMeet: 1605787405390n,
         },
         {
-            timeOfCreation: 1605009601683,
+            timeOfCreation: 1605009601683n,
             isVerified: true,
             verifyCode: "436",
             eventId: "r1000h109786710572605387609t1605787405390",
@@ -443,7 +445,7 @@ describe("testing-event-routes", () => {
             ],
             restId: "1000",
             restName: "Loafe Cafe",
-            timeOfMeet: 1605787405290,
+            timeOfMeet: 1605787405290n,
         },
         ];
         Event.find = jest.fn().mockResolvedValue(events);
@@ -454,12 +456,12 @@ describe("testing-event-routes", () => {
 
     it("POST /event/contactTrace - fail not real user", async () => {
         const info = [{
-            twoWeeksAgo: 1605009501688,
-            timeOfMeet: 1605787406390,
+            twoWeeksAgo: 1605009501688n,
+            timeOfMeet: 1605787406390n,
             hostId: "1",
-        }]
+        }];
         const events = [{
-            timeOfCreation: 1605009601688,
+            timeOfCreation: 1605009601688n,
             isVerified: true,
             verifyCode: "436",
             eventId: "r1000h105664700188784427014t1605787405390",
@@ -471,7 +473,7 @@ describe("testing-event-routes", () => {
             ],
             restId: "1000",
             restName: "Loafe Cafe",
-            timeOfMeet: 1605787405390,
+            timeOfMeet: 1605787405390n,
         }];
         Event.find = jest.fn().mockResolvedValue(events);
         const { body } = await request(app).post("/event/contactTrace", info);
