@@ -155,7 +155,7 @@ router.delete("/", (req, res) => {
         res.status(404).send(err);
         return;
         // console.log(err);
-      } else if (d.acknowledged && d.deletedCount == 1) {
+      } else if (d.acknowledged && d.deletedCount === 1) {
         res.status(200).send("delete successful");
         return;
       } else {

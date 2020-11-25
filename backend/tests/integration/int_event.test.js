@@ -84,7 +84,7 @@ describe("testing-event-routes", () => {
 
     it("GET /event - success no entry by that id", async () => {
         const { body } = await request(app).get("/event",
-            { eventId: "r3" });
+            [{ eventId: "r3" }]);
         expect(body).toEqual(null);
         expect(body.statusCode).toEqual(204);
     });

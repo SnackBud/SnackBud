@@ -11,9 +11,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,10 +32,10 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.priahi.snackbud.R;
 import com.priahi.snackbud.main.meeting.helper.RangeTimePickerDialog;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +43,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MeetingFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
@@ -110,7 +119,6 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
 //        if (getArguments() != null) {
 //            mParam1 = getArguments().getString(ARG_PARAM1);
 //            mParam2 = getArguments().getString(ARG_PARAM2);
-        //aaaaaaaaaa
 //        }
 
         // this is using assets locally
@@ -204,54 +212,48 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
 
         searchRest = requireView().findViewById(R.id.search_rest);
 
-        if(pos != 0) {
+        if (pos != 0) {
             searchRest.setText(restNames.get(pos));
             searchRest.setEnabled(false);
+            btnDatePicker.setEnabled(true);
         }
 
-        searchRest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog = new Dialog(getContext());
-                dialog.setContentView(R.layout.dialog_searchable_spinner);
-                dialog.getWindow().setLayout(900,1200);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                dialog.show();
+        searchRest.setOnClickListener(v -> {
+            dialog = new Dialog(getContext());
+            dialog.setContentView(R.layout.dialog_searchable_spinner);
+            dialog.getWindow().setLayout(900, 1200);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.show();
 
-                EditText editText = dialog.findViewById(R.id.edit_text_rest);
-                ListView listView = dialog.findViewById(R.id.list_view_rest);
+            EditText editText = dialog.findViewById(R.id.edit_text_rest);
+            ListView listView = dialog.findViewById(R.id.list_view_rest);
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
-                        android.R.layout.simple_spinner_dropdown_item, restNames);
-                listView.setAdapter(adapter);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
+                    android.R.layout.simple_spinner_dropdown_item, restNames);
+            listView.setAdapter(adapter);
 
-                editText.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-                    }
+                }
 
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        adapter.getFilter().filter(s);
-                    }
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    adapter.getFilter().filter(s);
+                }
 
-                    @Override
-                    public void afterTextChanged(Editable s) {
+                @Override
+                public void afterTextChanged(Editable s) {
+                }
+            });
 
-                    }
-                });
+            listView.setOnItemClickListener((parent, view12, position, id) -> {
+                searchRest.setText(adapter.getItem(position));
+                btnDatePicker.setEnabled(true);
+                dialog.dismiss();
+            });
 
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        searchRest.setText(adapter.getItem(position));
-                        btnDatePicker.setEnabled(true);
-                        dialog.dismiss();
-                    }
-                });
-
-            }
         });
 
         JSONArray js = new JSONArray();
