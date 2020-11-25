@@ -59,5 +59,16 @@
   },
   "directories": {
     "test": "tests"
+  },
+  "eslintConfig": {
+    "extends": [
+      "plugin:jest/recommended"
+    ],
+    "plugins": [
+      "jest"
+    ],
+    "env": {
+      "jest": true
+    }
   }
 }

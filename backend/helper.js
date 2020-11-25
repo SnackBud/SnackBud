@@ -41,7 +41,9 @@ class helpers {
   }
 
   checkParamNewMeet(event) {
-    if (typeof event === "undefined" || event == null
+    if (event == null) {
+      return true;
+    } else if (typeof event === "undefined"
       || typeof event.hostId === "undefined"
       || event.guestIds.length === 0) {
       return true;
@@ -97,8 +99,10 @@ class helpers {
 
   checkParamVerifyMeet(event, guest) {
     // check for bad calls
-    if (typeof event === "undefined" || event == null
-      || typeof guest === "undefined" || guest == null) {
+    if (event == null || guest == null) {
+      return true;
+    } else if (typeof event === "undefined"
+      || typeof guest === "undefined") {
       return true;
     }
     return false;

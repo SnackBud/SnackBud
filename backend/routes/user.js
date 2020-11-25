@@ -85,7 +85,7 @@ router.post("/", (req, res) => {
 router.delete("/", (req, res) => {
   // console.log("/user DELETE request");
   if (req.body.userId == null) {
-    res.status(400).send("bad input")
+    res.status(400).send("bad input");
     return;
   }
 

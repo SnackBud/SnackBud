@@ -91,17 +91,15 @@ router.get("/", (req, res) => {
 function checkParams(req, res) {
   const _ = req.body;
   if (_ == null) {
-    res.status(400).send("bad input");
-  }
-  var nullExists = (_.hostId == null ||
+    return true;
+  } else if (_.hostId == null ||
     _.guestIds == null ||
     _.restId == null ||
     _.restName == null ||
-    _.timeOfMeet == null);
-  if (nullExists) {
-    res.status(400).send("bad input");
+    _.timeOfMeet == null) {
+    return true;
   }
-
+  return false;
 }
 
 // post an event in our db
@@ -109,7 +107,10 @@ router.post("/", (req, res) => {
   // console.log("/event POST request");
   const _ = req.body;
 
-  checkParams(req, res);
+  if (checkParams(req, res)) {
+    res.status(400).send("bad input");
+    return;
+  }
   const event = new Event({
     eventId: `r${_.restId}h${_.hostId}t${_.timeOfMeet}`,
     hostId: _.hostId,

@@ -155,7 +155,7 @@ describe("notifyVerifyMeetup tests", () => {
 
   afterAll(() => {  
     mockingoose.resetAll();
-  })
+  });
 
   // make sure the call count is cleared after each test
   afterEach(() => {
@@ -329,9 +329,9 @@ describe("notifyEnterCode tests", () => {
   });
 
   it("notifyEnterCode bad call", () => {
-    const null_event = null;
+    const nullEvent = null;
     // call notifyNewMeetup
-    helper.notifyEnterCode(null_event);
+    helper.notifyEnterCode(nullEvent);
 
     // notify helper should not be called
     expect(helper.notifyHelper).toHaveBeenCalledTimes(0);
