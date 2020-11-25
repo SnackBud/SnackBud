@@ -186,7 +186,6 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         btnTimePicker.setEnabled(false);
         btnCreateMeeting.setEnabled(false);
 
-
         btnCreateMeeting.setOnClickListener(view1 -> {
             try {
                 postRequest();
@@ -204,6 +203,11 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         userDropdown.setOnItemSelectedListener(this);
 
         searchRest = requireView().findViewById(R.id.search_rest);
+
+        if(pos != 0) {
+            searchRest.setText(restNames.get(pos));
+            searchRest.setEnabled(false);
+        }
 
         searchRest.setOnClickListener(new View.OnClickListener() {
             @Override
