@@ -88,6 +88,13 @@ router.get("/", (req, res) => {
     });
 });
 
+function checkParam(val) {
+  if (val == null) {
+    return true;
+  }
+  return false;
+}
+
 function checkParams(req, res) {
   const _ = req.body;
   if (checkParam(_)) {
@@ -104,12 +111,7 @@ function checkParams(req, res) {
   }
 }
 
-function checkParam(value) {
-  if (val == null) {
-    return true;
-  }
-  return false;
-}
+
 
 // post an event in our db
 router.post("/", (req, res) => {

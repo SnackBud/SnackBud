@@ -47,7 +47,7 @@ describe("testing-event-routes", () => {
 
     it("GET /event - success", async () => {
         Event.findOne = jest.fn().mockResolvedValue([{
-            timeOfCreation: BigInt(1605009601688),
+            timeOfCreation: 1605009601688n,
             isVerified: true,
             verifyCode: "123",
             eventId: "r3h1t1605787405385",
@@ -59,13 +59,13 @@ describe("testing-event-routes", () => {
             ],
             restId: "3",
             restName: "Loafe Cafe",
-            timeOfMeet: BigInt(1605787405385)
+            timeOfMeet: 1605787405385n
         },
         ]);
         const { body } = await request(app).get("/event",
             { eventId: "r3h1t1605787405385" });
         expect(body).toEqual([{
-            timeOfCreation: BigInt(1605009601688),
+            timeOfCreation: 1605009601688n,
             isVerified: true,
             verifyCode: "123",
             eventId: "r3h1t1605787405385",
@@ -96,7 +96,7 @@ describe("testing-event-routes", () => {
 
     it("GET /event/getAll - success", async () => {
         const events = [{
-            timeOfCreation: 1605009601688,
+            timeOfCreation: 1605009601688n,
             isVerified: true,
             verifyCode: "123",
             eventId: "r3h1t1605787405385",
@@ -108,7 +108,7 @@ describe("testing-event-routes", () => {
             ],
             restId: "3",
             restName: "Loafe Cafe",
-            timeOfMeet: 1605787405385
+            timeOfMeet: 1605787405385n
         },
         {
             timeOfCreation: 1605009601689,
