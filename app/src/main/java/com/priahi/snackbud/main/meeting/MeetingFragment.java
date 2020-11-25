@@ -2,6 +2,7 @@ package com.priahi.snackbud.main.meeting;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -34,6 +35,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.priahi.snackbud.R;
+import com.priahi.snackbud.main.MainActivity;
 import com.priahi.snackbud.main.meeting.helper.RangeTimePickerDialog;
 
 import org.json.JSONArray;
@@ -198,6 +200,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
             try {
                 postRequest();
                 Toast.makeText(getContext(), "Meeting successfully created", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                startActivity(intent);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
