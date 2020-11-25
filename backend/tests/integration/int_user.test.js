@@ -2,7 +2,7 @@ const userRoute = require("../../routes/user.js");
 const supertest = require("supertest"); // supertest is a framework that allows to easily test web apis
 const app = require("../../app");
 app.use("/user", userRoute);
-const request = supertest(app)
+const request = supertest(app);
 
 const User = require("../../models/user");
 
@@ -111,8 +111,8 @@ describe("testing-user-routes", () => {
 
         //SHOULD BE DELETED, GET ERROR CASE OF DOUBLE DELETE
         let { body23 } = await request.delete("/user").send({
-                userId: "12345678",
-            }); //uses the request function that calls on express app instance
+            userId: "12345678",
+        }); //uses the request function that calls on express app instance
         expect(body23).toEqual("already deleted");
         expect(body23.statusCode).toEqual(410);
     });

@@ -22,11 +22,11 @@ const meetup = new mongoose.Schema({
     required: true,
   },
   timeOfMeet: {
-    type: Number,
+    type: BigInt,
     required: true,
   },
   timeOfCreation: {
-    type: Number,
+    type: BigInt,
     default: new Date().getTime(),
   },
   notVerified: [{
