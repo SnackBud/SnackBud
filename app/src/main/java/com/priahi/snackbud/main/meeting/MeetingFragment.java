@@ -1,19 +1,19 @@
 package com.priahi.snackbud.main.meeting;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
+import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,11 +38,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MeetingFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
@@ -55,8 +51,10 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     // TODO: Rename and change types of parameters
 //    private String mParam1;
 //    private String mParam2;
+    private Dialog dialog;
     private String hostId;
     private String guestId;
+    private ArrayList<String> guestIds;
     private String restId;
     private String restName;
     private Calendar timeOfMeet;
@@ -70,6 +68,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private Button btnCreateMeeting;
     private EditText txtDate;
     private EditText txtTime;
+    private TextView searchRest;
     private int mYear;
     private int mMonth;
     private int mDay;
@@ -82,6 +81,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private RequestQueue queue;
     private Integer pos = 0;
     private int dayOfMonth;
+    private int monthOfYear;
 
     public MeetingFragment() {
 
@@ -182,6 +182,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         btnDatePicker.setOnClickListener(this);
         btnTimePicker.setOnClickListener(this);
 
+        btnDatePicker.setEnabled(false);
         btnTimePicker.setEnabled(false);
         btnCreateMeeting.setEnabled(false);
 
@@ -202,15 +203,52 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         final Spinner userDropdown = requireView().findViewById(R.id.userSpinner);
         userDropdown.setOnItemSelectedListener(this);
 
-        // List the restaurants
-        Spinner restDropdown = requireView().findViewById(R.id.restSpinner);
-        ArrayAdapter<String> restAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_spinner_dropdown_item, restNames);
-        restAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        restDropdown.setAdapter(restAdapter);
-        restDropdown.setOnItemSelectedListener(this);
-        restDropdown.setSelection(pos);
-        if(pos != 0) restDropdown.setEnabled(false);
+        searchRest = requireView().findViewById(R.id.search_rest);
+
+        searchRest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog = new Dialog(getContext());
+                dialog.setContentView(R.layout.dialog_searchable_spinner);
+                dialog.getWindow().setLayout(900,1200);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.show();
+
+                EditText editText = dialog.findViewById(R.id.edit_text_rest);
+                ListView listView = dialog.findViewById(R.id.list_view_rest);
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
+                        android.R.layout.simple_spinner_dropdown_item, restNames);
+                listView.setAdapter(adapter);
+
+                editText.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        adapter.getFilter().filter(s);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
+
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        searchRest.setText(adapter.getItem(position));
+                        btnDatePicker.setEnabled(true);
+                        dialog.dismiss();
+                    }
+                });
+
+            }
+        });
 
         JSONArray js = new JSONArray();
 
@@ -234,6 +272,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                                 j++;
                             }
                         }
+
                         ArrayAdapter<String> userAdapter = new ArrayAdapter<>(requireContext(),
                                 android.R.layout.simple_spinner_dropdown_item, userNames);
                         userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -261,28 +300,16 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     // for setting the users and restaurants
     @Override
     public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-        switch (parent.getId()){
-            case R.id.restSpinner:
-                Log.d("restaurant", restNames.get(position));
-                if (restNames.get(position) != null) {
-                    restId = restaurants.get(restNames.get(position));
-                    if (restId != null) {
-                        Log.d("restaurant", restId);
-                    }
-                    restName = restNames.get(position);
+        if (parent.getId() == R.id.userSpinner) {
+            Log.d("user", userNames.get(position));
+            if (userNames.get(position) != null) {
+                guestId = users.get(userNames.get(position));
+                if (guestId != null) {
+                    Log.d("user", guestId);
                 }
-                break;
-            case R.id.userSpinner:
-                Log.d("user", userNames.get(position));
-                if (userNames.get(position) != null) {
-                    guestId = users.get(userNames.get(position));
-                    if (guestId != null) {
-                        Log.d("user", guestId);
-                    }
-                }
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + parent.getId());
+            }
+        } else {
+            throw new IllegalStateException("Unexpected value: " + parent.getId());
         }
     }
 
@@ -311,6 +338,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                         txtDate.setText(date);
 
                         this.dayOfMonth = dayOfMonth;
+                        this.monthOfYear = monthOfYear;
 
                         // set calendar
                         timeOfMeet.set(year, monthOfYear, dayOfMonth);
@@ -335,7 +363,6 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
             final Calendar c = Calendar.getInstance();
             mHour = c.get(Calendar.HOUR_OF_DAY);
             mMinute = c.get(Calendar.MINUTE);
-            mDay = c.get(Calendar.DAY_OF_MONTH);
             minHour = 8;
             maxHour = 23;
             maxMin = 0;
@@ -345,7 +372,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
 
             if(mHour == 23
                     || mHour < 7
-                    || mDay != dayOfMonth) {
+                    || mDay != dayOfMonth
+                    || mMonth != monthOfYear) {
                 mHour = 8;
                 mMinute = 0;
             }
@@ -402,6 +430,10 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         JSONObject guestId = new JSONObject();
         guestId.put("guestId", this.guestId);
         array.put(guestId);
+        //array.put(guestIds);
+
+        restName = searchRest.getText().toString();
+        restId = restaurants.get(restName);
 
         eventRequest.put("guestIds", array);
         eventRequest.put("restId", restId);
