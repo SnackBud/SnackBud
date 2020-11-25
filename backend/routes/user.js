@@ -7,7 +7,7 @@ const User = require("../models/user");
 router.get("/", async (req, res) => {
   // console.log("/user GET request");
   if (req.body.userId == null) {
-    res.status(400).send("bad input")
+    res.status(400).send("bad input");
     return;
   }
 
@@ -72,7 +72,7 @@ router.post("/", (req, res) => {
     (err, doc) => {
       if (err) {
         res.status(404).send(err);
-        return
+        return;
         // console.log(err);
         // console.log(doc);
       }

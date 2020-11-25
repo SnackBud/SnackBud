@@ -88,21 +88,22 @@ router.get("/", (req, res) => {
     });
 });
 
-// post an event in our db
-router.post("/", (req, res) => {
-  // console.log("/event POST request");
-  const _ = req.body;
-
+function checkParams(req) {
   if (req.body == null || _.hostId == null ||
     _.guestIds == null ||
     _.restId == null ||
     _.restName == null ||
     _.timeOfMeet == null) {
     res.status(400).send("bad input");
-    return;
   }
+}
 
+// post an event in our db
+router.post("/", (req, res) => {
+  // console.log("/event POST request");
+  const _ = req.body;
 
+  checkParams(req);
   const event = new Event({
     eventId: `r${_.restId}h${_.hostId}t${_.timeOfMeet}`,
     hostId: _.hostId,
@@ -174,10 +175,11 @@ router.delete("/deleteAll", (req, res) => {
       if (err) {
         res.status(404).send(err);
         // console.log(err);
-      } else if (d.acknowledged && d.deletedCount === 1)
+      } else if (d.acknowledged && d.deletedCount === 1) {
         res.status(200).send("delete all successful");
-      else
+      } else {
         res.status(410).send("already deleted all");
+      }
     });
 });
 
@@ -233,7 +235,7 @@ router.put("/", (req, res) => {
         // if everyone have verified, then change the isVerified status
         // var count = 0;
         // console.log(event.notVerified);
-        var count = event.notVerified.filter(x => x.guestId != null).length;
+        var count = event.notVerified.filter((x) => x.guestId != null).length;
         // for (var i = 0; i < event.notVerified.length; i++) {
         //   // console.log(event.notVerified[i]);
         //   if (event.notVerified[i].guestId != null) {
@@ -332,7 +334,7 @@ router.post("/contactTrace", (req, res) => {
   if (req.body.userId == null ||
     req.body.twoWeeksAgo == null ||
     req.body.currentDate == null) {
-    res.status(400).send("bad input")
+    res.status(400).send("bad input");
   }
 
   Event.find({

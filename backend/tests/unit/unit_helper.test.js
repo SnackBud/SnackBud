@@ -108,28 +108,28 @@ describe("notifyNewMeetup tests", () => {
   
   it("notifyNewMeetup bad call", () => {
     // inputs
-    const null_event = null;
-    const no_host_event = new Event({
+    const nullEvent = null;
+    const noHostEvent = new Event({
       guestIds: [
         {guestId: "2"},
         {guestId: "3"}
       ]
     });
-    const no_guest_event = new Event({
+    const noGuestEvent = new Event({
       hostId: "1"
     });
 
     // call notifyNewMeetup with null
-    helper.notifyNewMeetup(null_event);
+    helper.notifyNewMeetup(nullEvent);
 
     // call notifyNewMeetup with undefined
     helper.notifyNewMeetup();
 
     // call notifyNewMeetup with event without guests
-    helper.notifyNewMeetup(no_guest_event);
+    helper.notifyNewMeetup(noGuestEvent);
 
     // call notifyNewMeetup with event without host
-    helper.notifyNewMeetup(no_host_event);
+    helper.notifyNewMeetup(noHostEvent);
 
     // notifyHelper should not be called
     expect(helper.notifyHelper).toHaveBeenCalledTimes(0); 
@@ -212,8 +212,8 @@ describe("notifyVerifyMeetup tests", () => {
 
   it("notifyVerifyMeetup bad call", () => {
     // inputs
-    const null_event = null;
-    const null_guest = null;
+    const nullEvent = null;
+    const nullGuest = null;
     const event = new Event({
       hostId: "1",
       guestIds: [
@@ -229,10 +229,10 @@ describe("notifyVerifyMeetup tests", () => {
       deviceToken: "x"
     });
     // call notifyNewMeetup with null event and guest
-    helper.notifyVerifyMeetup(null_event, null_guest);
+    helper.notifyVerifyMeetup(nullEvent, nullGuest);
 
     // call notifyNewMeetup with a defined event and null guest
-    helper.notifyVerifyMeetup(event, null_guest);
+    helper.notifyVerifyMeetup(event, nullGuest);
 
     // notifyHelper should not be called
     expect(helper.notifyHelper).toHaveBeenCalledTimes(0); 
@@ -275,7 +275,7 @@ describe("notifyNoVerifyMeetup tests", () => {
   });
 
   it("notifyNoVerifyMeetup undefined guest call", () => {
-    const guest = null
+    const guest = null;
 
     // call notifyNewMeetup
     helper.notifyNoVerifyMeetup(guest, helper);

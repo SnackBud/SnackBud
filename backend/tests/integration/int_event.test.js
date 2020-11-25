@@ -412,7 +412,7 @@ describe("testing-event-routes", () => {
             twoWeeksAgo: 1605009501688,
             timeOfMeet: 1605787406390,
             hostId: "105664700188784427014",
-        }]
+        }];
         const events = [{
             timeOfCreation: 1605009601688,
             isVerified: true,

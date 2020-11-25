@@ -65,9 +65,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private Dialog dialog;
     private String hostId;
     private String guestId;
-    private ArrayList<String> guestIds;
-    private String restId;
-    private String restName;
+//    private ArrayList<String> guestIds;
     private Calendar timeOfMeet;
 //    private static final String url = "http://13.77.158.161:3000";
     private Map<String, String> users = new HashMap<>();
@@ -239,7 +237,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
             editText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                    Log.w(TAG, "before text changed"); //keep for codacy
                 }
 
                 @Override
@@ -249,6 +247,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
 
                 @Override
                 public void afterTextChanged(Editable s) {
+                    Log.w(TAG, "after text changed"); //keep for codacy
                 }
             });
 
@@ -259,9 +258,11 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
             });
 
         });
+        getAllUsers(userDropdown);
+    }
 
+    private void getAllUsers(Spinner userDropdown) {
         JSONArray js = new JSONArray();
-
         queue = Volley.newRequestQueue(requireContext());
         // Get all users
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
@@ -442,8 +443,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         array.put(guestId);
         //array.put(guestIds);
 
-        restName = searchRest.getText().toString();
-        restId = restaurants.get(restName);
+        String restName = searchRest.getText().toString();
+        String restId = restaurants.get(restName);
 
         eventRequest.put("guestIds", array);
         eventRequest.put("restId", restId);

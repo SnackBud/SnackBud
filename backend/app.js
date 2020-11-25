@@ -9,7 +9,7 @@ const consoleTransport = new Winston.transports.Console();
 const MyWinstonOptions = {
   transports: [consoleTransport]
 };
-const Logger = new Winston.createLogger(MyWinstonOptions);
+const Logger = Winston.createLogger(MyWinstonOptions);
 
 function logRequest(req, res, next) {
   Logger.info(req.url);

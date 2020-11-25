@@ -44,18 +44,16 @@ class helpers {
   notifyNewMeetup(event, helper = this) {
 
     // check for bad calls
-    if (typeof event === "undefined" || event == null) {
-      return;
-    } else if (typeof event.hostId === "undefined") {
-      return;
-    } else if (event.guestIds.length == 0) {
+    if (typeof event === "undefined" || event == null 
+    || typeof event.hostId === "undefined" 
+    || event.guestIds.length === 0) {
       return;
     }
 
     // get host name
     User.findOne({ userId: event.hostId }, {}, (err, host) => {
       if (err || host == null) {
-        res.send(err);
+        // res.send(err);
         return;
       }
       // get the deviceToken of the guests
@@ -94,9 +92,8 @@ class helpers {
   notifyVerifyMeetup(event, guest, helper = this) {
 
     // check for bad calls
-    if (typeof event === "undefined" || event == null) {
-      return;
-    } else if (typeof guest === "undefined" || guest == null) {
+    if (typeof event === "undefined" || event == null 
+    || typeof guest === "undefined" || guest == null) {
       return;
     }
 
@@ -112,8 +109,8 @@ class helpers {
       });
       return;
     }
-    const body = `We hope you enjoyed ${event.restName} today! Thanks for using SnackBud!`;
 
+    const body = `We hope you enjoyed ${event.restName} today! Thanks for using SnackBud!`;
     // get host
     User.findOne({ userId: event.hostId }, {}, (err, host) => {
       if (err) {

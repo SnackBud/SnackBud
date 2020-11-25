@@ -3,10 +3,10 @@ const User = require("../../models/user");
 const Helpers = require("../../helper");
 const mockingoose = require("mockingoose").default;
 
-const app = require("../../app") // Link to your server file
+const app = require("../../app"); // Link to your server file
 const supertest = require("supertest"); // supertest is a framework that allows to easily test web apis
 const pushNotify = require("../../emitter");
-const request = supertest(app)
+const request = supertest(app);
 
 
 describe("Event Model standard calls", () => {
