@@ -88,14 +88,27 @@ router.get("/", (req, res) => {
     });
 });
 
-function checkParams(req) {
-  if (req.body == null || _.hostId == null ||
-    _.guestIds == null ||
-    _.restId == null ||
-    _.restName == null ||
-    _.timeOfMeet == null) {
+function checkParams(req, res) {
+  const _ = req.body;
+  if (checkParam(_)) {
     res.status(400).send("bad input");
   }
+  var nullExists = checkParam(_.hostId)
+    || checkParam(_.hostId)
+    || checkParam(_.guestIds)
+    || checkParam(_.restId)
+    || checkParam(_.restName)
+    || checkParam(_.timeOfMeet);
+  if (nullExists) {
+    res.status(400).send("bad input");
+  }
+}
+
+function checkParam(value) {
+  if (val == null) {
+    return true;
+  }
+  return false;
 }
 
 // post an event in our db
@@ -103,7 +116,7 @@ router.post("/", (req, res) => {
   // console.log("/event POST request");
   const _ = req.body;
 
-  checkParams(req);
+  checkParams(req, res);
   const event = new Event({
     eventId: `r${_.restId}h${_.hostId}t${_.timeOfMeet}`,
     hostId: _.hostId,

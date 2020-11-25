@@ -34,7 +34,7 @@ module.exports.clearDatabase = async () => {
     const collections = mongoose.connection.collections;
 
     for (const key in collections) {
-        if ({}.hasOwnProperty.call(foo, key)) {
+        if ({}.hasOwnProperty.call(collections, key)) {
             const collection = key;
             await collection.deleteMany();
         }
