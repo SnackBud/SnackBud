@@ -295,89 +295,12 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v.equals(btnDatePicker)) {
-            // Get Current Date
-            final Calendar c = Calendar.getInstance();
-            mYear = c.get(Calendar.YEAR);
-            mMonth = c.get(Calendar.MONTH);
-            mDay = c.get(Calendar.DAY_OF_MONTH);
-            mHour = c.get(Calendar.HOUR_OF_DAY);
 
-            // bug fixed for m10
-            if(mHour == 23) mDay += 1;
-
-            DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(),
-                    (view, year, monthOfYear, dayOfMonth) -> {
-                        String date = String.format("%d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
-                        txtDate.setText(date);
-
-                        this.dayOfMonth = dayOfMonth;
-                        this.monthOfYear = monthOfYear;
-
-                        // set calendar
-                        timeOfMeet.set(year, monthOfYear, dayOfMonth);
-//                            timeOfMeet.set(Calendar.MONTH, monthOfYear);
-//                            timeOfMeet.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                    }, mYear, mMonth, mDay);
-
-            if(mHour == 23) {
-                c.add(Calendar.DAY_OF_MONTH, +1);
-            }
-            datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
-            c.add(Calendar.MONTH, +1);
-            long oneMonthAhead = c.getTimeInMillis();
-            datePickerDialog.getDatePicker().setMaxDate(oneMonthAhead);
-            datePickerDialog.show();
-
-            btnTimePicker.setEnabled(true);
+            datePicker();
 
         } else if (v.equals(btnTimePicker)) {
-            // Get Current Time
-            final Calendar c = Calendar.getInstance();
-            mHour = c.get(Calendar.HOUR_OF_DAY);
-            mMinute = c.get(Calendar.MINUTE);
-            minHour = 8;
-            maxHour = 23;
-            maxMin = 0;
 
-            // bug fixed for m10
-            if(mHour == 23) mDay += 1;
-
-            if(mHour == 23
-                    || mHour < 7
-                    || mDay != dayOfMonth
-                    || mMonth != monthOfYear) {
-                mHour = 8;
-                mMinute = 0;
-            }
-            else {
-                mHour = mHour + 1;
-            }
-
-            // Launch Time Picker Dialog
-            RangeTimePickerDialog timePickerDialog = new RangeTimePickerDialog(requireContext(),
-                    (view, hourOfDay, minute) -> {
-                        String timeOfDay = String.format("%02d:%02d", hourOfDay, minute);
-                        txtTime.setText(timeOfDay);
-
-                        // set calendar
-
-                        timeOfMeet.set(timeOfMeet.get(Calendar.YEAR),
-                                timeOfMeet.get(Calendar.MONTH),
-                                timeOfMeet.get(Calendar.DATE),
-                                hourOfDay, minute);
-//                            timeOfMeet.set(Calendar.MINUTE, minute);
-                    }, mHour, mMinute, false);
-
-            if(Calendar.getInstance().get(Calendar.DAY_OF_YEAR) >= timeOfMeet.get(Calendar.DAY_OF_YEAR)) {
-                minHour = mHour; //Math.max(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1, 8);
-                minMin = mMinute; //Math.max(Calendar.getInstance().get(Calendar.MINUTE), 0);
-            }
-            Log.d("hour", String.valueOf(minHour));
-            timePickerDialog.setMin((int) minHour, (int) minMin);
-            timePickerDialog.setMax((int) maxHour, (int) maxMin);
-            timePickerDialog.show();
-
-            btnCreateMeeting.setEnabled(true);
+            timePicker();
 
         } else if(v.equals(btnCreateMeeting)) {
             try {
@@ -390,49 +313,141 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
             }
         } else if(v.equals(searchRest)) {
 
-            dialog = new Dialog(getContext());
-            dialog.setContentView(R.layout.dialog_searchable_spinner);
-            dialog.getWindow().setLayout(900, 1200);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dialog.show();
-
-            EditText editText = dialog.findViewById(R.id.edit_text_rest);
-            ListView listView = dialog.findViewById(R.id.list_view_rest);
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
-                    android.R.layout.simple_spinner_dropdown_item, restNames);
-            listView.setAdapter(adapter);
-
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start,
-                                              int count, int after) {
-                    // do nothing
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start,
-                                          int before, int count) {
-                    adapter.getFilter().filter(s);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    // do nothing
-                }
-            });
-
-            listView.setOnItemClickListener((parent, view12, position, id) -> {
-                searchRest.setText(adapter.getItem(position));
-                btnDatePicker.setEnabled(pos == -1);
-                dialog.dismiss();
-            });
+            restDialogCreate();
 
         }
 
 //                String.format("%d-%02d-%02dT%02d:%02d:00Z", mYear, mMonth + 1, mDay, mHour, mMinute);
         Log.d("time", String.valueOf(timeOfMeet.getTime()));
 
+    }
+
+    private void restDialogCreate() {
+
+        dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_searchable_spinner);
+        dialog.getWindow().setLayout(900, 1200);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+
+        EditText editText = dialog.findViewById(R.id.edit_text_rest);
+        ListView listView = dialog.findViewById(R.id.list_view_rest);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_spinner_dropdown_item, restNames);
+        listView.setAdapter(adapter);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+                // do nothing
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                adapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // do nothing
+            }
+        });
+
+        listView.setOnItemClickListener((parent, view12, position, id) -> {
+            searchRest.setText(adapter.getItem(position));
+            btnDatePicker.setEnabled(pos == -1);
+            dialog.dismiss();
+        });
+    }
+
+    private void timePicker() {
+        // Get Current Time
+        final Calendar c = Calendar.getInstance();
+        mHour = c.get(Calendar.HOUR_OF_DAY);
+        mMinute = c.get(Calendar.MINUTE);
+        minHour = 8;
+        maxHour = 23;
+        maxMin = 0;
+
+        // bug fixed for m10
+        if(mHour == 23) mDay += 1;
+
+        if(mHour == 23
+                || mHour < 7
+                || mDay != dayOfMonth
+                || mMonth != monthOfYear) {
+            mHour = 8;
+            mMinute = 0;
+        }
+        else {
+            mHour = mHour + 1;
+        }
+
+        // Launch Time Picker Dialog
+        RangeTimePickerDialog timePickerDialog = new RangeTimePickerDialog(requireContext(),
+                (view, hourOfDay, minute) -> {
+                    String timeOfDay = String.format("%02d:%02d", hourOfDay, minute);
+                    txtTime.setText(timeOfDay);
+
+                    // set calendar
+
+                    timeOfMeet.set(timeOfMeet.get(Calendar.YEAR),
+                            timeOfMeet.get(Calendar.MONTH),
+                            timeOfMeet.get(Calendar.DATE),
+                            hourOfDay, minute);
+//                            timeOfMeet.set(Calendar.MINUTE, minute);
+                }, mHour, mMinute, false);
+
+        if(Calendar.getInstance().get(Calendar.DAY_OF_YEAR) >= timeOfMeet.get(Calendar.DAY_OF_YEAR)) {
+            minHour = mHour; //Math.max(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1, 8);
+            minMin = mMinute; //Math.max(Calendar.getInstance().get(Calendar.MINUTE), 0);
+        }
+        Log.d("hour", String.valueOf(minHour));
+        timePickerDialog.setMin((int) minHour, (int) minMin);
+        timePickerDialog.setMax((int) maxHour, (int) maxMin);
+        timePickerDialog.show();
+
+        btnCreateMeeting.setEnabled(true);
+    }
+
+    private void datePicker() {
+        // Get Current Date
+        final Calendar c = Calendar.getInstance();
+        mYear = c.get(Calendar.YEAR);
+        mMonth = c.get(Calendar.MONTH);
+        mDay = c.get(Calendar.DAY_OF_MONTH);
+        mHour = c.get(Calendar.HOUR_OF_DAY);
+
+        // bug fixed for m10
+        if(mHour == 23) mDay += 1;
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(),
+                (view, year, monthOfYear, dayOfMonth) -> {
+                    String date = String.format("%d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
+                    txtDate.setText(date);
+
+                    this.dayOfMonth = dayOfMonth;
+                    this.monthOfYear = monthOfYear;
+
+                    // set calendar
+                    timeOfMeet.set(year, monthOfYear, dayOfMonth);
+//                            timeOfMeet.set(Calendar.MONTH, monthOfYear);
+//                            timeOfMeet.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                }, mYear, mMonth, mDay);
+
+        if(mHour == 23) {
+            c.add(Calendar.DAY_OF_MONTH, +1);
+        }
+        datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
+        c.add(Calendar.MONTH, +1);
+        long oneMonthAhead = c.getTimeInMillis();
+        datePickerDialog.getDatePicker().setMaxDate(oneMonthAhead);
+        datePickerDialog.show();
+
+        btnTimePicker.setEnabled(true);
     }
 
 
