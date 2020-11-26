@@ -244,47 +244,20 @@ router.put("/", (req, res) => {
           },
         );
       } else {
+
         // if the user successfully verifies, we remove them from the notVerified array
-        // event.notVerified.filter((x) => {
-        //   if (x.guestId == req.body.guestId) {
-        //     delete x;
-        //   }
-        // });
 
         for (var i = 0; i < event.notVerified.length; i++) {
-          console.log(event.notVerified[i]);
           if (event.notVerified[i].guestId == req.body.guestId) {
-            console.log("matches");
-            delete event.notVerified[i];
+            event.notVerified[i].guestId = null;
           }
         }
 
-        // if everyone have verified, then change the isVerified status
-        // var count = 0;
-        // console.log(event.notVerified);
-        // for (var i = 0; i < event.notVerified.length; i++) {
-        //   // console.log(event.notVerified[i]);
-        //   if (event.notVerified[i].guestId != null) {
-        //     // console.log(count);
-        //     count++;
-        //   }
-        // }
-
         // if everyones verified, set isVerified to true in event
-        var count = event.notVerified.filter((x) => x != null).length;
-        // var count = event.notVerified.length;
+        var count = event.notVerified.filter((x) => x.guestId != null).length;
         if (count === 0) {
           event.isVerified = true;
         }
-        console.log(count);
-
-        // event.save((err) => {
-        //   if (err) {
-        //     console.log(err);
-        //     return;
-        //   }
-        //   // saved!
-        // });
 
         Event.findOneAndUpdate({
             _id: event._id
