@@ -34,6 +34,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.pchmn.materialchips.ChipsInput;
 import com.pchmn.materialchips.model.Chip;
+import com.pchmn.materialchips.model.ChipInterface;
 import com.priahi.snackbud.R;
 import com.priahi.snackbud.main.MainActivity;
 import com.priahi.snackbud.main.meeting.helper.RangeTimePickerDialog;
@@ -203,11 +204,15 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
         if (pos != 0) {
             searchRest.setText(restNames.get(pos));
             searchRest.setEnabled(false);
-            btnDatePicker.setEnabled(true);
         }
 
+        searchRest.setEnabled(false);
         searchRest.setOnClickListener(this);
 
+        setUsers();
+    }
+
+    public void setUsers() {
         JSONArray js = new JSONArray();
 
         queue = Volley.newRequestQueue(requireContext());
@@ -243,7 +248,28 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
                         // pass the ContactChip list
                         chipsInput.setFilterableList(contactList);
 
-                        chipsInput.getEditText().setEnabled(false);
+                        chipsInput.addChipsListener(new ChipsInput.ChipsListener() {
+                            @Override
+                            public void onChipAdded(ChipInterface chip, int newSize) {
+                                if(newSize > 0 && pos == 0) {
+                                    searchRest.setEnabled(true);
+                                }
+                                btnDatePicker.setEnabled(true);
+                            }
+
+                            @Override
+                            public void onChipRemoved(ChipInterface chip, int newSize) {
+                                if(newSize <= 0 && pos == 0) {
+                                    searchRest.setEnabled(false);
+                                }
+                                if(newSize == 0) btnDatePicker.setEnabled(false);
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence text) {
+
+                            }
+                        });
 
 
                     } catch (JSONException e) {
@@ -398,7 +424,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
 
             listView.setOnItemClickListener((parent, view12, position, id) -> {
                 searchRest.setText(adapter.getItem(position));
-                btnDatePicker.setEnabled(true);
+                btnDatePicker.setEnabled(pos == 0);
                 dialog.dismiss();
             });
 
