@@ -88,15 +88,16 @@ router.get("/", (req, res) => {
     });
 });
 
-function checkParams(req) {
+function checkParams(req, res) {
   const _ = req.body;
   const nullExists = (_.guestIds == null ||
     _.restId == null ||
     _.timeOfMeet == null);
   if (nullExists) {
-    return true;
+    res.status(400).send("bad input");
+    return 400;
   }
-  return false;
+  return 0;
 }
 
 function checkMeetup(event, res) {
@@ -119,10 +120,10 @@ router.post("/", (req, res) => {
   // console.log("/event POST request");
   const _ = req.body;
   if (!(_)) {
+    res.status(400).send("bad input");
     return;
   }
-  if (checkParams(req)) {
-    res.status(400).send("bad input");
+  if (checkParams(req, res)) {
     return;
   }
   const event = new Event({
@@ -138,8 +139,7 @@ router.post("/", (req, res) => {
     verifyCode: _.verifyCode,
   });
 
-  const err = checkMeetup(event, res);
-  if (err === 431) {
+  if (checkMeetup(event, res)) {
     return;
   }
 
