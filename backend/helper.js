@@ -41,9 +41,7 @@ class helpers {
   }
 
   checkParamNewMeet(event) {
-    if (event == null) {
-      return true;
-    } else if (typeof event === "undefined") {
+    if (typeof event === "undefined") {
       return true;
     } else if (typeof event.hostId === "undefined"
       || event.guestIds.length === 0) {
@@ -56,6 +54,9 @@ class helpers {
   notifyNewMeetup(event, helper = this) {
 
     // check for bad calls
+    if (event == null) {
+      return;
+    }
     if (this.checkParamNewMeet(event)) {
       return;
     }
@@ -100,9 +101,7 @@ class helpers {
 
   checkParamVerifyMeet(event, guest) {
     // check for bad calls
-    if (event == null || guest == null) {
-      return true;
-    } else if (typeof event === "undefined"
+    if (typeof event === "undefined"
       || typeof guest === "undefined") {
       return true;
     }
@@ -113,6 +112,9 @@ class helpers {
   notifyVerifyMeetup(event, guest, helper = this) {
 
     // check for bad calls
+    if (event == null || guest == null) {
+      return;
+    }
     if (this.checkParamVerifyMeet(event, guest)) {
       return;
     }
