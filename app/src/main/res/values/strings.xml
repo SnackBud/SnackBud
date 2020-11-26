@@ -48,4 +48,5 @@
     <string name="choose_restaurant_dialog">Choose Restaurant</string>
     <string name="search_restaurant_dialog">Search restaurant...</string>
     <string name="click_here_to_choose">Click here to choose</string>
+    <string name="isCorrect">Looks Incorrect, Please enter the correct digits</string>
 </resources>
