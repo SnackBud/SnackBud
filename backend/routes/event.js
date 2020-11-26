@@ -101,7 +101,7 @@ function checkParams(req, res) {
 }
 
 function checkMeetup(event, res) {
-  if (event.guestIds.length >= 7) {
+  if (event.guestIds.length >= 6) {
     res.status(431).send("Request header field too large");
     return 431;
   }
