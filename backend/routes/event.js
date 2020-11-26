@@ -126,6 +126,9 @@ router.post("/", (req, res) => {
   if (checkParams(req, res)) {
     return;
   }
+
+  console.log(req.body);
+
   const event = new Event({
     eventId: `r${_.restId}h${_.hostId}t${_.timeOfMeet}`,
     hostId: _.hostId,

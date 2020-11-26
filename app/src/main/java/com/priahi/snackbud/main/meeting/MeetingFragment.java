@@ -69,7 +69,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
     private Dialog dialog;
     private String hostId;
     private String guestId;
-    private ArrayList<ArrayList<String>> guestIds = new ArrayList<>();
+    private ArrayList<String> guestIds = new ArrayList<>();
     private String restId;
     private String restName;
     private Calendar timeOfMeet;
@@ -424,22 +424,26 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
 
         List<Chip> contactsSelected = (List<Chip>) chipsInput.getSelectedChipList();
         for(int i = 0; i < contactsSelected.size(); i++) {
-            guestIds.add(i, new ArrayList<String>(Collections.singleton(contactsSelected.get(i).getLabel())));
-            Log.i("guest", guestIds.get(i).get(0));
+            guestIds.add(i, contactsSelected.get(i).getLabel());
+            Log.i("guest", guestIds.get(i));
         }
 
         JSONObject eventRequest = new JSONObject();
         eventRequest.put("hostId", acct.getId());
 
         JSONArray array = new JSONArray();
-        JSONObject guestId = new JSONObject();
-        guestId.put("guestIds", this.guestIds);
-        array.put(guestId);
+
+        for (String guest : this.guestIds) {
+            JSONObject guestId = new JSONObject();
+            guestId.put("guestId", guest);
+            array.put(guestId);
+        }
 
         String restName = searchRest.getText().toString();
         String restId = restaurants.get(restName);
 
         eventRequest.put("guestIds", array);
+        eventRequest.put("notVerified", array);
         eventRequest.put("restId", restId);
         eventRequest.put("restName", restName);
         eventRequest.put("timeOfMeet", timeOfMeet.getTimeInMillis());
