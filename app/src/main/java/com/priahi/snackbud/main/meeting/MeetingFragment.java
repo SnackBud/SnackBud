@@ -194,16 +194,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
         btnTimePicker.setEnabled(false);
         btnCreateMeeting.setEnabled(false);
 
-        btnCreateMeeting.setOnClickListener(view1 -> {
-            try {
-                postRequest();
-                Toast.makeText(getContext(), "Meeting successfully created", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(getContext(), MainActivity.class);
-                startActivity(intent);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        });
+        btnCreateMeeting.setOnClickListener(this);
 
         timeOfMeet = Calendar.getInstance();
 
@@ -215,46 +206,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
             btnDatePicker.setEnabled(true);
         }
 
-        searchRest.setOnClickListener(v -> {
-            dialog = new Dialog(getContext());
-            dialog.setContentView(R.layout.dialog_searchable_spinner);
-            dialog.getWindow().setLayout(900, 1200);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dialog.show();
-
-            EditText editText = dialog.findViewById(R.id.edit_text_rest);
-            ListView listView = dialog.findViewById(R.id.list_view_rest);
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
-                    android.R.layout.simple_spinner_dropdown_item, restNames);
-            listView.setAdapter(adapter);
-
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start,
-                                              int count, int after) {
-                    // do nothing
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start,
-                                          int before, int count) {
-                    adapter.getFilter().filter(s);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    // do nothing
-                }
-            });
-
-            listView.setOnItemClickListener((parent, view12, position, id) -> {
-                searchRest.setText(adapter.getItem(position));
-                btnDatePicker.setEnabled(true);
-                dialog.dismiss();
-            });
-
-        });
+        searchRest.setOnClickListener(this);
 
         JSONArray js = new JSONArray();
 
@@ -400,10 +352,61 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
             timePickerDialog.show();
 
             btnCreateMeeting.setEnabled(true);
+
+        } else if(v.equals(btnCreateMeeting)) {
+            try {
+                postRequest();
+                Toast.makeText(getContext(), "Meeting successfully created", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                startActivity(intent);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else if(v.equals(searchRest)) {
+
+            dialog = new Dialog(getContext());
+            dialog.setContentView(R.layout.dialog_searchable_spinner);
+            dialog.getWindow().setLayout(900, 1200);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.show();
+
+            EditText editText = dialog.findViewById(R.id.edit_text_rest);
+            ListView listView = dialog.findViewById(R.id.list_view_rest);
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
+                    android.R.layout.simple_spinner_dropdown_item, restNames);
+            listView.setAdapter(adapter);
+
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start,
+                                              int count, int after) {
+                    // do nothing
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start,
+                                          int before, int count) {
+                    adapter.getFilter().filter(s);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    // do nothing
+                }
+            });
+
+            listView.setOnItemClickListener((parent, view12, position, id) -> {
+                searchRest.setText(adapter.getItem(position));
+                btnDatePicker.setEnabled(true);
+                dialog.dismiss();
+            });
+
         }
 
 //                String.format("%d-%02d-%02dT%02d:%02d:00Z", mYear, mMonth + 1, mDay, mHour, mMinute);
         Log.d("time", String.valueOf(timeOfMeet.getTime()));
+
     }
 
 
