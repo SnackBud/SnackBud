@@ -236,36 +236,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
                             }
                         }
 
-                        // get ChipsInput view
-                        chipsInput = (ChipsInput) requireView().findViewById(R.id.chips_input);
-                        chipsInput.setLayoutParams(chipsInput.getLayoutParams());
-
-                        List<Chip> contactList = new ArrayList<Chip>();
-                        for(int i = 0; i < userNames.size(); i++) {
-                            contactList.add(new Chip(userNames.get(i), ""));
-                        }
-
-                        // pass the ContactChip list
-                        chipsInput.setFilterableList(contactList);
-
-                        chipsInput.addChipsListener(new ChipsInput.ChipsListener() {
-                            @Override
-                            public void onChipAdded(ChipInterface chip, int newSize) {
-                                    searchRest.setEnabled(pos == -1);
-                                    btnDatePicker.setEnabled(pos != -1);
-                            }
-
-                            @Override
-                            public void onChipRemoved(ChipInterface chip, int newSize) {
-                                if(newSize <= 0) searchRest.setEnabled(pos == -1);
-                            }
-
-                            @Override
-                            public void onTextChanged(CharSequence text) {
-                                // do nothing
-                            }
-                        });
-
+                        setUserChips(userNames);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -284,6 +255,40 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
 
         // Start the request immediately
         queue.add(request);
+    }
+
+    private void setUserChips(ArrayList<String> userNames) {
+
+        // get ChipsInput view
+        chipsInput = (ChipsInput) requireView().findViewById(R.id.chips_input);
+        chipsInput.setLayoutParams(chipsInput.getLayoutParams());
+
+        List<Chip> contactList = new ArrayList<Chip>();
+        for(int i = 0; i < userNames.size(); i++) {
+            contactList.add(new Chip(userNames.get(i), ""));
+        }
+
+        // pass the ContactChip list
+        chipsInput.setFilterableList(contactList);
+
+        chipsInput.addChipsListener(new ChipsInput.ChipsListener() {
+            @Override
+            public void onChipAdded(ChipInterface chip, int newSize) {
+                searchRest.setEnabled(pos == -1);
+                btnDatePicker.setEnabled(pos != -1);
+            }
+
+            @Override
+            public void onChipRemoved(ChipInterface chip, int newSize) {
+                if(newSize <= 0) searchRest.setEnabled(pos == -1);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence text) {
+                // do nothing
+            }
+        });
+
     }
 
     // For choosing time
