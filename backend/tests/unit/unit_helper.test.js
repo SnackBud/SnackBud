@@ -304,7 +304,7 @@ describe("notifyEnterCode tests", () => {
 
   afterAll(() => {  
     mockingoose.resetAll();
-  })
+  });
 
   // make sure the call count is cleared after each test
   afterEach(() => {

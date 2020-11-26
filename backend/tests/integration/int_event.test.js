@@ -40,9 +40,9 @@ describe("testing-event-routes", () => {
     });
 
     it("GET / - success", async () => {
-        const { body } = await request(app).get("/");
-        expect(body).toEqual("home");
-        expect(body.statusCode).toEqual(200);
+        const res = await request(app).get("/");
+        expect(res.body).toEqual("home");
+        expect(res.body.statusCode).toEqual(200);
     });
 
     it("GET /event - success", async () => {
@@ -62,9 +62,9 @@ describe("testing-event-routes", () => {
             timeOfMeet: 1605787405385n
         },
         ]);
-        const { body } = await request(app).get("/event",
+        const res = await request(app).get("/event",
             { eventId: "r3h1t1605787405385" });
-        expect(body).toEqual([{
+        expect(res.body).toEqual([{
             timeOfCreation: 1605009601688n,
             isVerified: true,
             verifyCode: "123",
@@ -83,15 +83,15 @@ describe("testing-event-routes", () => {
     });
 
     it("GET /event - success no entry by that id", async () => {
-        const { body } = await request(app).get("/event",
+        const res = await request(app).get("/event",
             [{ eventId: "r3" }]);
-        expect(body).toEqual(null);
-        expect(body.statusCode).toEqual(204);
+        expect(res.body).toEqual(null);
+        expect(res.body.statusCode).toEqual(204);
     });
 
     it("GET /event - fail null id", async () => {
-        const { body } = await request(app).get("/event");
-        expect(body.statusCode).toEqual(400);
+        const res = await request(app).get("/event");
+        expect(res.body.statusCode).toEqual(400);
     });
 
     it("GET /event/getAll - success", async () => {
@@ -127,9 +127,9 @@ describe("testing-event-routes", () => {
         }
         ];
         Event.find = jest.fn().mockResolvedValue(events);
-        const { body } = await request(app).get("/event/getAll");
-        expect(body).toEqual(events);
-        expect(body.statusCode).toEqual(200);
+        const res = await request(app).get("/event/getAll");
+        expect(res.body).toEqual(events);
+        expect(res.body.statusCode).toEqual(200);
     });
 
     it("POST /event/getUser - success", async () => {
@@ -166,21 +166,21 @@ describe("testing-event-routes", () => {
         ];
 
         Event.find = jest.fn().mockResolvedValue(events);
-        const { body } = await request(app).post("/event/getUser",
+        const res = await request(app).post("/event/getUser",
             { userId: "2" });
-        expect(body).toEqual(events);
-        expect(body.statusCode).toEqual(200);
+        expect(res.body).toEqual(events);
+        expect(res.body.statusCode).toEqual(200);
     });
 
     it("GET /event/getUser - fail null id", async () => {
-        const { body } = await request(app).post("/event/getUser");
-        expect(body.statusCode).toEqual(400);
+        const res = await request(app).post("/event/getUser");
+        expect(res.body.statusCode).toEqual(400);
     });
 
     it("POST /event - fail null id", async () => {
-        const { body } = await request(app).post("/event");
-        expect(body).toEqual("bad input");
-        expect(body.statusCode).toEqual(400);
+        const res = await request(app).post("/event");
+        expect(res.body).toEqual("bad input");
+        expect(res.body.statusCode).toEqual(400);
     });
 
     it("POST /event - fail create meet with oneself", async () => {
@@ -201,9 +201,9 @@ describe("testing-event-routes", () => {
             restName: "Loafe Cafe",
             timeOfMeet: 1605787405385n
         }];
-        const { body } = await request(app).post("/event", event);
-        expect(body).toEqual({ message: "host cannot create meetup with themselves" });
-        expect(body.statusCode).toEqual(405);
+        const res = await request(app).post("/event", event);
+        expect(res.body).toEqual({ message: "host cannot create meetup with themselves" });
+        expect(res.body.statusCode).toEqual(405);
     });
 
     it("POST /event - fail too many guests", async () => {
@@ -236,9 +236,9 @@ describe("testing-event-routes", () => {
             restName: "Loafe Cafe",
             timeOfMeet: 1605787405385n
         }];
-        const { body } = await request(app).post("/event", event);
-        expect(body).toEqual("Request header field too large");
-        expect(body.statusCode).toEqual(431);
+        const res = await request(app).post("/event", event);
+        expect(res.body).toEqual("Request header field too large");
+        expect(res.body.statusCode).toEqual(431);
     });
 
     it("POST & DELETE /event - success", async () => {
@@ -257,29 +257,29 @@ describe("testing-event-routes", () => {
             restName: "Loafe Cafe",
             timeOfMeet: 1605787405385n
         }];
-        let { body1 } = await request(app).post("/event", event);
-        expect(body1).toEqual(event);
-        expect(body1.statusCode).toEqual(201);
+        const res1 = await request(app).post("/event", event);
+        expect(res1.body).toEqual(event);
+        expect(res1.body.statusCode).toEqual(201);
 
         //DELETE ONCE
-        let { body2 } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
-        expect(body2).toEqual("delete successful");
-        expect(body2.statusCode).toEqual(200);
+        const res2 = await request(app).delete("/event", event); //uses the request function that calls on express app instance
+        expect(res2.body).toEqual("delete successful");
+        expect(res2.body.statusCode).toEqual(200);
 
         //Check for missing resource
-        let { body3 } = await request(app).get("/event", event); //uses the request function that calls on express app instance
-        expect(body3.statusCode).toEqual(204);
+        const res3 = await request(app).get("/event", event); //uses the request function that calls on express app instance
+        expect(res3.body.statusCode).toEqual(204);
 
         //SHOULD BE DELETED, GET ERROR CASE OF DOUBLE DELETE
-        let { body4 } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
-        expect(body4).toEqual("already deleted");
-        expect(body4.statusCode).toEqual(410);
+        const res4 = await request(app).delete("/event", event); //uses the request function that calls on express app instance
+        expect(res4.body).toEqual("already deleted");
+        expect(res4.body.statusCode).toEqual(410);
     });
 
     it("DELETE /event - fail null id", async () => {
-        const { body } = await request(app).delete("/event");
-        expect(body).toEqual("bad input");
-        expect(body.statusCode).toEqual(400);
+        const res = await request(app).delete("/event");
+        expect(res.body).toEqual("bad input");
+        expect(res.body.statusCode).toEqual(400);
     });
 
     it("PUT /event - fail, already verified meetup", async () => {
@@ -300,9 +300,9 @@ describe("testing-event-routes", () => {
             guestId: "109786710572605387609"
         },
         ];
-        const { body } = await request(app).put("/event", event);
-        expect(body).toEqual("meetup not modified");
-        expect(body.statusCode).toEqual(304);
+        const res = await request(app).put("/event", event);
+        expect(res.body).toEqual("meetup not modified");
+        expect(res.body.statusCode).toEqual(304);
     });
 
     it("POST & PUT /event - fail, not a real guest user", async () => {
@@ -325,23 +325,23 @@ describe("testing-event-routes", () => {
             guestId: "3",
 
         }];
-        let { body } = await request(app).post("/event", event);
-        expect(body).toEqual(event);
-        expect(body.statusCode).toEqual(201);
+        const res1 = await request(app).post("/event", event);
+        expect(res1.body).toEqual(event);
+        expect(res1.body.statusCode).toEqual(201);
 
         //VERIFY MEETUP for first time, but wrong user
-        let { body2 } = await request(app).put("/event", event);
-        expect(body2).toEqual("user not in database");
-        expect(body2.statusCode).toEqual(410);
+        const res2 = await request(app).put("/event", event);
+        expect(res2.body).toEqual("user not in database");
+        expect(res2.body.statusCode).toEqual(410);
         //Meetup already verified, but wrong user
-        let { body3 } = await request(app).put("/event", event);
-        expect(body3).toEqual("user not in database");
-        expect(body3.statusCode).toEqual(410);
+        const res3 = await request(app).put("/event", event);
+        expect(res3.body).toEqual("user not in database");
+        expect(res3.body.statusCode).toEqual(410);
 
         //DELETE ONCE CREATED
-        let { body4 } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
-        expect(body4).toEqual("delete successful");
-        expect(body4.statusCode).toEqual(200);
+        const res4 = await request(app).delete("/event", event); //uses the request function that calls on express app instance
+        expect(res4.body).toEqual("delete successful");
+        expect(res4.body.statusCode).toEqual(200);
     });
 
     it("POST & PUT & DELETE /event - success", async () => {
@@ -362,26 +362,26 @@ describe("testing-event-routes", () => {
             guestId: "109786710572605387609"
         },
         ];
-        let { body } = await request(app).post("/event", event);
-        expect(body).toEqual(event);
-        expect(body.statusCode).toEqual(201);
+        const res1 = await request(app).post("/event", event);
+        expect(res1.body).toEqual(event);
+        expect(res1.body.statusCode).toEqual(201);
 
         //VERIFY MEETUP, but wrong user
-        let { body2 } = await request(app).put("/event", event);
-        expect(body2).toEqual("verify successful");
-        expect(body2.statusCode).toEqual(200);
+        const res2 = await request(app).put("/event", event);
+        expect(res2.body).toEqual("verify successful");
+        expect(res2.body.statusCode).toEqual(200);
 
         //DELETE ONCE VERIFED
-        let { body3 } = await request(app).delete("/event", event); //uses the request function that calls on express app instance
-        expect(body3).toEqual("delete successful");
-        expect(body3.statusCode).toEqual(200);
+        const res3 = await request(app).delete("/event", event); //uses the request function that calls on express app instance
+        expect(res3.body).toEqual("delete successful");
+        expect(res3.body.statusCode).toEqual(200);
     });
 
 
     it("POST /event/contactTrace - fail null id", async () => {
-        const { body } = await request(app).post("/event/contactTrace");
-        expect(body).toEqual("bad input");
-        expect(body.statusCode).toEqual(400);
+        const res = await request(app).post("/event/contactTrace");
+        expect(res.body).toEqual("bad input");
+        expect(res.body.statusCode).toEqual(400);
     });
 
     it("POST /event/contactTrace - success with no meetups", async () => {
@@ -406,9 +406,9 @@ describe("testing-event-routes", () => {
             timeOfMeet: 1605787405390n,
         }];
         Event.find = jest.fn().mockResolvedValue(events);
-        const { body } = await request(app).post("/event/contactTrace", info);
-        expect(body).toEqual("no at risk meet-ups");
-        expect(body.statusCode).toEqual(200);
+        const res = await request(app).post("/event/contactTrace", info);
+        expect(res.body).toEqual("no at risk meet-ups");
+        expect(res.body.statusCode).toEqual(200);
     });
 
     it("POST /event/contactTrace - success with reports", async () => {
@@ -449,9 +449,9 @@ describe("testing-event-routes", () => {
         },
         ];
         Event.find = jest.fn().mockResolvedValue(events);
-        const { body } = await request(app).post("/event/contactTrace", info);
-        expect(body).toEqual({ pastEvents: events, notifiedUserIds: ["109786710572605387609"] });
-        expect(body.statusCode).toEqual(200);
+        const res = await request(app).post("/event/contactTrace", info);
+        expect(res.body).toEqual({ pastEvents: events, notifiedUserIds: ["109786710572605387609"] });
+        expect(res.body.statusCode).toEqual(200);
     });
 
     it("POST /event/contactTrace - fail not real user", async () => {
@@ -476,8 +476,8 @@ describe("testing-event-routes", () => {
             timeOfMeet: 1605787405390n,
         }];
         Event.find = jest.fn().mockResolvedValue(events);
-        const { body } = await request(app).post("/event/contactTrace", info);
-        expect(body).toEqual("error, no user found by userId");
-        expect(body.statusCode).toEqual(410);
+        const res = await request(app).post("/event/contactTrace", info);
+        expect(res.body).toEqual("error, no user found by userId");
+        expect(res.body.statusCode).toEqual(410);
     });
 });
