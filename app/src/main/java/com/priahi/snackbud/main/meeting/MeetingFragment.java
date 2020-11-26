@@ -12,12 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +32,9 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.pchmn.materialchips.ChipsInput;
+import com.pchmn.materialchips.model.Chip;
+import com.pchmn.materialchips.model.ChipInterface;
 import com.priahi.snackbud.R;
 import com.priahi.snackbud.main.MainActivity;
 import com.priahi.snackbud.main.meeting.helper.RangeTimePickerDialog;
@@ -50,8 +51,9 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
-public class MeetingFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class MeetingFragment extends Fragment implements View.OnClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -59,15 +61,13 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
 //    private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "MeetingFragment";
 
-    // TODO: Rename and change types of parameters
 //    private String mParam1;
 //    private String mParam2;
     private Dialog dialog;
     private String hostId;
-    private String guestId;
-//    private ArrayList<String> guestIds;
+    private ArrayList<String> guestIds = new ArrayList<>();
     private Calendar timeOfMeet;
-//    private static final String url = "http://13.77.158.161:3000";
+//  private static final String url = "http://13.77.158.161:3000";
     private Map<String, String> users = new HashMap<>();
     private ArrayList<String> userNames = new ArrayList<>();
     private Map<String, String> restaurants = new HashMap<>();
@@ -78,17 +78,14 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private EditText txtDate;
     private EditText txtTime;
     private TextView searchRest;
+    private ChipsInput chipsInput;
     private int mYear;
     private int mMonth;
     private int mDay;
     private int mHour;
-    private int mMinute;
-    private long minHour;
-    private long maxHour;
-    private long maxMin;
     private long minMin;
     private RequestQueue queue;
-    private Integer pos = 0;
+    private Integer pos = -1;
     private int dayOfMonth;
     private int monthOfYear;
 
@@ -160,13 +157,6 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
             savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_two, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("220578639199-rv1vof8saj5d8b31fk2tp76hi8d9jv80.apps.googleusercontent.com")
                 .requestProfile()
@@ -182,6 +172,13 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
 
         hostId = acct.getId();
 
+        return inflater.inflate(R.layout.fragment_two, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         btnCreateMeeting = requireView().findViewById(R.id.createmeeting);
         btnDatePicker = requireView().findViewById(R.id.btn_date);
         btnTimePicker = requireView().findViewById(R.id.btn_time);
@@ -194,75 +191,26 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         btnTimePicker.setEnabled(false);
         btnCreateMeeting.setEnabled(false);
 
-        btnCreateMeeting.setOnClickListener(view1 -> {
-            try {
-                postRequest();
-                Toast.makeText(getContext(), "Meeting successfully created", Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(getContext(), MainActivity.class);
-                startActivity(intent);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        });
+        btnCreateMeeting.setOnClickListener(this);
 
         timeOfMeet = Calendar.getInstance();
 
-        Log.d("user", userNames.toString());
-        // List the users
-        final Spinner userDropdown = requireView().findViewById(R.id.userSpinner);
-        userDropdown.setOnItemSelectedListener(this);
-
         searchRest = requireView().findViewById(R.id.search_rest);
 
-        if (pos != 0) {
+        if (pos != -1) {
             searchRest.setText(restNames.get(pos));
             searchRest.setEnabled(false);
-            btnDatePicker.setEnabled(true);
         }
 
-        searchRest.setOnClickListener(v -> {
-            dialog = new Dialog(getContext());
-            dialog.setContentView(R.layout.dialog_searchable_spinner);
-            dialog.getWindow().setLayout(900, 1200);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dialog.show();
+        searchRest.setEnabled(false);
+        searchRest.setOnClickListener(this);
 
-            EditText editText = dialog.findViewById(R.id.edit_text_rest);
-            ListView listView = dialog.findViewById(R.id.list_view_rest);
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
-                    android.R.layout.simple_spinner_dropdown_item, restNames);
-            listView.setAdapter(adapter);
-
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    Log.w(TAG, "before text changed"); //keep for codacy
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    adapter.getFilter().filter(s);
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                    Log.w(TAG, "after text changed"); //keep for codacy
-                }
-            });
-
-            listView.setOnItemClickListener((parent, view12, position, id) -> {
-                searchRest.setText(adapter.getItem(position));
-                btnDatePicker.setEnabled(true);
-                dialog.dismiss();
-            });
-
-        });
-        getAllUsers(userDropdown);
+        setUsers();
     }
 
-    private void getAllUsers(Spinner userDropdown) {
+    public void setUsers() {
         JSONArray js = new JSONArray();
+
         queue = Volley.newRequestQueue(requireContext());
         // Get all users
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
@@ -284,10 +232,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                             }
                         }
 
-                        ArrayAdapter<String> userAdapter = new ArrayAdapter<>(requireContext(),
-                                android.R.layout.simple_spinner_dropdown_item, userNames);
-                        userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        userDropdown.setAdapter(userAdapter);
+                        setUserChips(userNames);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -308,119 +253,197 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         queue.add(request);
     }
 
-    // for setting the users and restaurants
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-        if (parent.getId() == R.id.userSpinner) {
-            Log.d("user", userNames.get(position));
-            if (userNames.get(position) != null) {
-                guestId = users.get(userNames.get(position));
-                if (guestId != null) {
-                    Log.d("user", guestId);
-                }
-            }
-        } else {
-            throw new IllegalStateException("Unexpected value: " + parent.getId());
-        }
-    }
+    private void setUserChips(ArrayList<String> userNames) {
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        // TODO Auto-generated method stub
+        // get ChipsInput view
+        chipsInput = (ChipsInput) requireView().findViewById(R.id.chips_input);
+        chipsInput.setLayoutParams(chipsInput.getLayoutParams());
+
+        List<Chip> contactList = new ArrayList<Chip>();
+        for(int i = 0; i < userNames.size(); i++) {
+            contactList.add(new Chip(userNames.get(i), ""));
+        }
+
+        // pass the ContactChip list
+        chipsInput.setFilterableList(contactList);
+
+        chipsInput.addChipsListener(new ChipsInput.ChipsListener() {
+            @Override
+            public void onChipAdded(ChipInterface chip, int newSize) {
+                searchRest.setEnabled(pos == -1);
+                btnDatePicker.setEnabled(pos != -1);
+            }
+
+            @Override
+            public void onChipRemoved(ChipInterface chip, int newSize) {
+                if(newSize <= 0) searchRest.setEnabled(pos == -1);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence text) {
+                // do nothing
+            }
+        });
+
     }
 
     // For choosing time
     @Override
     public void onClick(View v) {
         if (v.equals(btnDatePicker)) {
-            // Get Current Date
-            final Calendar c = Calendar.getInstance();
-            mYear = c.get(Calendar.YEAR);
-            mMonth = c.get(Calendar.MONTH);
-            mDay = c.get(Calendar.DAY_OF_MONTH);
-            mHour = c.get(Calendar.HOUR_OF_DAY);
 
-            // bug fixed for m10
-            if(mHour == 23) mDay += 1;
-
-            DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(),
-                    (view, year, monthOfYear, dayOfMonth) -> {
-                        String date = String.format("%d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
-                        txtDate.setText(date);
-
-                        this.dayOfMonth = dayOfMonth;
-                        this.monthOfYear = monthOfYear;
-
-                        // set calendar
-                        timeOfMeet.set(year, monthOfYear, dayOfMonth);
-//                            timeOfMeet.set(Calendar.MONTH, monthOfYear);
-//                            timeOfMeet.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                    }, mYear, mMonth, mDay);
-
-            if(mHour == 23) {
-                c.add(Calendar.DAY_OF_MONTH, +1);
-            }
-            datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
-            c.add(Calendar.MONTH, +1);
-            long oneMonthAhead = c.getTimeInMillis();
-            datePickerDialog.getDatePicker().setMaxDate(oneMonthAhead);
-            datePickerDialog.show();
-            //TODO: make this timezone invariant
-
-            btnTimePicker.setEnabled(true);
+            datePicker();
 
         } else if (v.equals(btnTimePicker)) {
-            // Get Current Time
-            final Calendar c = Calendar.getInstance();
-            mHour = c.get(Calendar.HOUR_OF_DAY);
-            mMinute = c.get(Calendar.MINUTE);
-            minHour = 8;
-            maxHour = 23;
-            maxMin = 0;
 
-            // bug fixed for m10
-            if(mHour == 23) mDay += 1;
+            timePicker();
 
-            if(mHour == 23
-                    || mHour < 7
-                    || mDay != dayOfMonth
-                    || mMonth != monthOfYear) {
-                mHour = 8;
-                mMinute = 0;
+        } else if(v.equals(btnCreateMeeting)) {
+            try {
+                postRequest();
+                Toast.makeText(getContext(), "Meeting successfully created", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                startActivity(intent);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            else {
-                mHour = mHour + 1;
-            }
+        } else if(v.equals(searchRest)) {
 
-            // Launch Time Picker Dialog
-            RangeTimePickerDialog timePickerDialog = new RangeTimePickerDialog(requireContext(),
-                    (view, hourOfDay, minute) -> {
-                        String timeOfDay = String.format("%02d:%02d", hourOfDay, minute);
-                        txtTime.setText(timeOfDay);
+            restDialogCreate();
 
-                        // set calendar
-
-                        timeOfMeet.set(timeOfMeet.get(Calendar.YEAR),
-                                timeOfMeet.get(Calendar.MONTH),
-                                timeOfMeet.get(Calendar.DATE),
-                                hourOfDay, minute);
-//                            timeOfMeet.set(Calendar.MINUTE, minute);
-                    }, mHour, mMinute, false);
-
-            if(Calendar.getInstance().get(Calendar.DAY_OF_YEAR) >= timeOfMeet.get(Calendar.DAY_OF_YEAR)) {
-                minHour = mHour; //Math.max(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1, 8);
-                minMin = mMinute; //Math.max(Calendar.getInstance().get(Calendar.MINUTE), 0);
-            }
-            Log.d("hour", String.valueOf(minHour));
-            timePickerDialog.setMin((int) minHour, (int) minMin);
-            timePickerDialog.setMax((int) maxHour, (int) maxMin);
-            timePickerDialog.show();
-
-            btnCreateMeeting.setEnabled(true);
         }
 
 //                String.format("%d-%02d-%02dT%02d:%02d:00Z", mYear, mMonth + 1, mDay, mHour, mMinute);
         Log.d("time", String.valueOf(timeOfMeet.getTime()));
+
+    }
+
+    private void restDialogCreate() {
+
+        dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.dialog_searchable_spinner);
+        dialog.getWindow().setLayout(900, 1200);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+
+        EditText editText = dialog.findViewById(R.id.edit_text_rest);
+        ListView listView = dialog.findViewById(R.id.list_view_rest);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_spinner_dropdown_item, restNames);
+        listView.setAdapter(adapter);
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+                // do nothing
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                adapter.getFilter().filter(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // do nothing
+            }
+        });
+
+        listView.setOnItemClickListener((parent, view12, position, id) -> {
+            searchRest.setText(adapter.getItem(position));
+            btnDatePicker.setEnabled(pos == -1);
+            dialog.dismiss();
+        });
+    }
+
+    private void timePicker() {
+        // Get Current Time
+        final Calendar c = Calendar.getInstance();
+        mHour = c.get(Calendar.HOUR_OF_DAY);
+        int mMinute = c.get(Calendar.MINUTE);
+        long minHour = 8;
+        long maxHour = 23;
+        long maxMin = 0;
+
+        // bug fixed for m10
+        if(mHour == 23) mDay += 1;
+
+        if(mHour == 23
+                || mHour < 7
+                || mDay != dayOfMonth
+                || mMonth != monthOfYear) {
+            mHour = 8;
+            mMinute = 0;
+        }
+        else {
+            mHour = mHour + 1;
+        }
+
+        // Launch Time Picker Dialog
+        RangeTimePickerDialog timePickerDialog = new RangeTimePickerDialog(requireContext(),
+                (view, hourOfDay, minute) -> {
+                    String timeOfDay = String.format("%02d:%02d", hourOfDay, minute);
+                    txtTime.setText(timeOfDay);
+
+                    // set calendar
+
+                    timeOfMeet.set(timeOfMeet.get(Calendar.YEAR),
+                            timeOfMeet.get(Calendar.MONTH),
+                            timeOfMeet.get(Calendar.DATE),
+                            hourOfDay, minute);
+//                            timeOfMeet.set(Calendar.MINUTE, minute);
+                }, mHour, mMinute, false);
+
+        if(Calendar.getInstance().get(Calendar.DAY_OF_YEAR) >= timeOfMeet.get(Calendar.DAY_OF_YEAR)) {
+            minHour = mHour; //Math.max(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1, 8);
+            minMin = mMinute; //Math.max(Calendar.getInstance().get(Calendar.MINUTE), 0);
+        }
+        Log.d("hour", String.valueOf(minHour));
+        timePickerDialog.setMin((int) minHour, (int) minMin);
+        timePickerDialog.setMax((int) maxHour, (int) maxMin);
+        timePickerDialog.show();
+
+        btnCreateMeeting.setEnabled(true);
+    }
+
+    private void datePicker() {
+        // Get Current Date
+        final Calendar c = Calendar.getInstance();
+        mYear = c.get(Calendar.YEAR);
+        mMonth = c.get(Calendar.MONTH);
+        mDay = c.get(Calendar.DAY_OF_MONTH);
+        mHour = c.get(Calendar.HOUR_OF_DAY);
+
+        // bug fixed for m10
+        if(mHour == 23) mDay += 1;
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(),
+                (view, year, monthOfYear, dayOfMonth) -> {
+                    String date = String.format("%d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
+                    txtDate.setText(date);
+
+                    this.dayOfMonth = dayOfMonth;
+                    this.monthOfYear = monthOfYear;
+
+                    // set calendar
+                    timeOfMeet.set(year, monthOfYear, dayOfMonth);
+//                            timeOfMeet.set(Calendar.MONTH, monthOfYear);
+//                            timeOfMeet.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                }, mYear, mMonth, mDay);
+
+        if(mHour == 23) {
+            c.add(Calendar.DAY_OF_MONTH, +1);
+        }
+        datePickerDialog.getDatePicker().setMinDate(c.getTimeInMillis());
+        c.add(Calendar.MONTH, +1);
+        long oneMonthAhead = c.getTimeInMillis();
+        datePickerDialog.getDatePicker().setMaxDate(oneMonthAhead);
+        datePickerDialog.show();
+
+        btnTimePicker.setEnabled(true);
     }
 
 
@@ -434,19 +457,31 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
 
         Log.d("time sent", String.valueOf(timeOfMeet.getTime()));
 
+        List<Chip> contactsSelected = (List<Chip>) chipsInput.getSelectedChipList();
+        for(int i = 0; i < contactsSelected.size(); i++) {
+            String userId = users.get(contactsSelected.get(i).getLabel());
+            if (userId != null) {
+                this.guestIds.add(i, userId);
+                Log.i("guest", userId);
+            }
+        }
+
         JSONObject eventRequest = new JSONObject();
         eventRequest.put("hostId", acct.getId());
 
         JSONArray array = new JSONArray();
-        JSONObject guestId = new JSONObject();
-        guestId.put("guestId", this.guestId);
-        array.put(guestId);
-        //array.put(guestIds);
+
+        for (String guest : this.guestIds) {
+            JSONObject guestId = new JSONObject();
+            guestId.put("guestId", guest);
+            array.put(guestId);
+        }
 
         String restName = searchRest.getText().toString();
         String restId = restaurants.get(restName);
 
         eventRequest.put("guestIds", array);
+        eventRequest.put("notVerified", array);
         eventRequest.put("restId", restId);
         eventRequest.put("restName", restName);
         eventRequest.put("timeOfMeet", timeOfMeet.getTimeInMillis());
