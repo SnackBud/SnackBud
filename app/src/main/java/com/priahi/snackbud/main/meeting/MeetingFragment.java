@@ -89,7 +89,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
     private long maxMin;
     private long minMin;
     private RequestQueue queue;
-    private Integer pos = 0;
+    private Integer pos = -1;
     private int dayOfMonth;
     private int monthOfYear;
 
@@ -201,7 +201,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
 
         searchRest = requireView().findViewById(R.id.search_rest);
 
-        if (pos != 0) {
+        if (pos != -1) {
             searchRest.setText(restNames.get(pos));
             searchRest.setEnabled(false);
         }
@@ -251,23 +251,18 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
                         chipsInput.addChipsListener(new ChipsInput.ChipsListener() {
                             @Override
                             public void onChipAdded(ChipInterface chip, int newSize) {
-                                if(newSize > 0 && pos == 0) {
-                                    searchRest.setEnabled(true);
-                                }
-                                btnDatePicker.setEnabled(true);
+                                    searchRest.setEnabled(pos == -1);
+                                    btnDatePicker.setEnabled(pos != -1);
                             }
 
                             @Override
                             public void onChipRemoved(ChipInterface chip, int newSize) {
-                                if(newSize <= 0 && pos == 0) {
-                                    searchRest.setEnabled(false);
-                                }
-                                if(newSize == 0) btnDatePicker.setEnabled(false);
+                                if(newSize <= 0) searchRest.setEnabled(pos == -1);
                             }
 
                             @Override
                             public void onTextChanged(CharSequence text) {
-
+                                // do nothing
                             }
                         });
 
@@ -424,7 +419,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
 
             listView.setOnItemClickListener((parent, view12, position, id) -> {
                 searchRest.setText(adapter.getItem(position));
-                btnDatePicker.setEnabled(pos == 0);
+                btnDatePicker.setEnabled(pos == -1);
                 dialog.dismiss();
             });
 
