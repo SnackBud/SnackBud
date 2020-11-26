@@ -208,7 +208,7 @@ router.put("/", (req, res) => {
 
 
   // update the meetup to show verified if the codes match, else fail
-  Event.findOneAndUpdate(
+  Event.findOne(
     {
       isVerified: false,
       eventId: req.body.eventId,
@@ -216,9 +216,8 @@ router.put("/", (req, res) => {
       verifyCode: req.body.verifyCode,
       notVerified: { $elemMatch: { guestId: req.body.guestId } }
     },
-    { notVerified: { $pull: { guestId: req.body.guestId } } },
-    // returns the updated document
-    { new: true },
+    // // returns the updated document
+    // { new: true },
     (err, event) => {
       if (err) {
         res.status(404).send(err);
@@ -245,11 +244,24 @@ router.put("/", (req, res) => {
           },
         );
       } else {
+        // if the user successfully verifies, we remove them from the notVerified array
+        // event.notVerified.filter((x) => {
+        //   if (x.guestId == req.body.guestId) {
+        //     delete x;
+        //   }
+        // });
+
+        for (var i = 0; i < event.notVerified.length; i++) {
+          console.log(event.notVerified[i]);
+          if (event.notVerified[i].guestId == req.body.guestId) {
+            console.log("matches");
+            delete event.notVerified[i];
+          }
+        }
 
         // if everyone have verified, then change the isVerified status
         // var count = 0;
         // console.log(event.notVerified);
-        var count = event.notVerified.filter((x) => x.guestId != null).length;
         // for (var i = 0; i < event.notVerified.length; i++) {
         //   // console.log(event.notVerified[i]);
         //   if (event.notVerified[i].guestId != null) {
@@ -258,20 +270,35 @@ router.put("/", (req, res) => {
         //   }
         // }
 
+        // if everyones verified, set isVerified to true in event
+        var count = event.notVerified.filter((x) => x != null).length;
+        // var count = event.notVerified.length;
         if (count === 0) {
-          // console.log("check")
           event.isVerified = true;
-          event.save((err) => {
+        }
+        console.log(count);
+
+        // event.save((err) => {
+        //   if (err) {
+        //     console.log(err);
+        //     return;
+        //   }
+        //   // saved!
+        // });
+
+        Event.findOneAndUpdate({
+            _id: event._id
+          }, 
+          event, 
+          { upsert: true }, 
+          function(err, res) {
             if (err) {
-              // console.log(err);
               return;
             }
-            // saved!
-          });
-        }
+        });
 
         User.findOne(
-          { userId: event.guestIds[0].guestId },
+          { userId: req.body.guestId },
           (err, guest) => {
             if (err) {
               res.status(404).send(err);
