@@ -83,10 +83,6 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
     private int mMonth;
     private int mDay;
     private int mHour;
-    private int mMinute;
-    private long minHour;
-    private long maxHour;
-    private long maxMin;
     private long minMin;
     private RequestQueue queue;
     private Integer pos = -1;
@@ -367,10 +363,10 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
         // Get Current Time
         final Calendar c = Calendar.getInstance();
         mHour = c.get(Calendar.HOUR_OF_DAY);
-        mMinute = c.get(Calendar.MINUTE);
-        minHour = 8;
-        maxHour = 23;
-        maxMin = 0;
+        int mMinute = c.get(Calendar.MINUTE);
+        long minHour = 8;
+        long maxHour = 23;
+        long maxMin = 0;
 
         // bug fixed for m10
         if(mHour == 23) mDay += 1;
