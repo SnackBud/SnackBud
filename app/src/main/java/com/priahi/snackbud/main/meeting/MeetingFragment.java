@@ -34,9 +34,13 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.pchmn.materialchips.ChipsInput;
+import com.pchmn.materialchips.model.Chip;
+import com.pchmn.materialchips.model.ChipInterface;
 import com.priahi.snackbud.R;
 import com.priahi.snackbud.main.MainActivity;
 import com.priahi.snackbud.main.meeting.helper.RangeTimePickerDialog;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,13 +49,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-public class MeetingFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class MeetingFragment extends Fragment implements View.OnClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -64,8 +64,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
 //    private String mParam2;
     private Dialog dialog;
     private String hostId;
-    private String guestId;
-    private ArrayList<String> guestIds;
+//  private String guestId;
+    private ArrayList<ArrayList<String>> guestIds = new ArrayList<>();
     private String restId;
     private String restName;
     private Calendar timeOfMeet;
@@ -80,6 +80,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private EditText txtDate;
     private EditText txtTime;
     private TextView searchRest;
+    private ChipsInput chipsInput;
     private int mYear;
     private int mMonth;
     private int mDay;
@@ -209,11 +210,6 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
 
         timeOfMeet = Calendar.getInstance();
 
-        Log.d("user", userNames.toString());
-        // List the users
-        final Spinner userDropdown = requireView().findViewById(R.id.userSpinner);
-        userDropdown.setOnItemSelectedListener(this);
-
         searchRest = requireView().findViewById(R.id.search_rest);
 
         if (pos != 0) {
@@ -283,10 +279,19 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                             }
                         }
 
-                        ArrayAdapter<String> userAdapter = new ArrayAdapter<>(requireContext(),
-                                android.R.layout.simple_spinner_dropdown_item, userNames);
-                        userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        userDropdown.setAdapter(userAdapter);
+                        // get ChipsInput view
+                        chipsInput = (ChipsInput) requireView().findViewById(R.id.chips_input);
+                        chipsInput.setLayoutParams(chipsInput.getLayoutParams());
+
+                        List<Chip> contactList = new ArrayList<Chip>();
+                        for(int i = 0; i < userNames.size(); i++) {
+                            contactList.add(new Chip(userNames.get(i), ""));
+                        }
+
+                        // pass the ContactChip list
+                        chipsInput.setFilterableList(contactList);
+
+                        chipsInput.getEditText().setEnabled(false);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -307,26 +312,6 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         queue.add(request);
     }
 
-    // for setting the users and restaurants
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-        if (parent.getId() == R.id.userSpinner) {
-            Log.d("user", userNames.get(position));
-            if (userNames.get(position) != null) {
-                guestId = users.get(userNames.get(position));
-                if (guestId != null) {
-                    Log.d("user", guestId);
-                }
-            }
-        } else {
-            throw new IllegalStateException("Unexpected value: " + parent.getId());
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        // TODO Auto-generated method stub
-    }
 
     // For choosing time
     @Override
@@ -433,14 +418,18 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
 
         Log.d("time sent", String.valueOf(timeOfMeet.getTime()));
 
+        List<Chip> contactsSelected = (List<Chip>) chipsInput.getSelectedChipList();
+        for(int i = 0; i < contactsSelected.size(); i++) {
+            guestIds.add(i, new ArrayList<String>(Collections.singleton(contactsSelected.get(i).getLabel())));
+        }
+
         JSONObject eventRequest = new JSONObject();
         eventRequest.put("hostId", acct.getId());
 
         JSONArray array = new JSONArray();
         JSONObject guestId = new JSONObject();
-        guestId.put("guestId", this.guestId);
+        guestId.put("guestIds", this.guestIds);
         array.put(guestId);
-        //array.put(guestIds);
 
         restName = searchRest.getText().toString();
         restId = restaurants.get(restName);

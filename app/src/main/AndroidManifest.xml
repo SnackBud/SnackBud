@@ -18,7 +18,8 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
-            android:usesCleartextTraffic="true">
+            android:usesCleartextTraffic="true" tools:ignore="ExtraText">
+
         <activity android:name=".main.about.About">
         </activity>
         <activity android:name=".main.profile.verifymeetup.VerifyMeetup" tools:ignore="Instantiatable">
@@ -47,8 +48,8 @@
         <activity android:name=".login.PermissionsActivity"/>
         <activity
                 android:name=".main.MainActivity"
+                android:windowSoftInputMode="adjustPan|stateHidden"
                 android:theme="@style/AppTheme.NoActionBar"/>
-
         <service
                 android:name=".firebase_notifications.MyFirebaseMessagingService"
                 android:exported="false">
