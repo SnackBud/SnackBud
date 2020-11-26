@@ -90,7 +90,7 @@ router.get("/", (req, res) => {
 
 function checkParams(req, res) {
   const _ = req.body;
-  nullExists = (_ == null || _.hostId == null ||
+  const nullExists = (_ == null || _.hostId == null ||
     _.guestIds == null ||
     _.restId == null ||
     _.restName == null ||
@@ -137,11 +137,11 @@ router.post("/", (req, res) => {
   });
 
   const err = checkMeetup(event);
-  if (err == 431) {
+  if (err === 431) {
     res.status(err).send("Request header field too large");
     return;
   }
-  if (err == 405) {
+  if (err === 405) {
     res.status(err).json({ message: "host cannot create meetup with themselves" });
     return;
   }
