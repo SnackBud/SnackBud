@@ -13,16 +13,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-// import android.widget.*;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,9 +37,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.maps.model.LatLng;
-
 import com.priahi.snackbud.R;
-import com.priahi.snackbud.main.MainActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,6 +55,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+
+// import android.widget.*;
 
 //import MapsFragment;
 
@@ -437,17 +435,17 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
 
     @Override
     public void onStatusChanged(String s, int i, Bundle bundle) {
-
+        Log.w(TAG, "on status changed"); //keep for codacy
     }
 
     @Override
     public void onProviderEnabled(String s) {
-
+        Log.w(TAG, "on provider enabled"); //keep for codacy
     }
 
     @Override
     public void onProviderDisabled(String s) {
-
+        Log.w(TAG, "on provider disabled"); //keep for codacy
     }
 }
 

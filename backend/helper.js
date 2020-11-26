@@ -9,8 +9,8 @@ admin.initializeApp({
 });
 
 class helpers {
-//   constructor() {
-//   }
+  //   constructor() {
+  //   }
 
   notifyHelper(elem, title, body) {
     // console.log("notifyHelper called");
@@ -40,27 +40,29 @@ class helpers {
       });
   }
 
+  // checkParamNewMeet(event) {
+  //   if (event && event.hostId && event.guestIds.length > 0) {
+  //     return false;
+  //   }
+  //   return true;
+  // }
+
   // tell the guests about the meetup creation
   notifyNewMeetup(event, helper = this) {
-    
+
     // check for bad calls
-    if (typeof event === 'undefined' || event == null) {
-      return;
-    } else if (typeof event.hostId === 'undefined') {
-      return;
-    } else if (event.guestIds.length == 0) {
+    if (!(event && event.hostId && event.guestIds.length > 0)) {
       return;
     }
 
     // get host name
     User.findOne({ userId: event.hostId }, {}, (err, host) => {
       if (err || host == null) {
-        res.send(err);
+        // res.send(err);
         return;
       }
       // get the deviceToken of the guests
-      let i;
-      for (i = 0; i < event.guestIds.length; i++) {
+      for (let i = 0; i < event.guestIds.length; i++) {
         const user = event.guestIds[parseInt(i, 10)];
         User.findOne({ userId: user.guestId }, {}, (err, guest) => {
           if (err) {
@@ -82,21 +84,19 @@ class helpers {
   notifyNoVerifyMeetup(guest, helper = this) {
     // console.log("No Verify meet for: " + guest.userId);
     // send messages to guest
-    if (typeof guest === 'undefined' || guest == null) {
+    if (typeof guest === "undefined" || guest == null) {
       return;
     }
 
-    helper.notifyHelper(guest, "You have failed to verify this meetup!", 
-    "Either your verify code is wrong or you are the host! Please try again");
+    helper.notifyHelper(guest, "You have failed to verify this meetup!",
+      "Either your verify code is wrong or you are the host! Please try again");
   }
 
   // listener helper for the host to see if the meetup has been verified
   notifyVerifyMeetup(event, guest, helper = this) {
 
     // check for bad calls
-    if (typeof event === 'undefined' || event == null) {
-      return;
-    } else if (typeof guest === 'undefined' || guest == null) {
+    if (!(event && guest)) {
       return;
     }
 
@@ -107,13 +107,13 @@ class helpers {
           return;
         }
         // send messages to host
-        helper.notifyHelper(host, `${host.username} you cannot verify your own event!`, 
-        "Please send the verification code to your friends so they can verify!");
+        helper.notifyHelper(host, `${host.username} you cannot verify your own event!`,
+          "Please send the verification code to your friends so they can verify!");
       });
       return;
     }
-    const body = `We hope you enjoyed ${event.restName} today! Thanks for using SnackBud!`;
 
+    const body = `We hope you enjoyed ${event.restName} today! Thanks for using SnackBud!`;
     // get host
     User.findOne({ userId: event.hostId }, {}, (err, host) => {
       if (err) {
@@ -132,7 +132,7 @@ class helpers {
 
   notifyEnterCode(event, helper = this) {
 
-    if (typeof event === 'undefined' || event == null) {
+    if (typeof event === "undefined" || event == null) {
       return;
     }
 

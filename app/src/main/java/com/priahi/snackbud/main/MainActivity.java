@@ -16,7 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.priahi.snackbud.*;
+import com.priahi.snackbud.R;
 import com.priahi.snackbud.login.LoginActivity;
 import com.priahi.snackbud.main.about.About;
 import com.priahi.snackbud.main.maps.MapsFragment;

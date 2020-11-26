@@ -29,9 +29,9 @@ router.post("/getUser", (req, res) => {
   // console.log("/event GET ALL request");
   // console.log(req.body);
   // console.log(req.body[0].userId);
-  if (req.body == null || 
+  if (req.body == null ||
     req.body[0].userId == null) {
-    res.status(400).send("bad input")
+    res.status(400).send("bad input");
     return;
   }
 
@@ -41,8 +41,8 @@ router.post("/getUser", (req, res) => {
       $or: [
         { hostId: req.body[0].userId },
         {
-          guestIds: { $elemMatch: { guestId: req.body[0].userId } } ,
-          notVerified: { $elemMatch: { guestId: req.body[0].userId } } 
+          guestIds: { $elemMatch: { guestId: req.body[0].userId } },
+          notVerified: { $elemMatch: { guestId: req.body[0].userId } }
         }
       ]
     },
@@ -65,44 +65,67 @@ router.post("/getUser", (req, res) => {
 router.get("/", (req, res) => {
   // console.log("/event GET request");
   if (req.body.eventId == null) {
-    res.status(400).send("bad input")
-    return
+    res.status(400).send("bad input");
+    return;
   }
 
   Event.findOne({ eventId: req.body.eventId },
     (err, event) => {
       if (err) {
-        console.log(err);
+        // console.log(err);
         res.status(404).send(err);
-        return
+        return;
       } else {
         if (event == null) {
           res.status(204).send(null);
-          return
+          return;
         } else {
           res.status(200).json(event);
-          return
+          return;
         }
         // console.log(event);
       }
     });
 });
 
+function checkParams(req, res) {
+  const _ = req.body;
+  const nullExists = (_.guestIds == null ||
+    _.restId == null ||
+    _.timeOfMeet == null);
+  if (nullExists) {
+    res.status(400).send("bad input");
+    return 400;
+  }
+  return 0;
+}
+
+function checkMeetup(event, res) {
+  if (event.guestIds.length >= 7) {
+    res.status(431).send("Request header field too large");
+    return 431;
+  }
+
+  for (let i = 0; i < event.guestIds.length; i++) {
+    if (event.guestIds[parseInt(i, 10)].guestId === event.hostId) {
+      res.status(405).json({ message: "host cannot create meetup with themselves" });
+      return 405;
+    }
+  }
+  return 0;
+}
+
 // post an event in our db
 router.post("/", (req, res) => {
   // console.log("/event POST request");
   const _ = req.body;
-
-  if (req.body == null || _.hostId == null ||
-    _.guestIds == null || 
-    _.restId == null ||
-    _.restName == null ||
-    _.timeOfMeet == null) {
-    res.status(400).send("bad input")
+  if (!(_)) {
+    res.status(400).send("bad input");
     return;
   }
-
-
+  if (checkParams(req, res)) {
+    return;
+  }
   const event = new Event({
     eventId: `r${_.restId}h${_.hostId}t${_.timeOfMeet}`,
     hostId: _.hostId,
@@ -116,27 +139,16 @@ router.post("/", (req, res) => {
     verifyCode: _.verifyCode,
   });
 
-  if (event.guestIds.length >= 7) {
-    res.status(431).send("Request header field too large");
+  if (checkMeetup(event, res)) {
     return;
   }
 
-  var i;
-  for (i = 0; i < event.guestIds.length; i++) {
-    if (event.guestIds[parseInt(i, 10)].guestId == event.hostId) {
-      res.status(405).json({ message: "host cannot create meetup with themselves" });
-      return;
-    }
-  }
-
-  event.save()
-    .then((data) => {
-      res.status(201).json(data);
-    })
-    .catch((err) => {
-      // console.log(err);
-      res.status(502).json({ message: err });
-    });
+  event.save().then((data) => {
+    res.status(201).json(data);
+  }).catch((err) => {
+    // console.log(err);
+    res.status(502).json({ message: err });
+  });
 
   pushNotify.emit("newMeetup", event);
 });
@@ -145,7 +157,7 @@ router.post("/", (req, res) => {
 router.delete("/", (req, res) => {
   // console.log("/event DELETE request");
   if (req.body.eventId == null) {
-    res.status(400).send("bad input")
+    res.status(400).send("bad input");
     return;
   }
 
@@ -174,10 +186,11 @@ router.delete("/deleteAll", (req, res) => {
       if (err) {
         res.status(404).send(err);
         // console.log(err);
-      } else if (d.acknowledged && d.deletedCount == 1)
+      } else if (d.acknowledged && d.deletedCount === 1) {
         res.status(200).send("delete all successful");
-      else
+      } else {
         res.status(410).send("already deleted all");
+      }
     });
 });
 
@@ -186,7 +199,7 @@ router.put("/", (req, res) => {
   if (req.body.eventId == null ||
     req.body.verifyCode == null ||
     req.body.guestId == null) {
-    res.status(400).send("bad input")
+    res.status(400).send("bad input");
     return;
   }
 
@@ -200,9 +213,9 @@ router.put("/", (req, res) => {
       verifyCode: req.body.verifyCode,
       notVerified: { $elemMatch: { guestId: req.body.guestId } }
     },
-    { notVerified: { $pullAll: { guestId: req.body.guestId } } }, 
+    { notVerified: { $pullAll: { guestId: req.body.guestId } } },
     // returns the updated document
-    {new: true}, 
+    { new: true },
     (err, event) => {
       if (err) {
         res.status(404).send(err);
@@ -228,27 +241,26 @@ router.put("/", (req, res) => {
             }
           },
         );
-
       } else {
 
         // if everyone have verified, then change the isVerified status
-        var count = 0;
-        console.log(event.notVerified);
+        // var count = 0;
+        // console.log(event.notVerified);
+        var count = event.notVerified.filter((x) => x.guestId != null).length;
+        // for (var i = 0; i < event.notVerified.length; i++) {
+        //   // console.log(event.notVerified[i]);
+        //   if (event.notVerified[i].guestId != null) {
+        //     // console.log(count);
+        //     count++;
+        //   }
+        // }
 
-        for (var i = 0; i < event.notVerified.length; i++) {
-          console.log(event.notVerified[i]);
-          if (event.notVerified[i].guestId != null) {
-            console.log(count);
-            count++;
-          }
-        }
-
-        if (count == 0) {
-          console.log("check")
+        if (count === 0) {
+          // console.log("check")
           event.isVerified = true;
-          event.save(function (err) {
+          event.save((err) => {
             if (err) {
-              console.log(err);
+              // console.log(err);
               return;
             }
             // saved!
@@ -261,11 +273,9 @@ router.put("/", (req, res) => {
             if (err) {
               res.status(404).send(err);
               // console.log(err);
+            } else if (guest == null) {
+              res.status(410).send("user not in database");
             } else {
-              if (guest == null) {
-                res.status(410).send("user not in database");
-                return;
-              }
               // console.log(guest);
               pushNotify.emit("verifyMeetup", event, guest);
               res.status(200).send("verify successful");
@@ -277,7 +287,7 @@ router.put("/", (req, res) => {
   );
 });
 
-async function contactTraceTrigger(sickUser, atRiskUserId, event) {
+async function contactTraceTrigger(res, sickUser, atRiskUserId, event) {
   await User.findOne({ userId: atRiskUserId },
     (err, atRiskUser) => {
       if (err) {
@@ -298,13 +308,13 @@ function findAtRiskUsers(req, res, sickUser, pastEvents) {
       // notify host
       // console.log(event.hostId);
       notifiedUserIds.push(event.hostId);
-      contactTraceTrigger(sickUser, event.hostId, event);
+      contactTraceTrigger(res, sickUser, event.hostId, event);
     }
     // notify guests
     event.guestIds.forEach((atRiskUser) => {
       if (!notifiedUserIds.includes(atRiskUser.guestId)) {
         // console.log(atRiskUser.guestId);
-        contactTraceTrigger(sickUser, atRiskUser.guestId, event);
+        contactTraceTrigger(res, sickUser, atRiskUser.guestId, event);
         notifiedUserIds.push(atRiskUser.guestId);
       }
     });
@@ -335,13 +345,13 @@ router.post("/contactTrace", (req, res) => {
   if (req.body.userId == null ||
     req.body.twoWeeksAgo == null ||
     req.body.currentDate == null) {
-    res.status(400).send("bad input")
+    res.status(400).send("bad input");
   }
 
   Event.find({
     $or: [{ hostId: req.body.userId }, { guestIds: { $elemMatch: { guestId: req.body.userId } } }],
     timeOfMeet: { $gte: req.body.twoWeeksAgo, $lte: req.body.currentDate },
-    notVerified: { },
+    notVerified: {},
   },
     (err, pastEvents) => {
       if (err) {
