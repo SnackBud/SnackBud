@@ -43,8 +43,9 @@ class helpers {
   checkParamNewMeet(event) {
     if (event == null) {
       return true;
-    } else if (typeof event === "undefined"
-      || typeof event.hostId === "undefined"
+    } else if (typeof event === "undefined") {
+      return true;
+    } else if (typeof event.hostId === "undefined"
       || event.guestIds.length === 0) {
       return true;
     }
