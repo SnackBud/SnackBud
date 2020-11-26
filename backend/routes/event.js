@@ -88,14 +88,15 @@ router.get("/", (req, res) => {
     });
 });
 
-function checkParams(req, res) {
+function checkParams(req) {
   const _ = req.body;
-  const noNull = (_ && _.hostId &&
-    _.guestIds && _.restId && _.restName && _.timeOfMeet);
-  if (noNull) {
-    return false;
+  const nullExists = (_.guestIds == null ||
+    _.restId == null ||
+    _.timeOfMeet == null);
+  if (nullExists) {
+    return true;
   }
-  return true;
+  return false;
 }
 
 function checkMeetup(event) {
@@ -115,44 +116,46 @@ function checkMeetup(event) {
 router.post("/", (req, res) => {
   // console.log("/event POST request");
   const _ = req.body;
-
-  if (checkParams(req, res)) {
-    res.status(400).send("bad input");
+  if (!(_)) {
     return;
-  }
-  const event = new Event({
-    eventId: `r${_.restId}h${_.hostId}t${_.timeOfMeet}`,
-    hostId: _.hostId,
-    guestIds: _.guestIds,
-    restId: _.restId,
-    restName: _.restName,
-    timeOfMeet: _.timeOfMeet,
-    // optional params which are set automatically
-    timeOfCreation: _.timeOfCreation,
-    notVerified: _.guestIds,
-    verifyCode: _.verifyCode,
+  })
+if (checkParams(req)) {
+  res.status(400).send("bad input");
+  return;
+}
+const event = new Event({
+  eventId: `r${_.restId}h${_.hostId}t${_.timeOfMeet}`,
+  hostId: _.hostId,
+  guestIds: _.guestIds,
+  restId: _.restId,
+  restName: _.restName,
+  timeOfMeet: _.timeOfMeet,
+  // optional params which are set automatically
+  timeOfCreation: _.timeOfCreation,
+  notVerified: _.guestIds,
+  verifyCode: _.verifyCode,
+});
+
+const err = checkMeetup(event);
+if (err === 431) {
+  res.status(err).send("Request header field too large");
+  return;
+}
+if (err === 405) {
+  res.status(err).json({ message: "host cannot create meetup with themselves" });
+  return;
+}
+
+event.save()
+  .then((data) => {
+    res.status(201).json(data);
+  })
+  .catch((err) => {
+    // console.log(err);
+    res.status(502).json({ message: err });
   });
 
-  const err = checkMeetup(event);
-  if (err === 431) {
-    res.status(err).send("Request header field too large");
-    return;
-  }
-  if (err === 405) {
-    res.status(err).json({ message: "host cannot create meetup with themselves" });
-    return;
-  }
-
-  event.save()
-    .then((data) => {
-      res.status(201).json(data);
-    })
-    .catch((err) => {
-      // console.log(err);
-      res.status(502).json({ message: err });
-    });
-
-  pushNotify.emit("newMeetup", event);
+pushNotify.emit("newMeetup", event);
 });
 
 // delete a specific event in our db
