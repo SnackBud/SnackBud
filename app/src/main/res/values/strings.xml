@@ -1,8 +1,8 @@
 <resources>
 
     <!--    backend url for both local backend and azure backend-->
-<!--    <string name="backend_url">http://13.77.158.161:3000</string>-->
-        <string name="backend_url">http://192.168.1.66:3000</string>
+    <string name="backend_url">http://13.77.158.161:3000</string>
+<!--        <string name="backend_url">http://192.168.1.66:3000</string>-->
 
     <string name="app_name">SnackBud</string>
     <string name="title_activity_maps">Map</string>
