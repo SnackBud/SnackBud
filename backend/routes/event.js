@@ -99,13 +99,15 @@ function checkParams(req) {
   return false;
 }
 
-function checkMeetup(event) {
+function checkMeetup(event, res) {
   if (event.guestIds.length >= 7) {
+    res.status(431).send("Request header field too large");
     return 431;
   }
 
   for (let i = 0; i < event.guestIds.length; i++) {
     if (event.guestIds[parseInt(i, 10)].guestId === event.hostId) {
+      res.status(405).json({ message: "host cannot create meetup with themselves" });
       return 405;
     }
   }
@@ -136,24 +138,17 @@ router.post("/", (req, res) => {
     verifyCode: _.verifyCode,
   });
 
-  const err = checkMeetup(event);
+  const err = checkMeetup(event, res);
   if (err === 431) {
-    res.status(err).send("Request header field too large");
-    return;
-  }
-  if (err === 405) {
-    res.status(err).json({ message: "host cannot create meetup with themselves" });
     return;
   }
 
-  event.save()
-    .then((data) => {
-      res.status(201).json(data);
-    })
-    .catch((err) => {
-      // console.log(err);
-      res.status(502).json({ message: err });
-    });
+  event.save().then((data) => {
+    res.status(201).json(data);
+  }).catch((err) => {
+    // console.log(err);
+    res.status(502).json({ message: err });
+  });
 
   pushNotify.emit("newMeetup", event);
 });
