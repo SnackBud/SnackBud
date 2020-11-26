@@ -216,7 +216,7 @@ router.put("/", (req, res) => {
       verifyCode: req.body.verifyCode,
       notVerified: { $elemMatch: { guestId: req.body.guestId } }
     },
-    { notVerified: { $pullAll: { guestId: req.body.guestId } } },
+    { notVerified: { $pull: { guestId: req.body.guestId } } },
     // returns the updated document
     { new: true },
     (err, event) => {
