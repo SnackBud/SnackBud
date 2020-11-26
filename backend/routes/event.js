@@ -127,7 +127,7 @@ router.post("/", (req, res) => {
     return;
   }
 
-  console.log(req.body);
+  // console.log(req.body);
 
   const event = new Event({
     eventId: `r${_.restId}h${_.hostId}t${_.timeOfMeet}`,
@@ -286,7 +286,7 @@ router.put("/", (req, res) => {
           }
         });
 
-      verifyMeetupTrigger(req, res, true)
+      verifyMeetupTrigger(req, res, true);
     },
   );
 });
