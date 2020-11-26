@@ -424,8 +424,11 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
 
         List<Chip> contactsSelected = (List<Chip>) chipsInput.getSelectedChipList();
         for(int i = 0; i < contactsSelected.size(); i++) {
-            guestIds.add(i, contactsSelected.get(i).getLabel());
-            Log.i("guest", guestIds.get(i));
+            String userId = users.get(contactsSelected.get(i).getLabel());
+            if (userId != null) {
+                this.guestIds.add(i, userId);
+                Log.i("guest", userId);
+            }
         }
 
         JSONObject eventRequest = new JSONObject();
