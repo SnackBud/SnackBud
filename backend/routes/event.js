@@ -90,15 +90,12 @@ router.get("/", (req, res) => {
 
 function checkParams(req, res) {
   const _ = req.body;
-  const nullExists = (_ == null || _.hostId == null ||
-    _.guestIds == null ||
-    _.restId == null ||
-    _.restName == null ||
-    _.timeOfMeet == null);
-  if (nullExists) {
-    return true;
+  const noNull = (_ && _.hostId &&
+    _.guestIds && _.restId && _.restName && _.timeOfMeet);
+  if (noNull) {
+    return false;
   }
-  return false;
+  return true;
 }
 
 function checkMeetup(event) {

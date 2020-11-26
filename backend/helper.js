@@ -40,24 +40,18 @@ class helpers {
       });
   }
 
-  checkParamNewMeet(event) {
-    if (typeof event === "undefined") {
-      return true;
-    } else if (typeof event.hostId === "undefined"
-      || event.guestIds.length === 0) {
-      return true;
-    }
-    return false;
-  }
+  // checkParamNewMeet(event) {
+  //   if (event && event.hostId && event.guestIds.length > 0) {
+  //     return false;
+  //   }
+  //   return true;
+  // }
 
   // tell the guests about the meetup creation
   notifyNewMeetup(event, helper = this) {
 
     // check for bad calls
-    if (event == null) {
-      return;
-    }
-    if (this.checkParamNewMeet(event)) {
+    if (!(event && event.hostId && event.guestIds.length > 0)) {
       return;
     }
 
@@ -98,24 +92,11 @@ class helpers {
       "Either your verify code is wrong or you are the host! Please try again");
   }
 
-
-  checkParamVerifyMeet(event, guest) {
-    // check for bad calls
-    if (typeof event === "undefined"
-      || typeof guest === "undefined") {
-      return true;
-    }
-    return false;
-  }
-
   // listener helper for the host to see if the meetup has been verified
   notifyVerifyMeetup(event, guest, helper = this) {
 
     // check for bad calls
-    if (event == null || guest == null) {
-      return;
-    }
-    if (this.checkParamVerifyMeet(event, guest)) {
+    if (!(event && guest)) {
       return;
     }
 
