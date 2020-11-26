@@ -250,38 +250,43 @@ router.put("/", (req, res) => {
         res.status(404).send(err);
         return;
         // console.log(err);
-      } else if (event == null) {
+      }
+      if (event == null) {
         // if we cannot verify the event we send error messages and notifications
         verifyMeetupTrigger(req, res, false);
-      } else {
-
-        // if the user successfully verifies, we remove them from the notVerified array
-
-        for (var i = 0; i < event.notVerified.length; i++) {
-          if (event.notVerified[i].guestId === req.body.guestId) {
-            event.notVerified[i].guestId = null;
-          }
-        }
-
-        // if everyones verified, set isVerified to true in event
-        var count = event.notVerified.filter((x) => x.guestId != null).length;
-        if (count === 0) {
-          event.isVerified = true;
-        }
-
-        Event.findOneAndUpdate({
-          _id: event._id
-        },
-          event,
-          { upsert: true },
-          function (err, res) {
-            if (err) {
-              return;
-            }
-          });
-
-        verifyMeetupTrigger(req, res, true)
+        return;
       }
+
+      // if the user successfully verifies, we remove them from the notVerified array
+      // for (var i = 0; i < event.notVerified.length; i++) {
+      //   if (event.notVerified[i].guestId === req.body.guestId) {
+      //     event.notVerified[i].guestId = null;
+      //   }
+      // }
+      event.notVerified = event.notVerified.map((x) => {
+        if (x.guestId === req.body.guestId) {
+          x.guestId = null;
+        }
+      });
+
+      // if everyones verified, set isVerified to true in event
+      var count = event.notVerified.filter((x) => x.guestId != null).length;
+      if (count === 0) {
+        event.isVerified = true;
+      }
+
+      Event.findOneAndUpdate({
+        _id: event._id
+      },
+        event,
+        { upsert: true },
+        function (err, res) {
+          if (err) {
+            return;
+          }
+        });
+
+      verifyMeetupTrigger(req, res, true)
     },
   );
 });
