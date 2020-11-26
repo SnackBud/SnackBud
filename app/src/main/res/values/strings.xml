@@ -44,4 +44,8 @@
     <string name="locationWarning">Please get to the restaurant to verify!</string>
     <string name="verifyWarning">Please enter a valid verify code (it must be 3 digits)</string>
     <string name="enter">Press enter and then verify meetup to verify</string>
+    <string name="select_restaurant">Select Restaurant</string>
+    <string name="choose_restaurant_dialog">Choose Restaurant</string>
+    <string name="search_restaurant_dialog">Search restaurant...</string>
+    <string name="click_here_to_choose">Click here to choose</string>
 </resources>

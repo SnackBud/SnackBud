@@ -17,8 +17,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-
 import androidx.fragment.app.FragmentTransaction;
+
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,8 +28,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.priahi.snackbud.main.maps.helper.CustomWindowAdapter;
 import com.priahi.snackbud.R;
+import com.priahi.snackbud.main.maps.helper.CustomWindowAdapter;
 import com.priahi.snackbud.main.meeting.MeetingFragment;
 
 import org.json.JSONArray;
@@ -58,7 +58,7 @@ public class MapsFragment extends Fragment {
 
     private Map<String, Integer> restaurantPosition = new HashMap<>();
 
-    private View mapView;
+//    private View mapView;
 
     private Map<String, String> restaurantImageUrl = new HashMap<>();
 
@@ -198,7 +198,7 @@ public class MapsFragment extends Fragment {
         findMeetUp = view.findViewById(R.id.map_btn);
         findMeetUp.setVisibility(View.INVISIBLE);
 
-        mapView = view;
+//        mapView = view;
     }
 
     public String loadJSONFromAsset() {

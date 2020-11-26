@@ -199,9 +199,8 @@ public class SnackBudUITest {
     @Test
     public void clickOnRestSpinner() {
         switchPageToMeetup();
-        onView(withId(R.id.restSpinner))
-                .perform(click())
-                .check(matches(isDisplayed()));
+        onView(withId(R.id.search_rest))
+                .perform(click());
         Assert.assertTrue(true);
     }
 
@@ -224,22 +223,13 @@ public class SnackBudUITest {
     @Test
     public void createMeetUpNoGuestID() {
         switchPageToMeetup();
-        onView(withId(R.id.btn_date))
-                .perform(click());
 
-        onView(withClassName(equalTo(DatePicker.class.getName())))
-                .perform(setDate(2020, 11, 20));
-        onView(withText("OK")).perform(click());
+        onView(withId(R.id.btn_date)).check(matches(not(isEnabled())));
 
-        onView(withId(R.id.btn_time))
-                .perform(click());
+        onView(withId(R.id.btn_time)).check(matches(not(isEnabled())));
 
-        onView(withClassName(equalTo(TimePicker.class.getName())))
-                .perform(setTime(16, 35));
-        onView(withText("OK")).perform(click());
+        onView(withId(R.id.createmeeting)).check(matches(not(isEnabled())));
 
-        onView(withId(R.id.createmeeting))
-                .perform(click());
         Assert.assertTrue(true);
     }
 
@@ -254,24 +244,19 @@ public class SnackBudUITest {
         onView(withId(R.id.userSpinner))
                 .perform(click());
         onData(anything())
-                .atPosition(1)
+                .atPosition(0)
                 .perform(click());
 
-        onView(withId(R.id.restSpinner))
+        onView(withId(R.id.search_rest))
                 .perform(click());
         onData(anything())
                 .atPosition(1)
                 .perform(click());
 
-        onView(withId(R.id.btn_time))
-                .perform(click());
+        onView(withId(R.id.btn_time)).check(matches(not(isEnabled())));
 
-        onView(withClassName(equalTo(TimePicker.class.getName())))
-                .perform(setTime(16, 35));
-        onView(withText("OK")).perform(click());
+        onView(withId(R.id.createmeeting)).check(matches(not(isEnabled())));
 
-        onView(withId(R.id.createmeeting))
-                .perform(click());
         Assert.assertTrue(true);
     }
 
@@ -286,10 +271,10 @@ public class SnackBudUITest {
         onView(withId(R.id.userSpinner))
                 .perform(click());
         onData(anything())
-                .atPosition(1)
+                .atPosition(0)
                 .perform(click());
 
-        onView(withId(R.id.restSpinner))
+        onView(withId(R.id.search_rest))
                 .perform(click());
         onData(anything())
                 .atPosition(1)
@@ -299,11 +284,11 @@ public class SnackBudUITest {
                 .perform(click());
 
         onView(withClassName(equalTo(DatePicker.class.getName())))
-                .perform(setDate(2020, 11, 22));
+                .perform(setDate(2020, 11, 29));
         onView(withText("OK")).perform(click());
 
-        onView(withId(R.id.createmeeting))
-                .perform(click());
+        onView(withId(R.id.createmeeting)).check(matches(not(isEnabled())));
+
         Assert.assertTrue(true);
     }
 
@@ -317,26 +302,26 @@ public class SnackBudUITest {
         onView(withId(R.id.userSpinner))
                 .perform(click()); // Click 2
         onData(anything())
-                .atPosition(1)
-                .perform(click()).check(matches(isEnabled())); // Click 3
+                .atPosition(0)
+                .perform(click()); // Click 3
 
-        onView(withId(R.id.restSpinner))
+        onView(withId(R.id.search_rest))
                 .perform(click()); // Click 4
         onData(anything())
                 .atPosition(1)
-                .perform(click()).check(matches(isEnabled())); // Click 5
+                .perform(click()); // Click 5
 
         onView(withId(R.id.btn_date))
                 .perform(click()); // Click 6
         onView(withClassName(equalTo(DatePicker.class.getName())))
-                .perform(setDate(2020, 11, 22)); // Click 7
-        onView(withText("OK")).perform(click()).check(matches(isEnabled())); // Click 8
+                .perform(setDate(2020, 11, 29)); // Click 7
+        onView(withText("OK")).perform(click()); // Click 8
 
         onView(withId(R.id.btn_time))
                 .perform(click()); // Click 9
         onView(withClassName(equalTo(TimePicker.class.getName())))
                 .perform(setTime(15, 35)); // Click 10
-        onView(withText("OK")).perform(click()).check(matches(isEnabled())); // Click 11
+        onView(withText("OK")).perform(click()); // Click 11
 
         onView(withId(R.id.createmeeting))
                 .perform(click()).check(matches(isEnabled()));// Click 12

@@ -1,18 +1,24 @@
 package com.priahi.snackbud.main.meeting;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.ArrayAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,10 +33,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.priahi.snackbud.R;
+import com.priahi.snackbud.main.MainActivity;
 import com.priahi.snackbud.main.meeting.helper.RangeTimePickerDialog;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,10 +62,10 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     // TODO: Rename and change types of parameters
 //    private String mParam1;
 //    private String mParam2;
+    private Dialog dialog;
     private String hostId;
     private String guestId;
-    private String restId;
-    private String restName;
+//    private ArrayList<String> guestIds;
     private Calendar timeOfMeet;
 //    private static final String url = "http://13.77.158.161:3000";
     private Map<String, String> users = new HashMap<>();
@@ -70,6 +77,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private Button btnCreateMeeting;
     private EditText txtDate;
     private EditText txtTime;
+    private TextView searchRest;
     private int mYear;
     private int mMonth;
     private int mDay;
@@ -81,6 +89,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     private long minMin;
     private RequestQueue queue;
     private Integer pos = 0;
+    private int dayOfMonth;
+    private int monthOfYear;
 
     public MeetingFragment() {
 
@@ -109,7 +119,6 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
 //        if (getArguments() != null) {
 //            mParam1 = getArguments().getString(ARG_PARAM1);
 //            mParam2 = getArguments().getString(ARG_PARAM2);
-        //aaaaaaaaaa
 //        }
 
         // this is using assets locally
@@ -181,14 +190,16 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         btnDatePicker.setOnClickListener(this);
         btnTimePicker.setOnClickListener(this);
 
+        btnDatePicker.setEnabled(false);
         btnTimePicker.setEnabled(false);
         btnCreateMeeting.setEnabled(false);
-
 
         btnCreateMeeting.setOnClickListener(view1 -> {
             try {
                 postRequest();
                 Toast.makeText(getContext(), "Meeting successfully created", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                startActivity(intent);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -201,18 +212,57 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         final Spinner userDropdown = requireView().findViewById(R.id.userSpinner);
         userDropdown.setOnItemSelectedListener(this);
 
-        // List the restaurants
-        Spinner restDropdown = requireView().findViewById(R.id.restSpinner);
-        ArrayAdapter<String> restAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_spinner_dropdown_item, restNames);
-        restAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        restDropdown.setAdapter(restAdapter);
-        restDropdown.setOnItemSelectedListener(this);
-        restDropdown.setSelection(pos);
-        if(pos != 0) restDropdown.setEnabled(false);
+        searchRest = requireView().findViewById(R.id.search_rest);
 
+        if (pos != 0) {
+            searchRest.setText(restNames.get(pos));
+            searchRest.setEnabled(false);
+            btnDatePicker.setEnabled(true);
+        }
+
+        searchRest.setOnClickListener(v -> {
+            dialog = new Dialog(getContext());
+            dialog.setContentView(R.layout.dialog_searchable_spinner);
+            dialog.getWindow().setLayout(900, 1200);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.show();
+
+            EditText editText = dialog.findViewById(R.id.edit_text_rest);
+            ListView listView = dialog.findViewById(R.id.list_view_rest);
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
+                    android.R.layout.simple_spinner_dropdown_item, restNames);
+            listView.setAdapter(adapter);
+
+            editText.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    Log.w(TAG, "before text changed"); //keep for codacy
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    adapter.getFilter().filter(s);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                    Log.w(TAG, "after text changed"); //keep for codacy
+                }
+            });
+
+            listView.setOnItemClickListener((parent, view12, position, id) -> {
+                searchRest.setText(adapter.getItem(position));
+                btnDatePicker.setEnabled(true);
+                dialog.dismiss();
+            });
+
+        });
+        getAllUsers(userDropdown);
+    }
+
+    private void getAllUsers(Spinner userDropdown) {
         JSONArray js = new JSONArray();
-
         queue = Volley.newRequestQueue(requireContext());
         // Get all users
         JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
@@ -233,6 +283,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                                 j++;
                             }
                         }
+
                         ArrayAdapter<String> userAdapter = new ArrayAdapter<>(requireContext(),
                                 android.R.layout.simple_spinner_dropdown_item, userNames);
                         userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -260,28 +311,16 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
     // for setting the users and restaurants
     @Override
     public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
-        switch (parent.getId()){
-            case R.id.restSpinner:
-                Log.d("restaurant", restNames.get(position));
-                if (restNames.get(position) != null) {
-                    restId = restaurants.get(restNames.get(position));
-                    if (restId != null) {
-                        Log.d("restaurant", restId);
-                    }
-                    restName = restNames.get(position);
+        if (parent.getId() == R.id.userSpinner) {
+            Log.d("user", userNames.get(position));
+            if (userNames.get(position) != null) {
+                guestId = users.get(userNames.get(position));
+                if (guestId != null) {
+                    Log.d("user", guestId);
                 }
-                break;
-            case R.id.userSpinner:
-                Log.d("user", userNames.get(position));
-                if (userNames.get(position) != null) {
-                    guestId = users.get(userNames.get(position));
-                    if (guestId != null) {
-                        Log.d("user", guestId);
-                    }
-                }
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + parent.getId());
+            }
+        } else {
+            throw new IllegalStateException("Unexpected value: " + parent.getId());
         }
     }
 
@@ -309,6 +348,9 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                         String date = String.format("%d-%02d-%02d", year, monthOfYear + 1, dayOfMonth);
                         txtDate.setText(date);
 
+                        this.dayOfMonth = dayOfMonth;
+                        this.monthOfYear = monthOfYear;
+
                         // set calendar
                         timeOfMeet.set(year, monthOfYear, dayOfMonth);
 //                            timeOfMeet.set(Calendar.MONTH, monthOfYear);
@@ -332,7 +374,6 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
             final Calendar c = Calendar.getInstance();
             mHour = c.get(Calendar.HOUR_OF_DAY);
             mMinute = c.get(Calendar.MINUTE);
-            mDay = c.get(Calendar.DAY_OF_MONTH);
             minHour = 8;
             maxHour = 23;
             maxMin = 0;
@@ -340,13 +381,15 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
             // bug fixed for m10
             if(mHour == 23) mDay += 1;
 
-            if(mHour == 23) {
+            if(mHour == 23
+                    || mHour < 7
+                    || mDay != dayOfMonth
+                    || mMonth != monthOfYear) {
                 mHour = 8;
                 mMinute = 0;
             }
             else {
-                mHour = Math.max(mHour + 1, 8);
-                if(mHour == 8) mMinute = 0;
+                mHour = mHour + 1;
             }
 
             // Launch Time Picker Dialog
@@ -365,8 +408,8 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
                     }, mHour, mMinute, false);
 
             if(Calendar.getInstance().get(Calendar.DAY_OF_YEAR) >= timeOfMeet.get(Calendar.DAY_OF_YEAR)) {
-                minHour = Math.max(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1, 8);
-                minMin = Math.max(Calendar.getInstance().get(Calendar.MINUTE), 0);
+                minHour = mHour; //Math.max(Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + 1, 8);
+                minMin = mMinute; //Math.max(Calendar.getInstance().get(Calendar.MINUTE), 0);
             }
             Log.d("hour", String.valueOf(minHour));
             timePickerDialog.setMin((int) minHour, (int) minMin);
@@ -398,6 +441,10 @@ public class MeetingFragment extends Fragment implements View.OnClickListener, A
         JSONObject guestId = new JSONObject();
         guestId.put("guestId", this.guestId);
         array.put(guestId);
+        //array.put(guestIds);
+
+        String restName = searchRest.getText().toString();
+        String restId = restaurants.get(restName);
 
         eventRequest.put("guestIds", array);
         eventRequest.put("restId", restId);
