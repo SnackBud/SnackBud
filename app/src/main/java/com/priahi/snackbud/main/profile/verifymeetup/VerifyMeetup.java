@@ -352,8 +352,8 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
             verifyStatus.setText(R.string.locationWarning);
         } else if (!validCode) {
             verifyStatus.setText(R.string.verifyWarning);
-        } else if (!editTextCode.getText().toString().contentEquals(displayCode.getText())) {
-            verifyStatus.setText(R.string.isCorrect);
+//        } else if (!editTextCode.getText().toString().contentEquals(displayCode.getText())) {
+//            verifyStatus.setText(R.string.isCorrect);
         } else {
             verifyStatus.setText(R.string.enter);
             enterCodeButton.setEnabled(true);
