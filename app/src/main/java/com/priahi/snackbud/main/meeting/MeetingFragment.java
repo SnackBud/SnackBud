@@ -160,14 +160,6 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
             savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_two, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view,
-                              @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("220578639199-rv1vof8saj5d8b31fk2tp76hi8d9jv80.apps.googleusercontent.com")
                 .requestProfile()
@@ -182,6 +174,13 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireContext());
 
         hostId = acct.getId();
+
+        return inflater.inflate(R.layout.fragment_two, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
 
         btnCreateMeeting = requireView().findViewById(R.id.createmeeting);
         btnDatePicker = requireView().findViewById(R.id.btn_date);
