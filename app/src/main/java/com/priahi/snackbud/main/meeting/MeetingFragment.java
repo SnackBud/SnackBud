@@ -12,12 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,7 +51,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
-import java.util.Collections;
 
 public class MeetingFragment extends Fragment implements View.OnClickListener {
 
@@ -63,17 +60,13 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
 //    private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "MeetingFragment";
 
-    // TODO: Rename and change types of parameters
 //    private String mParam1;
 //    private String mParam2;
     private Dialog dialog;
     private String hostId;
-    private String guestId;
     private ArrayList<String> guestIds = new ArrayList<>();
-    private String restId;
-    private String restName;
     private Calendar timeOfMeet;
-//    private static final String url = "http://13.77.158.161:3000";
+//  private static final String url = "http://13.77.158.161:3000";
     private Map<String, String> users = new HashMap<>();
     private ArrayList<String> userNames = new ArrayList<>();
     private Map<String, String> restaurants = new HashMap<>();
@@ -238,17 +231,20 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
 
             editText.addTextChangedListener(new TextWatcher() {
                 @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                public void beforeTextChanged(CharSequence s, int start,
+                                              int count, int after) {
+                    // do nothing
                 }
 
                 @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                public void onTextChanged(CharSequence s, int start,
+                                          int before, int count) {
                     adapter.getFilter().filter(s);
                 }
 
                 @Override
                 public void afterTextChanged(Editable s) {
+                    // do nothing
                 }
             });
 
@@ -353,7 +349,6 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
             long oneMonthAhead = c.getTimeInMillis();
             datePickerDialog.getDatePicker().setMaxDate(oneMonthAhead);
             datePickerDialog.show();
-            //TODO: make this timezone invariant
 
             btnTimePicker.setEnabled(true);
 
