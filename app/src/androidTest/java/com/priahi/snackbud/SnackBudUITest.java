@@ -18,6 +18,7 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.PickerActions.setDate;
 import static androidx.test.espresso.contrib.PickerActions.setTime;
@@ -185,9 +186,21 @@ public class SnackBudUITest {
      * Click on user spinner
      * */
     @Test
-    public void clickOnUserSpinner() {
+    public void clickOnUserChip() {
         switchPageToMeetup();
-        onView(withId(R.id.userSpinner))
+        onView(withId(R.id.chips_input))
+                .perform(click())
+                .check(matches(isDisplayed()));
+        Assert.assertTrue(true);
+    }
+
+    /*
+     * Click on user spinner
+     * */
+    @Test
+    public void selectUser() {
+        switchPageToMeetup();
+        onView(withId(R.id.chips_input))
                 .perform(click())
                 .check(matches(isDisplayed()));
         Assert.assertTrue(true);
@@ -200,7 +213,8 @@ public class SnackBudUITest {
     public void clickOnRestSpinner() {
         switchPageToMeetup();
         onView(withId(R.id.search_rest))
-                .perform(click());
+                .perform(click())
+                .check(matches(isDisplayed()));
         Assert.assertTrue(true);
     }
 
@@ -241,7 +255,7 @@ public class SnackBudUITest {
     public void createMeetUpNoDate() {
         switchPageToMeetup();
 
-        onView(withId(R.id.userSpinner))
+        onView(withId(R.id.chips_input))
                 .perform(click());
         onData(anything())
                 .atPosition(0)
@@ -268,7 +282,7 @@ public class SnackBudUITest {
     public void createMeetUpNoTime() {
         switchPageToMeetup();
 
-        onView(withId(R.id.userSpinner))
+        onView(withId(R.id.chips_input))
                 .perform(click());
         onData(anything())
                 .atPosition(0)
@@ -299,7 +313,7 @@ public class SnackBudUITest {
     public void createMeetUp() {
         switchPageToMeetup(); // Click 1
 
-        onView(withId(R.id.userSpinner))
+        onView(withId(R.id.chips_input))
                 .perform(click()); // Click 2
         onData(anything())
                 .atPosition(0)

@@ -4,26 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="false"
     tools:context=".main.meeting.MeetingFragment">
 
-    <FrameLayout android:layout_width="330dp"
-                 android:layout_height="wrap_content"
-                 tools:ignore="MissingConstraints"
-                 app:layout_constraintBottom_toTopOf="@+id/search_rest"
-                 app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent"
-                 app:layout_constraintStart_toStartOf="parent">
+    <FrameLayout
+        android:layout_width="330dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/search_rest"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints">
 
         <com.pchmn.materialchips.ChipsInput
-                android:id="@+id/chips_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:hint="Enter guest name"
-                app:maxRows="1"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/search_rest"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.493"
-                app:layout_constraintVertical_bias="0.582"/>
+            android:id="@+id/chips_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contextClickable="false"
+            app:hint="Enter guest name"
+            app:layout_constraintBottom_toTopOf="@+id/search_rest"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.493"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.582"
+            app:maxRows="1" />
 
     </FrameLayout>
 
@@ -39,34 +44,40 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.883" />
 
-    <TextView android:layout_width="330dp"
-              android:layout_height="51dp"
-              android:id="@+id/search_rest"
-              android:hint=""
-              android:textColor="@android:color/black"
-              android:elevation="0.5dp"
-              android:background="#A9A9A9"
-              android:padding="12dp"
-              android:gravity="center_vertical"
-              android:drawableEnd="@drawable/ic_baseline_arrow_drop_down_24"
-              app:layout_constraintBottom_toTopOf="@+id/btn_date"
-              app:layout_constraintEnd_toEndOf="parent"
-              app:layout_constraintStart_toStartOf="parent"
-              tools:ignore="UseCompatTextViewDrawableXml" app:layout_constraintTop_toTopOf="parent"
-              app:layout_constraintHorizontal_bias="0.493" app:layout_constraintVertical_bias="0.736"/>
+    <TextView
+        android:id="@+id/search_rest"
+        android:layout_width="330dp"
+        android:layout_height="51dp"
+        android:background="#A9A9A9"
+        android:drawableEnd="@drawable/ic_baseline_arrow_drop_down_24"
+        android:elevation="0.5dp"
+        android:gravity="center_vertical"
+        android:hint=""
+        android:padding="12dp"
+        android:textColor="@android:color/black"
+        app:layout_constraintBottom_toTopOf="@+id/btn_date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.736"
+        tools:ignore="UseCompatTextViewDrawableXml" />
 
     <EditText
-            android:id="@+id/in_date"
-            android:layout_width="127dp"
-            android:layout_height="44dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.203"
-            app:layout_constraintStart_toEndOf="@+id/btn_date"
-            android:autofillHints=""
-            android:inputType="" tools:ignore="LabelFor,TextFields" app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="340dp"/>
+        android:id="@+id/in_date"
+        android:layout_width="127dp"
+        android:layout_height="44dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="340dp"
+        android:autofillHints=""
+        android:inputType=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.203"
+        app:layout_constraintStart_toEndOf="@+id/btn_date"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="LabelFor,TextFields" />
+
     <Button
         android:id="@+id/btn_date"
         android:layout_width="wrap_content"
@@ -79,20 +90,20 @@
         app:layout_constraintTop_toTopOf="@+id/in_date" />
 
     <EditText
-            android:id="@+id/in_time"
-            android:layout_width="128dp"
-            android:layout_height="43dp"
-            android:layout_below="@+id/in_date"
-            android:layout_alignParentStart="true"
-            app:layout_constraintBottom_toTopOf="@+id/createmeeting"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.207"
-            app:layout_constraintStart_toEndOf="@+id/btn_time"
-            app:layout_constraintTop_toBottomOf="@+id/in_date"
-            app:layout_constraintVertical_bias="0.487"
-            android:autofillHints=""
-            android:inputType=""
-            tools:ignore="LabelFor"/>
+        android:id="@+id/in_time"
+        android:layout_width="128dp"
+        android:layout_height="43dp"
+        android:layout_below="@+id/in_date"
+        android:layout_alignParentStart="true"
+        android:autofillHints=""
+        android:inputType=""
+        app:layout_constraintBottom_toTopOf="@+id/createmeeting"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.207"
+        app:layout_constraintStart_toEndOf="@+id/btn_time"
+        app:layout_constraintTop_toBottomOf="@+id/in_date"
+        app:layout_constraintVertical_bias="0.487"
+        tools:ignore="LabelFor" />
 
     <Button
         android:id="@+id/btn_time"
@@ -108,14 +119,17 @@
         app:layout_constraintVertical_bias="0.455" />
 
     <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/choose_guest"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/textView2" app:layout_constraintVertical_bias="0.291"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.137"/>
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/choose_guest"
+        app:layout_constraintBottom_toTopOf="@+id/textView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.137"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.291" />
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
