@@ -6,15 +6,15 @@ const User = require("../models/user");
 // gets the user specified by req.body.userId in our db
 router.get("/", async (req, res) => {
   // console.log("/user GET request");
-  if (req.body.userId == null) {
-    res.status(400).send("bad input");
+  if (req.body == null || req.body.userId == null) {
+    res.status(400).json("bad input");
     return;
   }
 
   User.findOne({ userId: req.body.userId },
     (err, user) => {
       if (err) {
-        res.status(404).json(err);
+        res.status(404).send(err);
         return;
       } else {
         if (user == null) {
@@ -52,9 +52,10 @@ router.get("/getAll", async (req, res) => {
 router.post("/", (req, res) => {
   // console.log(req.body);
 
-  if (req.body.userId == null ||  
+  if (req.body == null ||
+    req.body.userId == null ||  
     req.body.deviceToken == null) {
-      res.status(400).send("bad input");
+      res.status(400).json("bad input");
       return;
     }
 
@@ -85,7 +86,7 @@ router.post("/", (req, res) => {
 router.delete("/", (req, res) => {
   // console.log("/user DELETE request");
   if (req.body.userId == null) {
-    res.status(400).send("bad input");
+    res.status(400).json("bad input");
     return;
   }
 
@@ -95,11 +96,11 @@ router.delete("/", (req, res) => {
         res.status(404).send(err);
         return;
         // console.log(err);
-      } else if (d.acknowledged && d.deletedCount === 1){
-        res.status(200).send("delete successful");
-        return;
+      // } else if (d.acknowledged && d.deletedCount === 1){
+      //   res.status(200).send("delete successful");
+      //   return;
       } else {
-        res.status(410).send("already deleted");
+        res.status(200).json("delete successful");
         return;
       }
     });

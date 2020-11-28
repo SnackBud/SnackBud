@@ -197,8 +197,8 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         array.put(user);
 
         // request all events on App
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.POST,
-                getString(R.string.backend_url) + "/event/getUser",
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
+                getString(R.string.backend_url) + "/event/toVerify",
                 array,
                 response -> {
                     Log.w(TAG, "request successful");
@@ -317,7 +317,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         eventRequest.put("verifyCode", userInputCode);
         Log.e(TAG, eventRequest.toString());
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT,
-                getString(R.string.backend_url) + "/event",
+                getString(R.string.backend_url) + "/event/verify",
                 eventRequest,
                 response -> {
                     try {

@@ -62,7 +62,7 @@ describe("testing-event-routes", () => {
             timeOfMeet: 1605787405385n
         },
         ]);
-        const res = await request(app).get("/event",
+        const res = await request(app).get("/event").send(
             { eventId: "r3h1t1605787405385" });
         expect(res.body).toEqual([{
             timeOfCreation: 1605009601688n,

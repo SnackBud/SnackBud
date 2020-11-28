@@ -1,9 +1,10 @@
 const express = require("express");
 
 const app = express();
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 require("dotenv/config");
+require("./mongoConfig");
 const Winston = require("winston");
 const consoleTransport = new Winston.transports.Console();
 const MyWinstonOptions = {
@@ -40,9 +41,9 @@ app.get("/", (req, res) => {
 });
 
 // connect to db
-mongoose.connect(process.env.DB_CONNECTION,
-  { useNewUrlParser: true, useUnifiedTopology: true }, () => {
-  // console.log("connected to db");
-  });
+// mongoose.connect(process.env.DB_CONNECTION,
+//   { useNewUrlParser: true, useUnifiedTopology: true }, () => {
+//   // console.log("connected to db");
+//   });
 
 module.exports = app;

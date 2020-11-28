@@ -1,6 +1,5 @@
 const admin = require("firebase-admin");
 const User = require("./models/user");
-require("dotenv/config");
 
 const serviceAccount = require("./snackbud-5911d-firebase-adminsdk-btpru-23d7cc7f93.json");
 
