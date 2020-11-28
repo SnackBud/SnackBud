@@ -6,8 +6,6 @@
   "scripts": {
     "start": "nodemon start.js",
     "test": "jest --coverage --forceExit",
-    "test:test": "jest -t /user/getAll - success",
-    "test:coverage": "jest --coverage",
     "test:watch": "jest --watch",
     "test:openHandles": "jest --runInBand --detectOpenHandles",
     "test:unit_user": "jest --coverage -- unit_user.test.js",
