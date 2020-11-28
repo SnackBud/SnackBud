@@ -1,13 +1,22 @@
 package com.priahi.snackbud;
 
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
+import androidx.test.espresso.InjectEventSecurityException;
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.base.UiControllerImpl_Factory;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
 import com.priahi.snackbud.main.MainActivity;
+
+import org.hamcrest.Matcher;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,9 +25,10 @@ import org.junit.runner.RunWith;
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.pressBack;
 import static androidx.test.espresso.action.ViewActions.replaceText;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.action.ViewActions.swipeUp;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.PickerActions.setDate;
 import static androidx.test.espresso.contrib.PickerActions.setTime;
@@ -198,9 +208,34 @@ public class SnackBudUITest {
      * Click on user spinner
      * */
     @Test
-    public void selectUser() {
+    public void searchUser() {
         switchPageToMeetup();
         onView(withId(R.id.chips_input))
+                .perform(
+                        new ViewAction() {
+                            @Override
+                            public Matcher<View> getConstraints() {
+                                return isEnabled();
+                            }
+
+                            @Override
+                            public String getDescription() {
+                                return "type in user name";
+                            }
+
+                            @Override
+                            public void perform(UiController uiController, View view) {
+                                view.performClick();
+                                try {
+                                    uiController.injectString("Arnold");
+                                } catch (InjectEventSecurityException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                )
+                .check(matches(isDisplayed()));
+        onView(withText("Arnold Ying"))
                 .perform(click())
                 .check(matches(isDisplayed()));
         Assert.assertTrue(true);
