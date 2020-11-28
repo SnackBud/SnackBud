@@ -101,7 +101,7 @@ function checkParams(req, res) {
 }
 
 function checkMeetup(event, res) {
-  if (event.guestIds.length >= 7) {
+  if (event.guestIds.length >= 6) {
     res.status(431).send("Request header field too large");
     return 431;
   }
@@ -127,7 +127,7 @@ router.post("/", (req, res) => {
     return;
   }
 
-  console.log(req.body);
+  // console.log(req.body);
 
   const event = new Event({
     eventId: `r${_.restId}h${_.hostId}t${_.timeOfMeet}`,
@@ -197,6 +197,33 @@ router.delete("/deleteAll", (req, res) => {
     });
 });
 
+// verify meetup helper, valid signifies whether the code entered is correct
+async function verifyMeetupTrigger(req, res, valid) {
+  User.findOne(
+    { userId: req.body.guestId },
+    (err, guest) => {
+      if (err) {
+        res.status(404).send(err);
+        return;
+        // console.log(err);
+      }
+      if (guest == null) {
+        res.status(410).send("user not in database");
+        return;
+      }
+      if (valid) {
+        // console.log(guest);
+        pushNotify.emit("verifyMeetup", event, guest);
+        res.status(200).send("verify successful");
+
+      }
+      res.status(304).send("meetup not modified");
+      pushNotify.emit("noVerifyMeetup", guest);
+      return;
+    },
+  );
+}
+
 // verify meetup, with error case
 router.put("/", (req, res) => {
   if (req.body.eventId == null ||
@@ -208,7 +235,7 @@ router.put("/", (req, res) => {
 
 
   // update the meetup to show verified if the codes match, else fail
-  Event.findOneAndUpdate(
+  Event.findOne(
     {
       isVerified: false,
       eventId: req.body.eventId,
@@ -216,76 +243,50 @@ router.put("/", (req, res) => {
       verifyCode: req.body.verifyCode,
       notVerified: { $elemMatch: { guestId: req.body.guestId } }
     },
-    { notVerified: { $pullAll: { guestId: req.body.guestId } } },
-    // returns the updated document
-    { new: true },
+    // // returns the updated document
+    // { new: true },
     (err, event) => {
       if (err) {
         res.status(404).send(err);
         return;
         // console.log(err);
-      } else if (event == null) {
-        // if we cannot verify the event we send error messages and notifications
-        User.findOne(
-          { userId: req.body.guestId },
-          (err, guest) => {
-            if (err) {
-              res.status(404).send(err);
-              return;
-              // console.log(err);
-            } else {
-              if (guest == null) {
-                res.status(410).send("user not in database");
-                return;
-              }
-              res.status(304).send("meetup not modified");
-              pushNotify.emit("noVerifyMeetup", guest);
-              return;
-            }
-          },
-        );
-      } else {
-
-        // if everyone have verified, then change the isVerified status
-        // var count = 0;
-        // console.log(event.notVerified);
-        var count = event.notVerified.filter((x) => x.guestId != null).length;
-        // for (var i = 0; i < event.notVerified.length; i++) {
-        //   // console.log(event.notVerified[i]);
-        //   if (event.notVerified[i].guestId != null) {
-        //     // console.log(count);
-        //     count++;
-        //   }
-        // }
-
-        if (count === 0) {
-          // console.log("check")
-          event.isVerified = true;
-          event.save((err) => {
-            if (err) {
-              // console.log(err);
-              return;
-            }
-            // saved!
-          });
-        }
-
-        User.findOne(
-          { userId: event.guestIds[0].guestId },
-          (err, guest) => {
-            if (err) {
-              res.status(404).send(err);
-              // console.log(err);
-            } else if (guest == null) {
-              res.status(410).send("user not in database");
-            } else {
-              // console.log(guest);
-              pushNotify.emit("verifyMeetup", event, guest);
-              res.status(200).send("verify successful");
-            }
-          },
-        );
       }
+      if (event == null) {
+        // if we cannot verify the event we send error messages and notifications
+        verifyMeetupTrigger(req, res, false);
+        return;
+      }
+
+      // if the user successfully verifies, we remove them from the notVerified array
+      // for (var i = 0; i < event.notVerified.length; i++) {
+      //   if (event.notVerified[i].guestId === req.body.guestId) {
+      //     event.notVerified[i].guestId = null;
+      //   }
+      // }
+      event.notVerified = event.notVerified.map((x) => {
+        if (x.guestId === req.body.guestId) {
+          x.guestId = null;
+        }
+      });
+
+      // if everyones verified, set isVerified to true in event
+      var count = event.notVerified.filter((x) => x.guestId != null).length;
+      if (count === 0) {
+        event.isVerified = true;
+      }
+
+      Event.findOneAndUpdate({
+        _id: event._id
+      },
+        event,
+        { upsert: true },
+        function (err, res) {
+          if (err) {
+            return;
+          }
+        });
+
+      verifyMeetupTrigger(req, res, true);
     },
   );
 });
