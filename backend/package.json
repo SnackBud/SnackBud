@@ -58,5 +58,8 @@
   },
   "directories": {
     "test": "tests"
+  },
+  "standard": {
+    "env": [ "jest" ]
   }
 }
