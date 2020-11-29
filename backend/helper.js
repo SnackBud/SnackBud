@@ -15,7 +15,7 @@ class helpers {
     // console.log("notifyHelper called");
 
     // check for bad calls
-    if (elem == null || elem.deviceToken == null || elem.username == "unknown user") {
+    if (elem == null || elem.deviceToken == null || elem.username === "unknown user") {
       return;
     }
 

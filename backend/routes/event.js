@@ -252,8 +252,8 @@ router.put("/verify", (req, res) => {
         // if the user successfully verifies, we remove them from the notVerified array
 
         for (var i = 0; i < event.notVerified.length; i++) {
-          if (event.notVerified[i].guestId == req.body.guestId) {
-            event.notVerified[i].guestId = null;
+          if (event.notVerified[parseInt(i, 10)].guestId === req.body.guestId) {
+            event.notVerified[parseInt(i, 10)].guestId = null;
           }
         }
 
