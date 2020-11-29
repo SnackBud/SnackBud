@@ -23,6 +23,8 @@ import com.priahi.snackbud.main.maps.MapsFragment;
 import com.priahi.snackbud.main.meeting.MeetingFragment;
 import com.priahi.snackbud.main.profile.HomeFragment;
 
+import java.util.Random;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
 
@@ -123,6 +125,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.nav_about_us:
                 startActivity(new Intent(MainActivity.this, About.class));
+                break;
+
+            case R.id.nav_support:
+                /* Create the Intent */
+                final Intent emailIntent = new Intent(Intent.ACTION_SEND);
+
+                /* Fill it with Data */
+                Random rd = new Random();
+                emailIntent.setType("message/rfc822");
+                emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"support@snackbud.com"});
+                emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Case: " + rd.nextInt());
+
+                /* Send it off to the Activity-Chooser */
+                this.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
                 break;
 
             default:

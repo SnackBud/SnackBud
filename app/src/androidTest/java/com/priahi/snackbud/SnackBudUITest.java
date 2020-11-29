@@ -24,11 +24,7 @@ import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.pressBack;
-import static androidx.test.espresso.action.ViewActions.replaceText;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.swipeUp;
+import static androidx.test.espresso.action.ViewActions.*;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.PickerActions.setDate;
 import static androidx.test.espresso.contrib.PickerActions.setTime;
@@ -349,7 +345,7 @@ public class SnackBudUITest {
         switchPageToMeetup(); // Click 1
 
         onView(withId(R.id.chips_input))
-                .perform(click()); // Click 2
+                .perform(typeTextIntoFocusedView("a")); // Click 2
         onData(anything())
                 .atPosition(0)
                 .perform(click()); // Click 3
