@@ -25,11 +25,11 @@ router.get("/getAll", (req, res) => {
 });
 
 // get all events that the user is in and is not verified in our db
-router.get("/toVerify", (req, res) => {
-  // console.log("/event GET ALL request");
+router.post("/toVerify", (req, res) => {
   // console.log(req.body);
   // console.log(req.body[0].userId);
   if (req.body == null ||
+    req.body[0] == null ||
     req.body[0].userId == null) {
     res.status(400).json("bad input");
     return;
@@ -150,9 +150,11 @@ router.post("/", (req, res) => {
       return;
     } else {
       res.status(200).json(event);
+      return;
     }
   });
 
+  // helper.notifyNewMeetup(event);
   pushNotify.emit("newMeetup", event);
 });
 
@@ -166,7 +168,7 @@ router.delete("/", (req, res) => {
 
   Event.deleteOne({ eventId: req.body.eventId },
     (err, d) => {
-      if (err, d) {
+      if (err) {
         res.status(404).send(err);
         return;
         // console.log(err);

@@ -21,9 +21,9 @@ pushNotify.on("noVerifyMeetup", (guest) => {
 });
 
 // listener for guests when the host unlocks the verification code
-pushNotify.on("enterCode", (event) => {
-  helper.notifyEnterCode(event);
-});
+// pushNotify.on("enterCode", (event) => {
+//   helper.notifyEnterCode(event);
+// });
 
 // listener for guests when the host unlocks the verification code
 pushNotify.on("contactTrace", (sickUser, atRiskUser, event) => {
