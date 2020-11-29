@@ -47,7 +47,7 @@ class helpers {
       if (err || host == null) {
         return;
       }
-      console.log(host);
+      // console.log(host);
       // get the deviceToken of the guests
       for (let i = 0; i < event.guestIds.length; i++) {
         const user = event.guestIds[parseInt(i, 10)];

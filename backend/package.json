@@ -7,6 +7,7 @@
     "start": "nodemon start.js",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
+    "test:integration": "jest --coverage --runTestsByPath ./tests/integration/int_event.test.js ./tests/integration/int_user.test.js",
     "test:openHandles": "jest --runInBand --detectOpenHandles",
     "test:unit_user": "jest --coverage -- unit_user.test.js",
     "test:unit_event": "jest --coverage -- unit_event.test.js",
