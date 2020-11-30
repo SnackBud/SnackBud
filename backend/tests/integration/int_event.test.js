@@ -128,7 +128,7 @@ describe("testing route POST /event/toVerify", () => {
 
     afterAll(() => {
         mockingoose.resetAll();
-    })
+    });
 
     it("POST /event/toVerify - success", async () => {
         mockingoose(Event).toReturn(event, "find");

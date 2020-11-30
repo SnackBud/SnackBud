@@ -134,8 +134,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 /* Fill it with Data */
                 Random rd = new Random();
                 emailIntent.setType("message/rfc822");
-                emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"support@snackbud.com"});
-                emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Case: " + rd.nextInt());
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"support@snackbud.com"});
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Case: " + rd.nextInt());
 
                 /* Send it off to the Activity-Chooser */
                 this.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
