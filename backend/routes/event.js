@@ -333,13 +333,16 @@ router.post("/contactTrace", (req, res) => {
   }
 
   Event.find({
-    timeOfMeet: { $gte: req.body.twoWeeksAgo, $lte: req.body.currentDate },
-    $or: [{ hostId: req.body.userId }, 
-      { 
-        guestIds: { $elemMatch: { guestId: req.body.userId } },
-        $not: { notVerified: { $elemMatch: { guestId: req.body.userId } } }
-      }
-    ],
+    $and: {
+      timeOfMeet: { $gte: req.body.twoWeeksAgo, $lte: req.body.currentDate },
+    
+      $or: [{ hostId: req.body.userId }, 
+            { 
+              guestIds: { $elemMatch: { guestId: req.body.userId } },
+              $not: { notVerified: { $elemMatch: { guestId: req.body.userId } } } 
+            }
+      ]
+    }
   },
     (err, pastEvents) => {
       if (err) {
