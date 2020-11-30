@@ -1,19 +1,24 @@
 package com.priahi.snackbud;
 
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
 import androidx.test.espresso.InjectEventSecurityException;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
 import com.priahi.snackbud.main.MainActivity;
 
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,14 +30,17 @@ import static androidx.test.espresso.action.ViewActions.*;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.PickerActions.setDate;
 import static androidx.test.espresso.contrib.PickerActions.setTime;
+import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 
@@ -203,34 +211,34 @@ public class SnackBudUITest {
     @Test
     public void searchAndSelectUser() {
         switchPageToMeetup();
-        onView(withId(R.id.chips_input))
-                .perform(
-                        new ViewAction() {
-                            @Override
-                            public Matcher<View> getConstraints() {
-                                return isEnabled();
-                            }
+        ViewInteraction recyclerView = onView(
+                allOf(withId(R.id.chips_recycler),
+                        childAtPosition(
+                                withId(R.id.container),
+                                0)));
+        recyclerView.perform(actionOnItemAtPosition(0, click()));
 
-                            @Override
-                            public String getDescription() {
-                                return "type in user name";
-                            }
+        ViewInteraction recyclerView2 = onView(
+                allOf(withId(R.id.chips_recycler),
+                        childAtPosition(
+                                withId(R.id.container),
+                                0)));
+        recyclerView2.perform(actionOnItemAtPosition(0, replaceText("Arnold")));
 
-                            @Override
-                            public void perform(UiController uiController, View view) {
-                                view.performClick();
-                                try {
-                                    uiController.injectString("Arnold");
-                                } catch (InjectEventSecurityException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                )
-                .check(matches(isDisplayed()));
-        onView(withText("Arnold Ying"))
-                .perform(click())
-                .check(matches(isDisplayed()));
+        ViewInteraction recyclerView3 = onView(
+                allOf(withId(R.id.chips_recycler),
+                        childAtPosition(
+                                withId(R.id.container),
+                                0)));
+        recyclerView3.perform(actionOnItemAtPosition(0, closeSoftKeyboard()));
+
+        ViewInteraction recyclerView4 = onView(
+                allOf(withId(R.id.recycler_view),
+                        childAtPosition(
+                                withClassName(is("android.widget.RelativeLayout")),
+                                0)));
+        recyclerView4.perform(actionOnItemAtPosition(0, click()));
+
         Assert.assertTrue(true);
     }
 
@@ -477,4 +485,22 @@ public class SnackBudUITest {
         Assert.assertTrue(true);
     }
 
+    private static Matcher<View> childAtPosition(
+            final Matcher<View> parentMatcher, final int position) {
+
+        return new TypeSafeMatcher<View>() {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Child at position " + position + " in parent ");
+                parentMatcher.describeTo(description);
+            }
+
+            @Override
+            public boolean matchesSafely(View view) {
+                ViewParent parent = view.getParent();
+                return parent instanceof ViewGroup && parentMatcher.matches(parent)
+                        && view.equals(((ViewGroup) parent).getChildAt(position));
+            }
+        };
+    }
 }
