@@ -179,23 +179,6 @@ router.delete("/", (req, res) => {
     });
 });
 
-// delete a specific event in our db
-// router.delete("/deleteAll", (req, res) => {
-//   // console.log("/event DELETE request");
-
-//   Event.deleteMany({},
-//     (err, d) => {
-//       if (err) {
-//         res.status(404).send(err);
-//         // console.log(err);
-//       // } else if (d.acknowledged && d.deletedCount === 1) {
-//       //   res.status(200).send("delete all successful");
-//       } else {
-//         res.status(200).send("delete all successful");
-//       }
-//     });
-// });
-
 // verify meetup, with error case
 router.put("/verify", (req, res) => {
   if (req.body == null || 
@@ -350,9 +333,13 @@ router.post("/contactTrace", (req, res) => {
   }
 
   Event.find({
-    $or: [{ hostId: req.body.userId }, { guestIds: { $elemMatch: { guestId: req.body.userId } } }],
     timeOfMeet: { $gte: req.body.twoWeeksAgo, $lte: req.body.currentDate },
-    notVerified: {},
+    $or: [{ hostId: req.body.userId }, 
+      { 
+        guestIds: { $elemMatch: { guestId: req.body.userId } },
+        "notVerified.guestId": {"$ne": req.body.userId}
+      }
+    ],
   },
     (err, pastEvents) => {
       if (err) {
@@ -379,5 +366,21 @@ router.post("/contactTrace", (req, res) => {
         });
     });
 });
+// delete a specific event in our db
+// router.delete("/deleteAll", (req, res) => {
+//   // console.log("/event DELETE request");
+
+//   Event.deleteMany({},
+//     (err, d) => {
+//       if (err) {
+//         res.status(404).send(err);
+//         // console.log(err);
+//       // } else if (d.acknowledged && d.deletedCount === 1) {
+//       //   res.status(200).send("delete all successful");
+//       } else {
+//         res.status(200).send("delete all successful");
+//       }
+//     });
+// });
 
 module.exports = router;
