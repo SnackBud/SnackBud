@@ -198,10 +198,10 @@ public class SnackBudUITest {
     }
 
     /*
-     * Click on user spinner
+     * Click on user spinner and search and select a user chip
      * */
     @Test
-    public void searchUser() {
+    public void searchAndSelectUser() {
         switchPageToMeetup();
         onView(withId(R.id.chips_input))
                 .perform(
@@ -240,30 +240,45 @@ public class SnackBudUITest {
     @Test
     public void clickOnRestSpinner() {
         switchPageToMeetup();
+
         onView(withId(R.id.search_rest))
-                .perform(click())
-                .check(matches(isDisplayed()));
-        Assert.assertTrue(true);
-    }
-
-
-    /*
-     * Create a meetup without any inputs
-     * */
-    @Test
-    public void createMeetUpNoInput() {
-        switchPageToMeetup();
-        onView(withId(R.id.createmeeting))
                 .perform(click());
+
+        onView(withId(R.id.edit_text_rest))
+                .check(matches(isDisplayed()));
+
+        onView(withId(R.id.list_view_rest))
+                .check(matches(isDisplayed()));
+
         Assert.assertTrue(true);
     }
 
-
     /*
-     * Create a meetup without guest
+     * Click on restaurant spinner and select a restaurant
      * */
     @Test
-    public void createMeetUpNoGuestID() {
+    public void searchandSelectRest() {
+        switchPageToMeetup();
+
+        onView(withId(R.id.search_rest)).perform(click());
+
+        onView(withId(R.id.edit_text_rest))
+                .check(matches(isDisplayed()))
+                .perform(replaceText("33 Acres"));
+        onData(anything())
+                .atPosition(0)
+                .perform(click());
+
+        onView(withText("33 Acres")).check(matches(isDisplayed()));
+
+        Assert.assertTrue(true);
+    }
+
+    /*
+     * Create a meetup without interacting with the UI
+     * */
+    @Test
+    public void createMeetUpNoInputs() {
         switchPageToMeetup();
 
         onView(withId(R.id.btn_date)).check(matches(not(isEnabled())));
@@ -277,23 +292,17 @@ public class SnackBudUITest {
 
 
     /*
-     * Create a meetup without date
+     * Select a user and restaurant and check if each button is enabled or not
      * */
     @Test
     public void createMeetUpNoDate() {
         switchPageToMeetup();
 
-        onView(withId(R.id.chips_input))
-                .perform(click());
-        onData(anything())
-                .atPosition(0)
-                .perform(click());
+        searchAndSelectUser();
 
-        onView(withId(R.id.search_rest))
-                .perform(click());
-        onData(anything())
-                .atPosition(1)
-                .perform(click());
+        searchandSelectRest();
+
+        onView(withId(R.id.btn_date)).check(matches(isEnabled()));
 
         onView(withId(R.id.btn_time)).check(matches(not(isEnabled())));
 
@@ -304,30 +313,24 @@ public class SnackBudUITest {
 
 
     /*
-     * Create a meetup without time
+     * Select a user and restaurant and time and check if each button is enabled or not
      * */
     @Test
     public void createMeetUpNoTime() {
         switchPageToMeetup();
 
-        onView(withId(R.id.chips_input))
-                .perform(click());
-        onData(anything())
-                .atPosition(0)
-                .perform(click());
+        searchAndSelectUser();
 
-        onView(withId(R.id.search_rest))
-                .perform(click());
-        onData(anything())
-                .atPosition(1)
-                .perform(click());
+        searchandSelectRest();
 
         onView(withId(R.id.btn_date))
                 .perform(click());
 
         onView(withClassName(equalTo(DatePicker.class.getName())))
-                .perform(setDate(2020, 11, 29));
+                .perform(setDate(2021, 2, 14));
         onView(withText("OK")).perform(click());
+
+        onView(withId(R.id.btn_time)).check(matches(isEnabled()));
 
         onView(withId(R.id.createmeeting)).check(matches(not(isEnabled())));
 
@@ -339,34 +342,27 @@ public class SnackBudUITest {
      * */
     @Test
     public void createMeetUp() {
-        switchPageToMeetup(); // Click 1
+        switchPageToMeetup();
 
-        onView(withId(R.id.chips_input))
-                .perform(typeTextIntoFocusedView("a")); // Click 2
-        onData(anything())
-                .atPosition(0)
-                .perform(click()); // Click 3
+        searchAndSelectUser();
 
-        onView(withId(R.id.search_rest))
-                .perform(click()); // Click 4
-        onData(anything())
-                .atPosition(1)
-                .perform(click()); // Click 5
+        searchandSelectRest();
 
         onView(withId(R.id.btn_date))
-                .perform(click()); // Click 6
+                .perform(click());
         onView(withClassName(equalTo(DatePicker.class.getName())))
-                .perform(setDate(2020, 11, 29)); // Click 7
-        onView(withText("OK")).perform(click()); // Click 8
+                .perform(setDate(2021, 2, 14));
+        onView(withText("OK")).perform(click());
 
         onView(withId(R.id.btn_time))
-                .perform(click()); // Click 9
+                .perform(click());
         onView(withClassName(equalTo(TimePicker.class.getName())))
-                .perform(setTime(15, 35)); // Click 10
-        onView(withText("OK")).perform(click()); // Click 11
+                .perform(setTime(15, 35));
+        onView(withText("OK")).perform(click());
 
         onView(withId(R.id.createmeeting))
-                .perform(click()).check(matches(isEnabled()));// Click 12
+                .check(matches(isEnabled()))
+                .perform(click());
         Assert.assertTrue(true);
     }
 
