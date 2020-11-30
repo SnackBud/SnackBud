@@ -13,10 +13,10 @@ describe("testing route GET /event", () => {
         hostId: "1",
         restname: "Mcdonald",
         guestIds: [
-          { guestId: "4" },
+            { guestId: "4" },
         ],
         notVerified: [
-          { guestId: "4" },
+            { guestId: "4" },
         ]
     });
 
@@ -24,15 +24,15 @@ describe("testing route GET /event", () => {
         jest.clearAllMocks();
         jest.restoreAllMocks();
         mockingoose.resetAll();
-    }); 
+    });
 
     afterAll(() => {
         jest.clearAllMocks();
         jest.restoreAllMocks();
         mockingoose.resetAll();
     });
-    
-    
+
+
     it("GET /event - success", async () => {
         mockingoose(Event).toReturn(event, "findOne");
         const res = await request.get("/event").send({ eventId: "1" });
@@ -67,10 +67,10 @@ describe("testing route GET /event/getAll", () => {
         hostId: "1",
         restname: "Mcdonald",
         guestIds: [
-          { guestId: "4" },
+            { guestId: "4" },
         ],
         notVerified: [
-          { guestId: "4" },
+            { guestId: "4" },
         ]
     });
 
@@ -78,15 +78,15 @@ describe("testing route GET /event/getAll", () => {
         jest.clearAllMocks();
         jest.restoreAllMocks();
         mockingoose.resetAll();
-    }); 
+    });
 
     afterAll(() => {
         jest.clearAllMocks();
         jest.restoreAllMocks();
         mockingoose.resetAll();
     });
-    
-    
+
+
     it("GET /event/getAll - success", async () => {
         mockingoose(Event).toReturn(event, "find");
         const res = await request.get("/event/getAll").send({ eventId: "1" });
@@ -115,16 +115,16 @@ describe("testing route POST /event/toVerify", () => {
         hostId: "1",
         restname: "Mcdonald",
         guestIds: [
-          { guestId: "4" },
+            { guestId: "4" },
         ],
         notVerified: [
-          { guestId: "4" },
+            { guestId: "4" },
         ]
     });
 
     beforeEach(() => {
         mockingoose.resetAll();
-    }); 
+    });
 
     afterAll(() => {
         mockingoose.resetAll();
@@ -157,10 +157,10 @@ describe("testing route DELETE /event", () => {
         hostId: "1",
         restname: "Mcdonald",
         guestIds: [
-          { guestId: "4" },
+            { guestId: "4" },
         ],
         notVerified: [
-          { guestId: "4" },
+            { guestId: "4" },
         ]
     });
 
@@ -168,14 +168,14 @@ describe("testing route DELETE /event", () => {
         jest.clearAllMocks();
         jest.restoreAllMocks();
         mockingoose.resetAll();
-    }); 
+    });
 
     afterAll(() => {
         jest.clearAllMocks();
         jest.restoreAllMocks();
         mockingoose.resetAll();
     });
-    
+
 
     it("DELETE /event - success", async () => {
         mockingoose(Event).toReturn(event, "deleteOne");
@@ -210,10 +210,10 @@ describe("testing route PUT /event/verify", () => {
         hostId: "1",
         restname: "Mcdonald",
         guestIds: [
-          { guestId: "4" },
+            { guestId: "4" },
         ],
         notVerified: [
-          { guestId: "4" },
+            { guestId: "4" },
         ]
     });
 
@@ -222,12 +222,12 @@ describe("testing route PUT /event/verify", () => {
         hostId: "1",
         restname: "Mcdonald",
         guestIds: [
-          { guestId: "4" },
-          { guestId: "6" },
+            { guestId: "4" },
+            { guestId: "6" },
         ],
         notVerified: [
-          { guestId: "4" },
-          { guestId: "6" },
+            { guestId: "4" },
+            { guestId: "6" },
         ]
     });
 
@@ -236,12 +236,12 @@ describe("testing route PUT /event/verify", () => {
         hostId: "3",
         restname: "Mcdonald",
         guestIds: [
-          { guestId: "4" },
-          { guestId: "6" },
+            { guestId: "4" },
+            { guestId: "6" },
         ],
         notVerified: [
-          { guestId: "4" },
-          { guestId: "6" },
+            { guestId: "4" },
+            { guestId: "6" },
         ]
     });
 
@@ -249,14 +249,14 @@ describe("testing route PUT /event/verify", () => {
         jest.clearAllMocks();
         jest.restoreAllMocks();
         mockingoose.resetAll();
-    }); 
+    });
 
     afterAll(() => {
         jest.clearAllMocks();
         jest.restoreAllMocks();
         mockingoose.resetAll();
     });
-    
+
 
     it("PUT /event/verify - success", async () => {
         mockingoose(Event).toReturn(event, "findOne");
@@ -404,10 +404,10 @@ describe("testing route POST /event", () => {
         hostId: "1",
         restname: "Mcdonald",
         guestIds: [
-          { guestId: "4" },
+            { guestId: "4" },
         ],
         notVerified: [
-          { guestId: "4" },
+            { guestId: "4" },
         ]
     });
 
@@ -415,14 +415,14 @@ describe("testing route POST /event", () => {
         jest.clearAllMocks();
         jest.restoreAllMocks();
         mockingoose.resetAll();
-    }); 
+    });
 
     afterAll(() => {
         jest.clearAllMocks();
         jest.restoreAllMocks();
         mockingoose.resetAll();
     });
-    
+
     it("POST /event - success", async () => {
         mockingoose(Event).toReturn(event, "save");
         mockingoose(User).toReturn(guest, "findOne");
@@ -430,31 +430,31 @@ describe("testing route POST /event", () => {
             userId: "1",
             hostId: "xd",
             guestIds: [
-              { guestId: "2" }
+                { guestId: "2" }
             ],
             restId: "fake restaurant",
             restName: "fake name",
             timeOfMeet: 1827192837,
-          });
+        });
 
         expect(res.status).toBe(200);
     });
-    
+
     it("POST /event - error in notifyNewMeetup", async () => {
         mockingoose(Event).toReturn(event, "save");
         mockingoose(User).toReturn(new Error("error"), "findOne");
 
-        
+
         const res = await request.post("/event").send({
             userId: "1",
             hostId: "22",
             guestIds: [
-              { guestId: "2" }
+                { guestId: "2" }
             ],
             restId: "fake restaurant",
             restName: "fake name",
             timeOfMeet: 1827192837,
-          });
+        });
 
         expect(res.status).toBe(200);
     });
@@ -469,14 +469,14 @@ describe("testing route POST /event", () => {
         const res = await request.post("/event").send({
             hostId: "not null",
             guestIds: [
-              { guestId: "2" }, 
-              { guestId: "3" }, 
-              { guestId: "4" }, 
-              { guestId: "5" }, 
-              { guestId: "22" }, 
-              { guestId: "223" }, 
-              { guestId: "242" }, 
-              { guestId: "3122" },
+                { guestId: "2" },
+                { guestId: "3" },
+                { guestId: "4" },
+                { guestId: "5" },
+                { guestId: "22" },
+                { guestId: "223" },
+                { guestId: "242" },
+                { guestId: "3122" },
             ],
             restId: "fake restaurant",
             restName: "fake name",
@@ -490,7 +490,7 @@ describe("testing route POST /event", () => {
         const res = await request.post("/event").send({
             hostId: "1",
             guestIds: [
-              { guestId: "1" }, 
+                { guestId: "1" },
             ],
             restId: "fake restaurant",
             restName: "fake name",
@@ -507,12 +507,12 @@ describe("testing route POST /event", () => {
             userId: "1",
             hostId: "xd",
             guestIds: [
-              { guestId: "2" }
+                { guestId: "2" }
             ],
             restId: "fake restaurant",
             restName: "fake name",
             timeOfMeet: 1827192837,
-          });
+        });
 
         expect(res.status).toBe(502);
     });
@@ -530,10 +530,10 @@ describe("testing route POST /event/contactTrace", () => {
         hostId: "1",
         restname: "Mcdonald",
         guestIds: [
-          { guestId: "4" },
+            { guestId: "4" },
         ],
         notVerified: [
-          { guestId: "4" },
+            { guestId: "4" },
         ]
     });
 
@@ -541,15 +541,15 @@ describe("testing route POST /event/contactTrace", () => {
         jest.clearAllMocks();
         jest.restoreAllMocks();
         mockingoose.resetAll();
-    }); 
+    });
 
     afterAll(() => {
         jest.clearAllMocks();
         jest.restoreAllMocks();
         mockingoose.resetAll();
     });
-    
-    
+
+
     it("POST /event/contactTrace - success", async () => {
         mockingoose(Event).toReturn([event], "find");
         mockingoose(User).toReturn(guest, "findOne");
@@ -557,7 +557,7 @@ describe("testing route POST /event/contactTrace", () => {
             userId: "1",
             twoWeeksAgo: 21312378273,
             currentDate: 21312378273
-          });
+        });
 
         expect(res.status).toBe(200);
     });
