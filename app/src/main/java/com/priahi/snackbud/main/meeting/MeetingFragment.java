@@ -202,7 +202,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
             searchRest.setEnabled(false);
         }
 
-        searchRest.setEnabled(false);
+//      searchRest.setEnabled(false);
         searchRest.setOnClickListener(this);
 
         setUsers();
@@ -270,13 +270,13 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
         chipsInput.addChipsListener(new ChipsInput.ChipsListener() {
             @Override
             public void onChipAdded(ChipInterface chip, int newSize) {
-                searchRest.setEnabled(pos == -1);
+//              searchRest.setEnabled(pos == -1);
                 btnDatePicker.setEnabled(pos != -1);
             }
 
             @Override
             public void onChipRemoved(ChipInterface chip, int newSize) {
-                if(newSize <= 0) searchRest.setEnabled(pos == -1);
+//                if(newSize <= 0) searchRest.setEnabled(pos == -1);
             }
 
             @Override
@@ -366,7 +366,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
         int mMinute = c.get(Calendar.MINUTE);
         long minHour = 8;
         long maxHour = 23;
-        long maxMin = 0;
+        long maxMin = 59;
 
         // bug fixed for m10
         if(mHour == 23) mDay += 1;
@@ -379,7 +379,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
             mMinute = 0;
         }
         else {
-            mHour = mHour + 1;
+            //mHour = mHour + 1;
         }
 
         // Launch Time Picker Dialog
