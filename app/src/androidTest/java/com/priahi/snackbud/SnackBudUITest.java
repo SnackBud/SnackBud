@@ -9,11 +9,16 @@ import android.widget.TimePicker;
 import androidx.test.espresso.InjectEventSecurityException;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.action.GeneralClickAction;
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.base.UiControllerImpl_Factory;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import com.pchmn.materialchips.ChipsInput;
+import com.pchmn.materialchips.model.Chip;
+import com.pchmn.materialchips.model.ChipInterface;
 import com.priahi.snackbud.main.MainActivity;
 
 import org.hamcrest.Matcher;
@@ -38,8 +43,12 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 
