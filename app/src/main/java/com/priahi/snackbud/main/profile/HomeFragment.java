@@ -24,6 +24,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.priahi.snackbud.R;
+import com.priahi.snackbud.main.profile.cancelmeetup.CancelMeetup;
 import com.priahi.snackbud.main.profile.verifymeetup.VerifyMeetup;
 import com.squareup.picasso.Picasso;
 
@@ -142,15 +143,21 @@ public class HomeFragment extends Fragment {
         });
 
 
-        Button enterPasscode = view.findViewById(R.id.verify_meetup);
+        Button verifyMeetup = view.findViewById(R.id.verify_meetup);
 
-        enterPasscode.setOnClickListener(v -> {
+        verifyMeetup.setOnClickListener(v -> {
             DialogFragment dialogFragment = VerifyMeetup.newInstance();
             dialogFragment.show(getParentFragmentManager(), "VerifyMeetup");
         });
 
+        Button cancelMeetup = view.findViewById(R.id.cancel_meetup);
 
-        // profile setup
+        cancelMeetup.setOnClickListener(v -> {
+            DialogFragment cancelFragment = CancelMeetup.newInstance();
+            cancelFragment.show(getParentFragmentManager(), "CancelMeetup");
+        });
+
+            // profile setup
         // image
         ImageView profileImage = view.findViewById(R.id.profile_image);
         Uri url = acct.getPhotoUrl();

@@ -184,6 +184,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         getUserEvents(eventDropdown);
     }
 
+    @SuppressWarnings("Duplicates")
     private void getUserEvents(Spinner eventDropdown) {
         // JSON array to get event ID's
         JSONArray array = new JSONArray();
@@ -306,6 +307,7 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         }
     }
 
+    @SuppressWarnings("Duplicates")
     private void putRequest() throws JSONException {
 
         GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(requireActivity());
