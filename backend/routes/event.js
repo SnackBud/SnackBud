@@ -118,46 +118,41 @@ function checkMeetup(event, res) {
 router.post("/", (req, res) => {
   // console.log("/event POST request");
   const _ = req.body;
-  if (_ == null || _.guestIds == null ||
-    _.restId == null ||
-    _.timeOfMeet == null) {
+  var badInput = _ == null || _.guestIds == null || _.restId == null || _.timeOfMeet == null;
+  if (badInput) {
     res.status(400).json("bad input");
     return;
-  } else {
+  } 
+  const event = new Event({
+    hostId: _.hostId,
+    guestIds: _.guestIds,
+    restId: _.restId,
+    restName: _.restName,
+    timeOfMeet: _.timeOfMeet,
+    eventId: `r${_.restId}h${_.hostId}t${_.timeOfMeet}`,
+    // optional params which are set automatically
+    timeOfCreation: _.timeOfCreation,
+    notVerified: _.guestIds,
+    verifyCode: _.verifyCode,
+  });
 
-    // console.log(req.body);
-  
-    const event = new Event({
-      hostId: _.hostId,
-      guestIds: _.guestIds,
-      restId: _.restId,
-      restName: _.restName,
-      timeOfMeet: _.timeOfMeet,
-      eventId: `r${_.restId}h${_.hostId}t${_.timeOfMeet}`,
-      // optional params which are set automatically
-      timeOfCreation: _.timeOfCreation,
-      notVerified: _.guestIds,
-      verifyCode: _.verifyCode,
-    });
-  
-    if (checkMeetup(event, res)) {
+  if (checkMeetup(event, res)) {
+    return;
+  }
+
+  event.save(function(err) {
+    if (err) {
+      res.status(502).send(err);
+      return;
+    } else {
+      res.status(200).json(event);
       return;
     }
-  
-    event.save(function(err) {
-      if (err) {
-        res.status(502).send(err);
-        return;
-      } else {
-        res.status(200).json(event);
-        return;
-      }
-    });
-  
-    // helper.notifyNewMeetup(event);
-    pushNotify.emit("newMeetup", event);
+  });
 
-  }
+  // helper.notifyNewMeetup(event);
+  pushNotify.emit("newMeetup", event);
+
 });
 
 // delete a specific event in our db
