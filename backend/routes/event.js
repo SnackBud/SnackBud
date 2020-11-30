@@ -123,39 +123,41 @@ router.post("/", (req, res) => {
     _.timeOfMeet == null) {
     res.status(400).json("bad input");
     return;
-  }
+  } else {
 
-  // console.log(req.body);
-
-  const event = new Event({
-    hostId: _.hostId,
-    guestIds: _.guestIds,
-    restId: _.restId,
-    restName: _.restName,
-    timeOfMeet: _.timeOfMeet,
-    eventId: `r${_.restId}h${_.hostId}t${_.timeOfMeet}`,
-    // optional params which are set automatically
-    timeOfCreation: _.timeOfCreation,
-    notVerified: _.guestIds,
-    verifyCode: _.verifyCode,
-  });
-
-  if (checkMeetup(event, res)) {
-    return;
-  }
-
-  event.save(function(err) {
-    if (err) {
-      res.status(502).send(err);
-      return;
-    } else {
-      res.status(200).json(event);
+    // console.log(req.body);
+  
+    const event = new Event({
+      hostId: _.hostId,
+      guestIds: _.guestIds,
+      restId: _.restId,
+      restName: _.restName,
+      timeOfMeet: _.timeOfMeet,
+      eventId: `r${_.restId}h${_.hostId}t${_.timeOfMeet}`,
+      // optional params which are set automatically
+      timeOfCreation: _.timeOfCreation,
+      notVerified: _.guestIds,
+      verifyCode: _.verifyCode,
+    });
+  
+    if (checkMeetup(event, res)) {
       return;
     }
-  });
+  
+    event.save(function(err) {
+      if (err) {
+        res.status(502).send(err);
+        return;
+      } else {
+        res.status(200).json(event);
+        return;
+      }
+    });
+  
+    // helper.notifyNewMeetup(event);
+    pushNotify.emit("newMeetup", event);
 
-  // helper.notifyNewMeetup(event);
-  pushNotify.emit("newMeetup", event);
+  }
 });
 
 // delete a specific event in our db
