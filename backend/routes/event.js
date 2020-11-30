@@ -25,11 +25,11 @@ router.get("/getAll", (req, res) => {
 });
 
 // get all events that the user is in and is not verified in our db
-router.get("/toVerify", (req, res) => {
-  // console.log("/event GET ALL request");
+router.post("/toVerify", (req, res) => {
   // console.log(req.body);
   // console.log(req.body[0].userId);
   if (req.body == null ||
+    req.body[0] == null ||
     req.body[0].userId == null) {
     res.status(400).json("bad input");
     return;
@@ -118,15 +118,11 @@ function checkMeetup(event, res) {
 router.post("/", (req, res) => {
   // console.log("/event POST request");
   const _ = req.body;
-  if (_ == null || _.guestIds == null ||
-    _.restId == null ||
-    _.timeOfMeet == null) {
+  var badInput = _ == null || _.guestIds == null || _.restId == null || _.timeOfMeet == null;
+  if (badInput) {
     res.status(400).json("bad input");
     return;
-  }
-
-  // console.log(req.body);
-
+  } 
   const event = new Event({
     hostId: _.hostId,
     guestIds: _.guestIds,
@@ -150,10 +146,13 @@ router.post("/", (req, res) => {
       return;
     } else {
       res.status(200).json(event);
+      return;
     }
   });
 
+  // helper.notifyNewMeetup(event);
   pushNotify.emit("newMeetup", event);
+
 });
 
 // delete a specific event in our db
@@ -166,7 +165,7 @@ router.delete("/", (req, res) => {
 
   Event.deleteOne({ eventId: req.body.eventId },
     (err, d) => {
-      if (err, d) {
+      if (err) {
         res.status(404).send(err);
         return;
         // console.log(err);
@@ -250,8 +249,8 @@ router.put("/verify", (req, res) => {
         // if the user successfully verifies, we remove them from the notVerified array
 
         for (var i = 0; i < event.notVerified.length; i++) {
-          if (event.notVerified[i].guestId == req.body.guestId) {
-            event.notVerified[i].guestId = null;
+          if (event.notVerified[parseInt(i, 10)].guestId === req.body.guestId) {
+            event.notVerified[parseInt(i, 10)].guestId = null;
           }
         }
 

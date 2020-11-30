@@ -3,8 +3,6 @@ const express = require("express");
 const app = express();
 // const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-require("dotenv/config");
-require("./mongoConfig");
 const Winston = require("winston");
 const consoleTransport = new Winston.transports.Console();
 const MyWinstonOptions = {
@@ -18,11 +16,11 @@ function logRequest(req, res, next) {
 }
 app.use(logRequest);
 
-function logError(err, req, res, next) {
-  Logger.error(err);
-  next();
-}
-app.use(logError);
+// function logError(err, req, res, next) {
+//   Logger.error(err);
+//   next();
+// }
+// app.use(logError);
 
 app.use(bodyParser.json());
 
@@ -34,11 +32,6 @@ const eventRoute = require("./routes/event.js");
 
 app.use("/user", userRoute);
 app.use("/event", eventRoute);
-
-app.get("/", (req, res) => {
-  res.status(200).json("home");
-  // console.log("home accessed");
-});
 
 // connect to db
 // mongoose.connect(process.env.DB_CONNECTION,

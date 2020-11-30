@@ -69,9 +69,9 @@ describe("Event Model standard calls", () => {
     expect(res.body[0].eventId).toBe(event.eventId);
   });
 
-  it("Event GET /toVerify", async () => {
+  it("Event POST /toVerify", async () => {
 
-    const res = await request.get("/event/toVerify").send([guest]);
+    const res = await request.post("/event/toVerify").send([guest]);
 
     expect(res.status).toBe(200);
     expect(res.body.length).toBe(1);
@@ -198,9 +198,9 @@ describe("Event Model bad / improper calls", () => {
     expect(resn.body).toBeTruthy();
   });
 
-  it("Event GET /toVerify null input", async () => {
+  it("Event POST /toVerify null input", async () => {
 
-    const res = await request.get("/event/toVerify").send([{
+    const res = await request.post("/event/toVerify").send([{
       userId: null,
       username: "Arnold",
       deviceToken: "x",
@@ -210,10 +210,10 @@ describe("Event Model bad / improper calls", () => {
     expect(res.body).toBe("bad input");
   });
 
-  it("Event GET /toVerify error response from mongoose", async () => {
+  it("Event POST /toVerify error response from mongoose", async () => {
 
     mockingoose(Event).toReturn(new Error("error"), "find");
-    const res = await request.get("/event/toVerify").send([{
+    const res = await request.post("/event/toVerify").send([{
       userId: "not null",
       username: "Arnold",
       deviceToken: "x",

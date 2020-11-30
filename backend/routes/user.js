@@ -36,12 +36,15 @@ router.get("/getAll", async (req, res) => {
     (err, users) => {
       if (err) {
         res.status(404).send(err);
+        return;
         // console.log(err);
       } else {
         if (users == null) {
           res.status(204).json(users);
+          return;
         } else {
           res.status(200).json(users);
+          return;
         }
         //console.log(user);
       }

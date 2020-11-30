@@ -190,14 +190,17 @@ public class VerifyMeetup extends DialogFragment implements AdapterView.OnItemSe
         JSONObject user = new JSONObject();
         try {
             user.put("userId", Objects.requireNonNull(GoogleSignIn.getLastSignedInAccount(requireContext())).getId());
+            Log.w(TAG, user.toString());
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, e.toString());
         }
+
         array.put(user);
+        Log.w(TAG, array.toString());
 
         // request all events on App
-        JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET,
+        JsonArrayRequest request = new JsonArrayRequest(Request.Method.POST,
                 getString(R.string.backend_url) + "/event/toVerify",
                 array,
                 response -> {

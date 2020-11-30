@@ -1,7 +1,5 @@
 package com.priahi.snackbud;
 
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
@@ -9,16 +7,10 @@ import android.widget.TimePicker;
 import androidx.test.espresso.InjectEventSecurityException;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.action.GeneralClickAction;
-import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.base.UiControllerImpl_Factory;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
-import com.pchmn.materialchips.ChipsInput;
-import com.pchmn.materialchips.model.Chip;
-import com.pchmn.materialchips.model.ChipInterface;
 import com.priahi.snackbud.main.MainActivity;
 
 import org.hamcrest.Matcher;
@@ -29,11 +21,7 @@ import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.pressBack;
-import static androidx.test.espresso.action.ViewActions.replaceText;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.swipeUp;
+import static androidx.test.espresso.action.ViewActions.*;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.PickerActions.setDate;
 import static androidx.test.espresso.contrib.PickerActions.setTime;
@@ -43,12 +31,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 
@@ -358,7 +342,7 @@ public class SnackBudUITest {
         switchPageToMeetup(); // Click 1
 
         onView(withId(R.id.chips_input))
-                .perform(click()); // Click 2
+                .perform(typeTextIntoFocusedView("a")); // Click 2
         onData(anything())
                 .atPosition(0)
                 .perform(click()); // Click 3
