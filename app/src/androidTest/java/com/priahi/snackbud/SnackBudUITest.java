@@ -1,19 +1,24 @@
 package com.priahi.snackbud;
 
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
-import androidx.test.espresso.InjectEventSecurityException;
-import androidx.test.espresso.UiController;
-import androidx.test.espresso.ViewAction;
+// import androidx.test.espresso.InjectEventSecurityException;
+// import androidx.test.espresso.UiController;
+// import androidx.test.espresso.ViewAction;
+// import androidx.test.espresso.ViewInteraction;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
 import com.priahi.snackbud.main.MainActivity;
 
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,14 +30,17 @@ import static androidx.test.espresso.action.ViewActions.*;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.PickerActions.setDate;
 import static androidx.test.espresso.contrib.PickerActions.setTime;
+// import static androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
+// import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.equalTo;
+// import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 
@@ -132,31 +140,12 @@ public class SnackBudUITest {
         onView(withId(R.id.verify_meetup_code))
                 .perform(click(), replaceText("998"), closeSoftKeyboard());
 
-        // Send code button disabled
-        onView(withId(R.id.send_code))
-                .check(matches(not(isEnabled())));
-
         // Enter the code
-        onView(withId(R.id.enter_code))
-                .check(matches((isEnabled())))
-                .perform(click());
+        onView(withId(R.id.enter_code)).check(matches(not(isEnabled())));
 
-        // Send code enabled, try to verify
-        onView(withId(R.id.send_code))
-                .check(matches((isEnabled())))
-                .perform(click());
-        Assert.assertTrue(true);
-    }
+        // Send code button disabled
+        onView(withId(R.id.send_code)).check(matches(not(isEnabled())));
 
-    /*
-     * Click on event spinner
-     * */
-    @Test
-    public void clickOnEventSpinner() {
-        clickOnVerifyMeetup();
-        onView(withId(R.id.eventSpinner))
-                .perform(click())
-                .check(matches(isDisplayed()));
         Assert.assertTrue(true);
     }
 
@@ -198,41 +187,41 @@ public class SnackBudUITest {
     }
 
     /*
-     * Click on user spinner
+     * Click on user spinner and search and select a user chip
      * */
-    @Test
-    public void searchUser() {
-        switchPageToMeetup();
-        onView(withId(R.id.chips_input))
-                .perform(
-                        new ViewAction() {
-                            @Override
-                            public Matcher<View> getConstraints() {
-                                return isEnabled();
-                            }
-
-                            @Override
-                            public String getDescription() {
-                                return "type in user name";
-                            }
-
-                            @Override
-                            public void perform(UiController uiController, View view) {
-                                view.performClick();
-                                try {
-                                    uiController.injectString("Arnold");
-                                } catch (InjectEventSecurityException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                )
-                .check(matches(isDisplayed()));
-        onView(withText("Arnold Ying"))
-                .perform(click())
-                .check(matches(isDisplayed()));
-        Assert.assertTrue(true);
-    }
+//    @Test
+//    public void searchAndSelectUser() {
+//        switchPageToMeetup();
+//        ViewInteraction recyclerView = onView(
+//                allOf(withId(R.id.chips_recycler),
+//                        childAtPosition(
+//                                withId(R.id.container),
+//                                0)));
+//        recyclerView.perform(actionOnItemAtPosition(0, click()));
+//
+//        ViewInteraction recyclerView2 = onView(
+//                allOf(withId(R.id.chips_recycler),
+//                        childAtPosition(
+//                                withId(R.id.container),
+//                                0)));
+//        recyclerView2.perform(actionOnItemAtPosition(0, replaceText("Arnold")));
+//
+//        ViewInteraction recyclerView3 = onView(
+//                allOf(withId(R.id.chips_recycler),
+//                        childAtPosition(
+//                                withId(R.id.container),
+//                                0)));
+//        recyclerView3.perform(actionOnItemAtPosition(0, closeSoftKeyboard()));
+//
+//        ViewInteraction recyclerView4 = onView(
+//                allOf(withId(R.id.recycler_view),
+//                        childAtPosition(
+//                                withClassName(is("android.widget.RelativeLayout")),
+//                                0)));
+//        recyclerView4.perform(actionOnItemAtPosition(0, click()));
+//
+//        Assert.assertTrue(true);
+//    }
 
     /*
      * Click on rest spinner
@@ -240,30 +229,45 @@ public class SnackBudUITest {
     @Test
     public void clickOnRestSpinner() {
         switchPageToMeetup();
+
         onView(withId(R.id.search_rest))
-                .perform(click())
-                .check(matches(isDisplayed()));
-        Assert.assertTrue(true);
-    }
-
-
-    /*
-     * Create a meetup without any inputs
-     * */
-    @Test
-    public void createMeetUpNoInput() {
-        switchPageToMeetup();
-        onView(withId(R.id.createmeeting))
                 .perform(click());
+
+        onView(withId(R.id.edit_text_rest))
+                .check(matches(isDisplayed()));
+
+        onView(withId(R.id.list_view_rest))
+                .check(matches(isDisplayed()));
+
         Assert.assertTrue(true);
     }
 
-
     /*
-     * Create a meetup without guest
+     * Click on restaurant spinner and select a restaurant
      * */
     @Test
-    public void createMeetUpNoGuestID() {
+    public void searchandSelectRest() {
+        switchPageToMeetup();
+
+        onView(withId(R.id.search_rest)).perform(click());
+
+        onView(withId(R.id.edit_text_rest))
+                .check(matches(isDisplayed()))
+                .perform(replaceText("33 Acres"));
+        onData(anything())
+                .atPosition(0)
+                .perform(click());
+
+        onView(withText("33 Acres")).check(matches(isDisplayed()));
+
+        Assert.assertTrue(true);
+    }
+
+    /*
+     * Create a meetup without interacting with the UI
+     * */
+    @Test
+    public void createMeetUpNoInputs() {
         switchPageToMeetup();
 
         onView(withId(R.id.btn_date)).check(matches(not(isEnabled())));
@@ -277,23 +281,54 @@ public class SnackBudUITest {
 
 
     /*
-     * Create a meetup without date
+     * Select a user and restaurant and check if each button is enabled or not
      * */
     @Test
     public void createMeetUpNoDate() {
         switchPageToMeetup();
 
-        onView(withId(R.id.chips_input))
-                .perform(click());
+//        onView(withId(R.id.chips_input))
+//                .perform(
+//                        new ViewAction() {
+//                            @Override
+//                            public Matcher<View> getConstraints() {
+//                                return isEnabled();
+//                            }
+//
+//                            @Override
+//                            public String getDescription() {
+//                                return "type in user name";
+//                            }
+//
+//                            @Override
+//                            public void perform(UiController uiController, View view) {
+//                                view.performClick();
+//                                try {
+//                                    uiController.injectString("Arnold");
+//                                } catch (InjectEventSecurityException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        }
+//                )
+//                .check(matches(isDisplayed()));
+
+//        onView(withText("Arnold Ying"))
+//                .check(matches(isDisplayed()))
+//                .perform(click());
+
+        onView(withId(R.id.search_rest)).perform(click());
+
+        onView(withId(R.id.edit_text_rest))
+                .check(matches(isDisplayed()))
+                .perform(replaceText("33 Acres"));
         onData(anything())
                 .atPosition(0)
                 .perform(click());
 
-        onView(withId(R.id.search_rest))
-                .perform(click());
-        onData(anything())
-                .atPosition(1)
-                .perform(click());
+        onView(withText("33 Acres")).check(matches(isDisplayed()));
+
+        onView(withId(R.id.btn_date)).check(matches(isEnabled()));
 
         onView(withId(R.id.btn_time)).check(matches(not(isEnabled())));
 
@@ -304,30 +339,61 @@ public class SnackBudUITest {
 
 
     /*
-     * Create a meetup without time
+     * Select a user and restaurant and time and check if each button is enabled or not
      * */
     @Test
     public void createMeetUpNoTime() {
         switchPageToMeetup();
 
-        onView(withId(R.id.chips_input))
-                .perform(click());
+//        onView(withId(R.id.chips_input))
+//                .perform(
+//                        new ViewAction() {
+//                            @Override
+//                            public Matcher<View> getConstraints() {
+//                                return isEnabled();
+//                            }
+//
+//                            @Override
+//                            public String getDescription() {
+//                                return "type in user name";
+//                            }
+//
+//                            @Override
+//                            public void perform(UiController uiController, View view) {
+//                                view.performClick();
+//                                try {
+//                                    uiController.injectString("Arnold");
+//                                } catch (InjectEventSecurityException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        }
+//                )
+//                .check(matches(isDisplayed()));
+//
+//        onView(withText("Arnold Ying"))
+//                .check(matches(isDisplayed()))
+//                .perform(click());
+
+        onView(withId(R.id.search_rest)).perform(click());
+
+        onView(withId(R.id.edit_text_rest))
+                .check(matches(isDisplayed()))
+                .perform(replaceText("33 Acres"));
         onData(anything())
                 .atPosition(0)
                 .perform(click());
 
-        onView(withId(R.id.search_rest))
-                .perform(click());
-        onData(anything())
-                .atPosition(1)
-                .perform(click());
+        onView(withText("33 Acres")).check(matches(isDisplayed()));
 
         onView(withId(R.id.btn_date))
                 .perform(click());
 
         onView(withClassName(equalTo(DatePicker.class.getName())))
-                .perform(setDate(2020, 11, 29));
+                .perform(setDate(2021, 2, 14));
         onView(withText("OK")).perform(click());
+
+        onView(withId(R.id.btn_time)).check(matches(isEnabled()));
 
         onView(withId(R.id.createmeeting)).check(matches(not(isEnabled())));
 
@@ -339,35 +405,83 @@ public class SnackBudUITest {
      * */
     @Test
     public void createMeetUp() {
-        switchPageToMeetup(); // Click 1
+        switchPageToMeetup();
 
-        onView(withId(R.id.chips_input))
-                .perform(typeTextIntoFocusedView("a")); // Click 2
+//        onView(withId(R.id.chips_input))
+//                .perform(
+//                        new ViewAction() {
+//                            @Override
+//                            public Matcher<View> getConstraints() {
+//                                return isEnabled();
+//                            }
+//
+//                            @Override
+//                            public String getDescription() {
+//                                return "type in user name";
+//                            }
+//
+//                            @Override
+//                            public void perform(UiController uiController, View view) {
+//                                view.performClick();
+//                                try {
+//                                    uiController.injectString("Arnold");
+//                                } catch (InjectEventSecurityException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        }
+//                )
+//                .check(matches(isDisplayed()));
+//
+//        onView(withText("Arnold Ying"))
+//                .check(matches(isDisplayed()))
+//                .perform(click());
+
+        onView(withId(R.id.search_rest)).perform(click());
+
+        onView(withId(R.id.edit_text_rest))
+                .check(matches(isDisplayed()))
+                .perform(replaceText("33 Acres"));
         onData(anything())
                 .atPosition(0)
-                .perform(click()); // Click 3
+                .perform(click());
 
-        onView(withId(R.id.search_rest))
-                .perform(click()); // Click 4
-        onData(anything())
-                .atPosition(1)
-                .perform(click()); // Click 5
+        onView(withText("33 Acres")).check(matches(isDisplayed()));
 
         onView(withId(R.id.btn_date))
-                .perform(click()); // Click 6
+                .perform(click());
         onView(withClassName(equalTo(DatePicker.class.getName())))
-                .perform(setDate(2020, 11, 29)); // Click 7
-        onView(withText("OK")).perform(click()); // Click 8
+                .perform(setDate(2020, 12, 4));
+        onView(withText("OK")).perform(click());
 
         onView(withId(R.id.btn_time))
-                .perform(click()); // Click 9
+                .perform(click());
         onView(withClassName(equalTo(TimePicker.class.getName())))
-                .perform(setTime(15, 35)); // Click 10
-        onView(withText("OK")).perform(click()); // Click 11
+                .perform(setTime(15, 35));
+        onView(withText("OK")).perform(click());
 
         onView(withId(R.id.createmeeting))
-                .perform(click()).check(matches(isEnabled()));// Click 12
+                .check(matches(isEnabled()))
+                .perform(click());
         Assert.assertTrue(true);
     }
 
+    private static Matcher<View> childAtPosition(
+            final Matcher<View> parentMatcher, final int position) {
+
+        return new TypeSafeMatcher<View>() {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Child at position " + position + " in parent ");
+                parentMatcher.describeTo(description);
+            }
+
+            @Override
+            public boolean matchesSafely(View view) {
+                ViewParent parent = view.getParent();
+                return parent instanceof ViewGroup && parentMatcher.matches(parent)
+                        && view.equals(((ViewGroup) parent).getChildAt(position));
+            }
+        };
+    }
 }
