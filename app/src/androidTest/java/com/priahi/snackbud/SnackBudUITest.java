@@ -298,9 +298,46 @@ public class SnackBudUITest {
     public void createMeetUpNoDate() {
         switchPageToMeetup();
 
-        searchAndSelectUser();
+        onView(withId(R.id.chips_input))
+                .perform(
+                        new ViewAction() {
+                            @Override
+                            public Matcher<View> getConstraints() {
+                                return isEnabled();
+                            }
 
-        searchandSelectRest();
+                            @Override
+                            public String getDescription() {
+                                return "type in user name";
+                            }
+
+                            @Override
+                            public void perform(UiController uiController, View view) {
+                                view.performClick();
+                                try {
+                                    uiController.injectString("Arnold");
+                                } catch (InjectEventSecurityException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                )
+                .check(matches(isDisplayed()));
+
+        onView(withText("Arnold Ying"))
+                .check(matches(isDisplayed()))
+                .perform(click());
+
+        onView(withId(R.id.search_rest)).perform(click());
+
+        onView(withId(R.id.edit_text_rest))
+                .check(matches(isDisplayed()))
+                .perform(replaceText("33 Acres"));
+        onData(anything())
+                .atPosition(0)
+                .perform(click());
+
+        onView(withText("33 Acres")).check(matches(isDisplayed()));
 
         onView(withId(R.id.btn_date)).check(matches(isEnabled()));
 
@@ -319,9 +356,46 @@ public class SnackBudUITest {
     public void createMeetUpNoTime() {
         switchPageToMeetup();
 
-        searchAndSelectUser();
+        onView(withId(R.id.chips_input))
+                .perform(
+                        new ViewAction() {
+                            @Override
+                            public Matcher<View> getConstraints() {
+                                return isEnabled();
+                            }
 
-        searchandSelectRest();
+                            @Override
+                            public String getDescription() {
+                                return "type in user name";
+                            }
+
+                            @Override
+                            public void perform(UiController uiController, View view) {
+                                view.performClick();
+                                try {
+                                    uiController.injectString("Arnold");
+                                } catch (InjectEventSecurityException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                )
+                .check(matches(isDisplayed()));
+
+        onView(withText("Arnold Ying"))
+                .check(matches(isDisplayed()))
+                .perform(click());
+
+        onView(withId(R.id.search_rest)).perform(click());
+
+        onView(withId(R.id.edit_text_rest))
+                .check(matches(isDisplayed()))
+                .perform(replaceText("33 Acres"));
+        onData(anything())
+                .atPosition(0)
+                .perform(click());
+
+        onView(withText("33 Acres")).check(matches(isDisplayed()));
 
         onView(withId(R.id.btn_date))
                 .perform(click());
@@ -344,9 +418,46 @@ public class SnackBudUITest {
     public void createMeetUp() {
         switchPageToMeetup();
 
-        searchAndSelectUser();
+        onView(withId(R.id.chips_input))
+                .perform(
+                        new ViewAction() {
+                            @Override
+                            public Matcher<View> getConstraints() {
+                                return isEnabled();
+                            }
 
-        searchandSelectRest();
+                            @Override
+                            public String getDescription() {
+                                return "type in user name";
+                            }
+
+                            @Override
+                            public void perform(UiController uiController, View view) {
+                                view.performClick();
+                                try {
+                                    uiController.injectString("Arnold");
+                                } catch (InjectEventSecurityException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                )
+                .check(matches(isDisplayed()));
+
+        onView(withText("Arnold Ying"))
+                .check(matches(isDisplayed()))
+                .perform(click());
+
+        onView(withId(R.id.search_rest)).perform(click());
+
+        onView(withId(R.id.edit_text_rest))
+                .check(matches(isDisplayed()))
+                .perform(replaceText("33 Acres"));
+        onData(anything())
+                .atPosition(0)
+                .perform(click());
+
+        onView(withText("33 Acres")).check(matches(isDisplayed()));
 
         onView(withId(R.id.btn_date))
                 .perform(click());
