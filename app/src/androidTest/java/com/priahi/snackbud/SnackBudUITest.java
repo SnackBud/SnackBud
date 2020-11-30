@@ -7,6 +7,7 @@ import android.widget.TimePicker;
 import androidx.test.espresso.InjectEventSecurityException;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -226,11 +227,31 @@ public class SnackBudUITest {
                                 }
                             }
                         }
-                )
-                .check(matches(isDisplayed()));
-        onView(withText("Arnold Ying"))
-                .perform(click())
-                .check(matches(isDisplayed()));
+                );
+
+        onView(withText("Arnold Ying")).perform(click());
+
+        onView(withId(R.id.search_rest))
+                .perform(click()); // Click 4
+        onData(anything())
+                .atPosition(1)
+                .perform(click()); // Click 5
+
+        onView(withId(R.id.btn_date))
+                .perform(click()); // Click 6
+        onView(withClassName(equalTo(DatePicker.class.getName())))
+                .perform(setDate(2020, 12, 4)); // Click 7
+        onView(withText("OK")).perform(click()); // Click 8
+
+        onView(withId(R.id.btn_time))
+                .perform(click()); // Click 9
+        onView(withClassName(equalTo(TimePicker.class.getName())))
+                .perform(setTime(15, 35)); // Click 10
+        onView(withText("OK")).perform(click()); // Click 11
+
+        onView(withId(R.id.createmeeting))
+                .perform(click()).check(matches(isEnabled()));// Click 12
+
         Assert.assertTrue(true);
     }
 
@@ -346,6 +367,8 @@ public class SnackBudUITest {
         onData(anything())
                 .atPosition(0)
                 .perform(click()); // Click 3
+
+        searchUser();
 
         onView(withId(R.id.search_rest))
                 .perform(click()); // Click 4
