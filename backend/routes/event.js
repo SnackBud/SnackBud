@@ -337,7 +337,7 @@ router.post("/contactTrace", (req, res) => {
     $or: [{ hostId: req.body.userId }, 
       { 
         guestIds: { $elemMatch: { guestId: req.body.userId } },
-        "notVerified.guestId": {"$ne": req.body.userId}
+        $not: { notVerified: { $elemMatch: { guestId: req.body.userId } } }
       }
     ],
   },
