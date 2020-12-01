@@ -253,15 +253,9 @@ router.put("/verify", (req, res) => {
       }
 
       // if the user successfully verifies, we remove them from the notVerified array
-      for (var i = 0; i < event.notVerified.length; i++) {
-        if (event.notVerified[parseInt(i, 10)].guestId === req.body.guestId) {
-          event.notVerified[parseInt(i, 10)].guestId = null;
-        }
-      }
-
+      event.notVerified = event.notVerified.filter((x) => x.guestId != req.body.guestId);
       // if everyones verified, set isVerified to true in event
-      var count = event.notVerified.filter((x) => x.guestId != null).length;
-      event.isVerified = (count === 0);
+      event.isVerified = (event.notVerified.length === 0);
 
       // var savingError = false;
       Event.findOneAndUpdate({ _id: event._id }, event,
