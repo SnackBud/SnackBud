@@ -105,21 +105,23 @@ function checkMeetup(event, res) {
 }
 
 
-function checkParams(req) {
-  const _ = req.body;
-  const nullExists = (_.guestIds == null ||
-    _.restId == null ||
-    _.timeOfMeet == null);
-  if (nullExists) {
-    // res.status(400).json("bad input");
-    return 400;
-  }
-  return 0;
-}
+
 
 // post an event in our db
 router.post("/", (req, res) => {
   // console.log("/event POST request");
+  function checkParams(req) {
+    const _ = req.body;
+    const nullExists = (_.guestIds == null ||
+      _.restId == null ||
+      _.timeOfMeet == null);
+    if (nullExists) {
+      // res.status(400).json("bad input");
+      return 400;
+    }
+    return 0;
+  }
+
   const _ = req.body;
   if (_ == null || checkParams(req)) {
     res.status(400).json("bad input");
@@ -181,26 +183,52 @@ router.delete("/", (req, res) => {
     });
 });
 
-function checkParams2(req) {
-  const _ = req.body;
-  const nullExists = (_.eventId == null ||
-    _.verifyCode == null ||
-    _.guestId == null);
-  if (nullExists) {
-    // res.status(400).json("bad input");
-    return 400;
-  }
-  return 0;
-}
+
 
 // verify meetup, with error case
 router.put("/verify", (req, res) => {
+  function checkParams2(req) {
+    const _ = req.body;
+    const nullExists = (_.eventId == null ||
+      _.verifyCode == null ||
+      _.guestId == null);
+    if (nullExists) {
+      // res.status(400).json("bad input");
+      return 400;
+    }
+    return 0;
+  }
+
   const _ = req.body;
   if (_ == null || checkParams2(req)) {
     res.status(400).json("bad input");
     return;
   }
 
+  function verifyUserCheck(req, res, event, verified) {
+    User.findOne(
+      { userId: req.body.guestId },
+      (err, guest) => {
+        if (err) {
+          res.status(404).send(err);
+          return;
+        }
+        if (guest == null) {
+          res.status(410).json("user not in database");
+          return;
+        }
+        if (verified) {
+          res.status(200).json("verify successful");
+          pushNotify.emit("verifyMeetup", event, guest);
+
+        } else {
+          pushNotify.emit("noVerifyMeetup", guest);
+          res.status(304).json("meetup not modified");
+        }
+        return;
+      },
+    );
+  }
 
   // update the meetup to show verified if the codes match, else fail
   Event.findOne(
@@ -220,22 +248,8 @@ router.put("/verify", (req, res) => {
       }
       if (event == null) {
         // if we cannot verify the event we send error messages and notifications
-        User.findOne(
-          { userId: req.body.guestId },
-          (err, guest) => {
-            if (err) {
-              res.status(404).send(err);
-              return;
-            }
-            if (guest == null) {
-              res.status(410).json("user not in database");
-              return;
-            }
-            pushNotify.emit("noVerifyMeetup", guest);
-            res.status(304).json("meetup not modified");
-            return;
-          },
-        );
+        verifyUserCheck(req, res, null, false);
+        return;
       } else {
 
         // if the user successfully verifies, we remove them from the notVerified array
@@ -258,42 +272,9 @@ router.put("/verify", (req, res) => {
               // savingError = true;
               return;
             }
-            User.findOne(
-              { userId: req.body.guestId },
-              (err, guest) => {
-                if (err) {
-                  res.status(404).send(err);
-                  return;
-                }
-                if (guest == null) {
-                  res.status(410).json("user not in database");
-                  return;
-                }
-                res.status(200).json("verify successful");
-                pushNotify.emit("verifyMeetup", event, guest);
-                return;
-              },
-            );
+            verifyUserCheck(req, res, event, true);
+            return;
           });
-
-        // if (!savingError) {
-        //   User.findOne(
-        //     { userId: req.body.guestId },
-        //     (err, guest) => {
-        //       if (err) {
-        //         res.status(404).send(err);
-        //         return;
-        //       }
-        //       if (guest == null) {
-        //         res.status(410).json("user not in database");
-        //         return;
-        //       }
-        //       res.status(200).json("verify successful");
-        //       pushNotify.emit("verifyMeetup", event, guest);
-        //       return;
-        //     },
-        //   );
-        // }
       }
     },
   );
@@ -335,20 +316,22 @@ function findAtRiskUsers(req, res, sickUser, pastEvents) {
   res.status(200).json({ pastEvents, notifiedUserIds });
 }
 
-function checkParams3(req) {
-  const _ = req.body;
-  const nullExists = (_.userId == null ||
-    _.twoWeeksAgo == null ||
-    _.currentDate == null);
-  if (nullExists) {
-    // res.status(400).json("bad input");
-    return 400;
-  }
-  return 0;
-}
+
 
 // update contact tracing logs
 router.post("/contactTrace", (req, res) => {
+  function checkParams3(req) {
+    const _ = req.body;
+    const nullExists = (_.userId == null ||
+      _.twoWeeksAgo == null ||
+      _.currentDate == null);
+    if (nullExists) {
+      // res.status(400).json("bad input");
+      return 400;
+    }
+    return 0;
+  }
+
   const _ = req.body;
   if (_ == null || checkParams3(req)) {
     res.status(400).json("bad input");
