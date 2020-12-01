@@ -15,28 +15,27 @@ class helpers {
     // console.log("notifyHelper called");
 
     // check for bad calls
-    if (elem == null || elem.deviceToken == null || elem.username === "unknown user") {
-      return;
+    if (!(elem == null || elem.deviceToken == null || elem.username === "unknown user")) {
+
+      // send messages to guests
+      const message = {
+        notification: {
+          title,
+          body,
+        },
+        token: elem.deviceToken,
+      };
+      // console.log(message);
+
+      // registration token.
+      admin.messaging().send(message)
+        .then((response) => {
+          return response;
+        })
+        .catch((error) => {
+          return error;
+        });
     }
-
-    // send messages to guests
-    const message = {
-      notification: {
-        title,
-        body,
-      },
-      token: elem.deviceToken,
-    };
-    // console.log(message);
-
-    // registration token.
-    admin.messaging().send(message)
-      .then((response) => {
-        return response;
-      })
-      .catch((error) => {
-        return error;
-      });
   }
 
   // tell the guests about the meetup creation
@@ -52,11 +51,10 @@ class helpers {
       for (let i = 0; i < event.guestIds.length; i++) {
         const user = event.guestIds[parseInt(i, 10)];
         User.findOne({ userId: user.guestId }, {}, (err, guest) => {
-          if (err) {
-            return;
+          if (!err) {
+            // send messages to guests
+            helper.notifyHelper(guest, `You are invited to a meetup with ${host.username}, The meetup will be at ${event.restName} at ${new Date(event.timeOfMeet)}`);
           }
-          // send messages to guests
-          helper.notifyHelper(guest, `You are invited to a meetup with ${host.username}, The meetup will be at ${event.restName} at ${new Date(event.timeOfMeet)}`);
         });
       }
 
@@ -80,12 +78,12 @@ class helpers {
     if (event.hostId === guest.userId) {
       // console.log("verifying meetup as the host, returning");
       User.findOne({ userId: event.hostId }, {}, (err, host) => {
-        if (err || host == null) {
-          return;
+        if (!err && host) {
+
+          // send messages to host
+          helper.notifyHelper(host, `${host.username} you cannot verify your own event!`,
+            "Please send the verification code to your friends so they can verify!");
         }
-        // send messages to host
-        helper.notifyHelper(host, `${host.username} you cannot verify your own event!`,
-          "Please send the verification code to your friends so they can verify!");
       });
       return;
     }
@@ -93,17 +91,13 @@ class helpers {
     const body = `We hope you enjoyed ${event.restName} today! Thanks for using SnackBud!`;
     // get host
     User.findOne({ userId: event.hostId }, {}, (err, host) => {
-      if (err || host == null) {
-        // TODO: Cannot use res here safely
-        // res.send(err);
-        // console.log(err);
-        return;
+      if (!err && host) {
+        // console.log("host is:" + host.userId);
+        // send messages to host
+        helper.notifyHelper(host, `${guest.username} has verified your meetup with you!`, body);
+        // send messages to guest
+        helper.notifyHelper(guest, `You have verified your meetup with ${host.username}!`, body);
       }
-      // console.log("host is:" + host.userId);
-      // send messages to host
-      helper.notifyHelper(host, `${guest.username} has verified your meetup with you!`, body);
-      // send messages to guest
-      helper.notifyHelper(guest, `You have verified your meetup with ${host.username}!`, body);
     });
   }
 
