@@ -327,7 +327,7 @@ public class SnackBudUITest {
      * Click on restaurant spinner and select a restaurant
      * */
     @Test
-    public void searchandSelectRest() {
+    public void searchAndSelectRest() {
         switchPageToMeetup();
 
         onView(withId(R.id.search_rest)).perform(click());
@@ -454,25 +454,5 @@ public class SnackBudUITest {
         onView(withId(R.id.createmeeting))
                 .check(matches(isEnabled())); // click 12
         Assert.assertTrue(true);
-    }
-
-
-    private static Matcher<View> childAtPosition(
-            final Matcher<View> parentMatcher, final int position) {
-
-        return new TypeSafeMatcher<View>() {
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Child at position " + position + " in parent ");
-                parentMatcher.describeTo(description);
-            }
-
-            @Override
-            public boolean matchesSafely(View view) {
-                ViewParent parent = view.getParent();
-                return parent instanceof ViewGroup && parentMatcher.matches(parent)
-                        && view.equals(((ViewGroup) parent).getChildAt(position));
-            }
-        };
     }
 }
