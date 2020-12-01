@@ -87,17 +87,7 @@ router.get("/", (req, res) => {
     });
 });
 
-// function checkParams(req, res) {
-//   const _ = req.body;
-//   const nullExists = (_.guestIds == null ||
-//     _.restId == null ||
-//     _.timeOfMeet == null);
-//   if (nullExists) {
-//     res.status(400).json("bad input");
-//     return 400;
-//   }
-//   return 0;
-// }
+
 
 function checkMeetup(event, res) {
   if (event.guestIds.length >= 7) {
@@ -333,16 +323,15 @@ router.post("/contactTrace", (req, res) => {
   }
 
   Event.find({
-    $and: {
-      timeOfMeet: { $gte: req.body.twoWeeksAgo, $lte: req.body.currentDate },
-    
-      $or: [{ hostId: req.body.userId }, 
-            { 
-              guestIds: { $elemMatch: { guestId: req.body.userId } },
-              $not: { notVerified: { $elemMatch: { guestId: req.body.userId } } } 
-            }
-      ]
-    }
+    timeOfMeet: { $gte: req.body.twoWeeksAgo, $lte: req.body.currentDate },
+    $or: [{ 
+            hostId: req.body.userId 
+          }, 
+          { 
+            guestIds: { guestId: req.body.userId },
+            $not: { notVerified: { $elemMatch: { guestId: req.body.userId } } } 
+          }
+    ]
   },
     (err, pastEvents) => {
       if (err) {
@@ -387,3 +376,32 @@ router.post("/contactTrace", (req, res) => {
 // });
 
 module.exports = router;
+
+// function checkParams(req, res) {
+//   const _ = req.body;
+//   const nullExists = (_.guestIds == null ||
+//     _.restId == null ||
+//     _.timeOfMeet == null);
+//   if (nullExists) {
+//     res.status(400).json("bad input");
+//     return 400;
+//   }
+//   return 0;
+// }
+
+// delete a specific event in our db
+// router.delete("/deleteAll", (req, res) => {
+//   // console.log("/event DELETE request");
+
+//   Event.deleteMany({},
+//     (err, d) => {
+//       if (err) {
+//         res.status(404).send(err);
+//         // console.log(err);
+//       // } else if (d.acknowledged && d.deletedCount === 1) {
+//       //   res.status(200).send("delete all successful");
+//       } else {
+//         res.status(200).send("delete all successful");
+//       }
+//     });
+// });
