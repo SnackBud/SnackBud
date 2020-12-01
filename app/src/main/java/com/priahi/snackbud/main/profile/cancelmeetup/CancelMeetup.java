@@ -20,6 +20,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import android.view.View;
@@ -40,11 +41,12 @@ public class CancelMeetup extends DialogFragment implements AdapterView.OnItemSe
 //    private static final String url = "http://192.168.1.66:3000";
 
 
-    private RequestQueue queue;
+
     private String eventId;
     private Map<String, String> eventsIdMap = new HashMap<>();
     private ArrayList<String> eventsIdList = new ArrayList<>();
     private ArrayList<String> eventTitle = new ArrayList<>();
+    private RequestQueue queue;
 
 
     public static CancelMeetup newInstance() {
@@ -84,6 +86,8 @@ public class CancelMeetup extends DialogFragment implements AdapterView.OnItemSe
                 e.printStackTrace();
             }
         });
+
+        queue = Volley.newRequestQueue(requireContext());
 
         // spinner
         final Spinner eventDropdown = requireView().findViewById(R.id.cancel_event_spinner);
