@@ -251,9 +251,9 @@ router.put("/verify", (req, res) => {
 
         // if everyones verified, set isVerified to true in event
         var count = event.notVerified.filter((x) => x.guestId != null).length;
-        if (count === 0) {
-          event.isVerified = true;
-        }
+        // if (count === 0) {
+        event.isVerified = (count === 0);
+        // }
 
         var savingError = false;
         Event.findOneAndUpdate({
@@ -283,12 +283,11 @@ router.put("/verify", (req, res) => {
             } else if (guest == null) {
               res.status(410).json("user not in database");
               return;
-            } else {
-              // console.log(guest);
-              res.status(200).json("verify successful");
-              pushNotify.emit("verifyMeetup", event, guest);
-              return;
             }
+            // console.log(guest);
+            res.status(200).json("verify successful");
+            pushNotify.emit("verifyMeetup", event, guest);
+            return;
           },
         );
       }
