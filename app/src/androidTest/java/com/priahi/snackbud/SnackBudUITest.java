@@ -26,6 +26,7 @@ import org.junit.runner.RunWith;
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.*;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.contrib.PickerActions.setDate;
 import static androidx.test.espresso.contrib.PickerActions.setTime;
@@ -66,6 +67,10 @@ public class SnackBudUITest {
         onView(withId(R.id.profile_view))
                 .perform(click())
                 .check(matches(isDisplayed()));
+
+        onView(withText("109786710572605387609"))
+                .check(doesNotExist());
+
         Assert.assertTrue(true);
     }
 
@@ -79,6 +84,7 @@ public class SnackBudUITest {
                 .perform(click());
         onView(withText("Are you sure you want to report COVID symptoms?"))
                 .check(matches(isDisplayed()));
+
         Assert.assertTrue(true);
     }
 
@@ -92,6 +98,7 @@ public class SnackBudUITest {
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()))
                 .perform(click());
+
         Assert.assertTrue(true);
     }
 
@@ -105,6 +112,7 @@ public class SnackBudUITest {
                 .inRoot(isDialog())
                 .check(matches(isDisplayed()))
                 .perform(click());
+
         Assert.assertTrue(true);
     }
 
@@ -116,6 +124,10 @@ public class SnackBudUITest {
         switchPageToProfile();
         onView(withId(R.id.verify_meetup))
                 .perform(click());
+
+        onView(withText("109786710572605387609"))
+                .check(doesNotExist());
+
         Assert.assertTrue(true);
     }
 
@@ -145,13 +157,12 @@ public class SnackBudUITest {
 
         // Enter the code
         onView(withId(R.id.enter_code))
-                .check(matches((isEnabled())))
                 .perform(click());
 
         // Send code enabled, try to verify
         onView(withId(R.id.send_code))
-                .check(matches((isEnabled())))
                 .perform(click());
+
         Assert.assertTrue(true);
     }
 
@@ -162,10 +173,50 @@ public class SnackBudUITest {
     public void clickOnEventSpinner() {
         clickOnVerifyMeetup();
         onView(withId(R.id.eventSpinner))
-                .perform(click())
                 .check(matches(isDisplayed()));
+
         Assert.assertTrue(true);
     }
+
+    /*
+     * Click on verify meetup
+     * */
+    @Test
+    public void clickOnCancelMeetup() {
+        switchPageToProfile();
+        onView(withId(R.id.cancel_meetup))
+                .perform(click());
+
+        onView(withText("109786710572605387609"))
+                .check(doesNotExist());
+
+        Assert.assertTrue(true);
+    }
+
+    /*
+     * Click on event spinner
+     * */
+    @Test
+    public void clickOnCancelEventSpinner() {
+        clickOnCancelMeetup();
+        onView(withId(R.id.cancel_event_spinner))
+                .check(matches(isDisplayed()));
+
+        Assert.assertTrue(true);
+    }
+
+    /*
+     * Cancel Event
+     */
+//    @Test
+//    public void CancelEvent() {
+//        clickOnVerifyMeetup();
+//        onView(withId(R.id.cancel_event_spinner))
+//                .perform(click())
+//                .check(matches(isDisplayed()));
+//
+//        Assert.assertTrue(true);
+//    }
 
     /*
      * Switch page to map_view
@@ -175,6 +226,10 @@ public class SnackBudUITest {
         onView(withId(R.id.map_view))
                 .perform(click())
                 .check(matches(isDisplayed()));
+
+        onView(withText("109786710572605387609"))
+                .check(doesNotExist());
+
         Assert.assertTrue(true);
     }
 
@@ -189,6 +244,10 @@ public class SnackBudUITest {
         onView(withId(R.id.meetup_view))
                 .perform(click())
                 .check(matches(isDisplayed()));
+
+        onView(withText("109786710572605387609"))
+                .check(doesNotExist());
+
         Assert.assertTrue(true);
     }
 
@@ -366,32 +425,32 @@ public class SnackBudUITest {
     @Test
     public void createMeetUp() {
         switchPageToMeetup();
-
-        onView(withId(R.id.search_rest)).perform(click());
+        // click 1 - on the chips
+        onView(withId(R.id.search_rest)).perform(click()); // click 2
 
         onView(withId(R.id.edit_text_rest))
                 .check(matches(isDisplayed()))
                 .perform(replaceText("33 Acres"));
         onData(anything())
                 .atPosition(0)
-                .perform(click());
+                .perform(click()); // click 3
 
         onView(withText("33 Acres")).check(matches(isDisplayed()));
 
         onView(withId(R.id.btn_date))
-                .perform(click());
+                .perform(click()); // click 4
         onView(withClassName(equalTo(DatePicker.class.getName())))
-                .perform(setDate(2021, 2, 14));
-        onView(withText("OK")).perform(click());
+                .perform(setDate(2021, 2, 14)); // click 5 & click 6
+        onView(withText("OK")).perform(click()); // click 7
 
         onView(withId(R.id.btn_time))
-                .perform(click());
+                .perform(click()); // click 8
         onView(withClassName(equalTo(TimePicker.class.getName())))
-                .perform(setTime(15, 35));
-        onView(withText("OK")).perform(click());
+                .perform(setTime(15, 35)); // click 9 & click 10
+        onView(withText("OK")).perform(click()); // click 11
 
         onView(withId(R.id.createmeeting))
-                .check(matches(isEnabled()));
+                .check(matches(isEnabled())); // click 12
         Assert.assertTrue(true);
     }
 
