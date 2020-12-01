@@ -250,32 +250,32 @@ router.put("/verify", (req, res) => {
         // if we cannot verify the event we send error messages and notifications
         verifyUserCheck(req, res, null, false);
         return;
-      } else {
-
-        // if the user successfully verifies, we remove them from the notVerified array
-        for (var i = 0; i < event.notVerified.length; i++) {
-          if (event.notVerified[parseInt(i, 10)].guestId === req.body.guestId) {
-            event.notVerified[parseInt(i, 10)].guestId = null;
-          }
-        }
-
-        // if everyones verified, set isVerified to true in event
-        var count = event.notVerified.filter((x) => x.guestId != null).length;
-        event.isVerified = (count === 0);
-
-        // var savingError = false;
-        Event.findOneAndUpdate({ _id: event._id }, event,
-          { upsert: true },
-          function (err, _) {
-            if (err) {
-              res.status(404).send(err);
-              // savingError = true;
-              return;
-            }
-            verifyUserCheck(req, res, event, true);
-            return;
-          });
       }
+
+      // if the user successfully verifies, we remove them from the notVerified array
+      for (var i = 0; i < event.notVerified.length; i++) {
+        if (event.notVerified[parseInt(i, 10)].guestId === req.body.guestId) {
+          event.notVerified[parseInt(i, 10)].guestId = null;
+        }
+      }
+
+      // if everyones verified, set isVerified to true in event
+      var count = event.notVerified.filter((x) => x.guestId != null).length;
+      event.isVerified = (count === 0);
+
+      // var savingError = false;
+      Event.findOneAndUpdate({ _id: event._id }, event,
+        { upsert: true },
+        function (err, _) {
+          if (err) {
+            res.status(404).send(err);
+            // savingError = true;
+            return;
+          }
+          verifyUserCheck(req, res, event, true);
+          return;
+        });
+
     },
   );
 });
