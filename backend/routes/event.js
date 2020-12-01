@@ -218,7 +218,8 @@ router.put("/verify", (req, res) => {
         res.status(404).send(err);
         return;
         // console.log(err);
-      } else if (event == null) {
+      }
+      if (event == null) {
         // if we cannot verify the event we send error messages and notifications
         User.findOne(
           { userId: req.body.guestId },
@@ -251,17 +252,12 @@ router.put("/verify", (req, res) => {
 
         // if everyones verified, set isVerified to true in event
         var count = event.notVerified.filter((x) => x.guestId != null).length;
-        // if (count === 0) {
         event.isVerified = (count === 0);
-        // }
 
         var savingError = false;
-        Event.findOneAndUpdate({
-          _id: event._id
-        },
-          event,
+        Event.findOneAndUpdate({ _id: event._id }, event,
           { upsert: true },
-          function (err, event) {
+          function (err, _) {
             if (err) {
               res.status(404).send(err);
               savingError = true;
@@ -269,27 +265,24 @@ router.put("/verify", (req, res) => {
             }
           });
 
-        if (savingError) {
-          return;
+        if (!savingError) {
+          User.findOne(
+            { userId: req.body.guestId },
+            (err, guest) => {
+              if (err) {
+                res.status(404).send(err);
+                return;
+              }
+              if (guest == null) {
+                res.status(410).json("user not in database");
+                return;
+              }
+              res.status(200).json("verify successful");
+              pushNotify.emit("verifyMeetup", event, guest);
+              return;
+            },
+          );
         }
-
-        User.findOne(
-          { userId: req.body.guestId },
-          (err, guest) => {
-            if (err) {
-              res.status(404).send(err);
-              return;
-              // console.log(err);
-            } else if (guest == null) {
-              res.status(410).json("user not in database");
-              return;
-            }
-            // console.log(guest);
-            res.status(200).json("verify successful");
-            pushNotify.emit("verifyMeetup", event, guest);
-            return;
-          },
-        );
       }
     },
   );
