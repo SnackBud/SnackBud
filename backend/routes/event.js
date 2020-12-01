@@ -217,7 +217,6 @@ router.put("/verify", (req, res) => {
       if (err) {
         res.status(404).send(err);
         return;
-        // console.log(err);
       }
       if (event == null) {
         // if we cannot verify the event we send error messages and notifications
@@ -227,23 +226,19 @@ router.put("/verify", (req, res) => {
             if (err) {
               res.status(404).send(err);
               return;
-              // console.log(err);
-            } else {
-              if (guest == null) {
-                res.status(410).json("user not in database");
-                return;
-              } else {
-                pushNotify.emit("noVerifyMeetup", guest);
-                res.status(304).json("meetup not modified");
-                return;
-              }
             }
+            if (guest == null) {
+              res.status(410).json("user not in database");
+              return;
+            }
+            pushNotify.emit("noVerifyMeetup", guest);
+            res.status(304).json("meetup not modified");
+            return;
           },
         );
       } else {
 
         // if the user successfully verifies, we remove them from the notVerified array
-
         for (var i = 0; i < event.notVerified.length; i++) {
           if (event.notVerified[parseInt(i, 10)].guestId === req.body.guestId) {
             event.notVerified[parseInt(i, 10)].guestId = null;
@@ -254,35 +249,51 @@ router.put("/verify", (req, res) => {
         var count = event.notVerified.filter((x) => x.guestId != null).length;
         event.isVerified = (count === 0);
 
-        var savingError = false;
+        // var savingError = false;
         Event.findOneAndUpdate({ _id: event._id }, event,
           { upsert: true },
           function (err, _) {
             if (err) {
               res.status(404).send(err);
-              savingError = true;
+              // savingError = true;
               return;
             }
+            User.findOne(
+              { userId: req.body.guestId },
+              (err, guest) => {
+                if (err) {
+                  res.status(404).send(err);
+                  return;
+                }
+                if (guest == null) {
+                  res.status(410).json("user not in database");
+                  return;
+                }
+                res.status(200).json("verify successful");
+                pushNotify.emit("verifyMeetup", event, guest);
+                return;
+              },
+            );
           });
 
-        if (!savingError) {
-          User.findOne(
-            { userId: req.body.guestId },
-            (err, guest) => {
-              if (err) {
-                res.status(404).send(err);
-                return;
-              }
-              if (guest == null) {
-                res.status(410).json("user not in database");
-                return;
-              }
-              res.status(200).json("verify successful");
-              pushNotify.emit("verifyMeetup", event, guest);
-              return;
-            },
-          );
-        }
+        // if (!savingError) {
+        //   User.findOne(
+        //     { userId: req.body.guestId },
+        //     (err, guest) => {
+        //       if (err) {
+        //         res.status(404).send(err);
+        //         return;
+        //       }
+        //       if (guest == null) {
+        //         res.status(410).json("user not in database");
+        //         return;
+        //       }
+        //       res.status(200).json("verify successful");
+        //       pushNotify.emit("verifyMeetup", event, guest);
+        //       return;
+        //     },
+        //   );
+        // }
       }
     },
   );
