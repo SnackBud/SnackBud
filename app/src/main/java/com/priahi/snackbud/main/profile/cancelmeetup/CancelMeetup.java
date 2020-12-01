@@ -40,7 +40,6 @@ public class CancelMeetup extends DialogFragment implements AdapterView.OnItemSe
 //    private static final String url = "http://192.168.1.66:3000";
 
 
-    private Button cancelEvent;
     private RequestQueue queue;
     private String eventId;
     private Map<String, String> eventsIdMap = new HashMap<>();
@@ -76,22 +75,21 @@ public class CancelMeetup extends DialogFragment implements AdapterView.OnItemSe
         closeButton.setOnClickListener(v -> dismiss());
 
         // cancel button
-        cancelEvent = view.findViewById(R.id.cancel_event);
-        cancelEvent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    putRequest();
-                    dismiss();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        Button cancelEvent = view.findViewById(R.id.cancel_event);
+        cancelEvent.setOnClickListener(v -> {
+            try {
+                putRequest();
+                dismiss();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         });
 
         // spinner
         final Spinner eventDropdown = requireView().findViewById(R.id.cancel_event_spinner);
         eventDropdown.setOnItemSelectedListener(this);
+
+        getUserEvents(eventDropdown);
     }
 
     // for setting the users and restaurants
@@ -110,7 +108,7 @@ public class CancelMeetup extends DialogFragment implements AdapterView.OnItemSe
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
+        // Codacy Fix
     }
 
     @SuppressWarnings("Duplicates")
