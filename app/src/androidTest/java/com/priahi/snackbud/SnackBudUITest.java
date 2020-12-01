@@ -456,7 +456,7 @@ public class SnackBudUITest {
         Assert.assertTrue(true);
     }
 
-    
+
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
 
