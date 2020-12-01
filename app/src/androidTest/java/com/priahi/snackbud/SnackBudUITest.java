@@ -197,7 +197,7 @@ public class SnackBudUITest {
      * Click on user spinner
      * */
     @Test
-    public void clickOnUserChip() {
+    public void clickOnUserChipInput() {
         switchPageToMeetup();
         onView(withId(R.id.chips_input))
                 .perform(click())
@@ -206,38 +206,40 @@ public class SnackBudUITest {
     }
 
     /*
-     * Click on user spinner and search and select a user chip
+     * Click on user spinner and search for a user chip
      * */
     @Test
-    public void searchAndSelectUser() {
+    public void searchUser() {
         switchPageToMeetup();
-        ViewInteraction recyclerView = onView(
-                allOf(withId(R.id.chips_recycler),
-                        childAtPosition(
-                                withId(R.id.container),
-                                0)));
-        recyclerView.perform(actionOnItemAtPosition(0, click()));
 
-        ViewInteraction recyclerView2 = onView(
-                allOf(withId(R.id.chips_recycler),
-                        childAtPosition(
-                                withId(R.id.container),
-                                0)));
-        recyclerView2.perform(actionOnItemAtPosition(0, replaceText("Arnold")));
+        onView(withId(R.id.chips_input))
+                .perform(
+                        new ViewAction() {
+                            @Override
+                            public Matcher<View> getConstraints() {
+                                return isEnabled();
+                            }
 
-        ViewInteraction recyclerView3 = onView(
-                allOf(withId(R.id.chips_recycler),
-                        childAtPosition(
-                                withId(R.id.container),
-                                0)));
-        recyclerView3.perform(actionOnItemAtPosition(0, closeSoftKeyboard()));
+                            @Override
+                            public String getDescription() {
+                                return "type in user name";
+                            }
 
-        ViewInteraction recyclerView4 = onView(
-                allOf(withId(R.id.recycler_view),
-                        childAtPosition(
-                                withClassName(is("android.widget.RelativeLayout")),
-                                0)));
-        recyclerView4.perform(actionOnItemAtPosition(0, click()));
+                            @Override
+                            public void perform(UiController uiController, View view) {
+                                view.performClick();
+                                try {
+                                    uiController.injectString("Arnold");
+                                } catch (InjectEventSecurityException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                )
+                .check(matches(isDisplayed()));
+
+        onView(withText("Arnold Ying"))
+                .check(matches(isDisplayed()));
 
         Assert.assertTrue(true);
     }
@@ -306,36 +308,6 @@ public class SnackBudUITest {
     public void createMeetUpNoDate() {
         switchPageToMeetup();
 
-        onView(withId(R.id.chips_input))
-                .perform(
-                        new ViewAction() {
-                            @Override
-                            public Matcher<View> getConstraints() {
-                                return isEnabled();
-                            }
-
-                            @Override
-                            public String getDescription() {
-                                return "type in user name";
-                            }
-
-                            @Override
-                            public void perform(UiController uiController, View view) {
-                                view.performClick();
-                                try {
-                                    uiController.injectString("Arnold");
-                                } catch (InjectEventSecurityException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                )
-                .check(matches(isDisplayed()));
-
-        onView(withText("Arnold Ying"))
-                .check(matches(isDisplayed()))
-                .perform(click());
-
         onView(withId(R.id.search_rest)).perform(click());
 
         onView(withId(R.id.edit_text_rest))
@@ -363,36 +335,6 @@ public class SnackBudUITest {
     @Test
     public void createMeetUpNoTime() {
         switchPageToMeetup();
-
-        onView(withId(R.id.chips_input))
-                .perform(
-                        new ViewAction() {
-                            @Override
-                            public Matcher<View> getConstraints() {
-                                return isEnabled();
-                            }
-
-                            @Override
-                            public String getDescription() {
-                                return "type in user name";
-                            }
-
-                            @Override
-                            public void perform(UiController uiController, View view) {
-                                view.performClick();
-                                try {
-                                    uiController.injectString("Arnold");
-                                } catch (InjectEventSecurityException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                )
-                .check(matches(isDisplayed()));
-
-        onView(withText("Arnold Ying"))
-                .check(matches(isDisplayed()))
-                .perform(click());
 
         onView(withId(R.id.search_rest)).perform(click());
 
@@ -426,36 +368,6 @@ public class SnackBudUITest {
     public void createMeetUp() {
         switchPageToMeetup();
 
-        onView(withId(R.id.chips_input))
-                .perform(
-                        new ViewAction() {
-                            @Override
-                            public Matcher<View> getConstraints() {
-                                return isEnabled();
-                            }
-
-                            @Override
-                            public String getDescription() {
-                                return "type in user name";
-                            }
-
-                            @Override
-                            public void perform(UiController uiController, View view) {
-                                view.performClick();
-                                try {
-                                    uiController.injectString("Arnold");
-                                } catch (InjectEventSecurityException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                )
-                .check(matches(isDisplayed()));
-
-        onView(withText("Arnold Ying"))
-                .check(matches(isDisplayed()))
-                .perform(click());
-
         onView(withId(R.id.search_rest)).perform(click());
 
         onView(withId(R.id.edit_text_rest))
@@ -480,8 +392,7 @@ public class SnackBudUITest {
         onView(withText("OK")).perform(click());
 
         onView(withId(R.id.createmeeting))
-                .check(matches(isEnabled()))
-                .perform(click());
+                .check(matches(isEnabled()));
         Assert.assertTrue(true);
     }
 
