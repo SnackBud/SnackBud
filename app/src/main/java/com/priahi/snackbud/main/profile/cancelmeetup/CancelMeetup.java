@@ -200,11 +200,11 @@ public class CancelMeetup extends DialogFragment implements AdapterView.OnItemSe
         }
         Log.e(TAG, Objects.requireNonNull(acct.getId()));
         JSONObject eventRequest = new JSONObject();
-        eventRequest.put("guestId", acct.getId());
+        //eventRequest.put("guestId", acct.getId());
         eventRequest.put("eventId", this.eventId);
         Log.e(TAG, eventRequest.toString());
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT,
-                getString(R.string.backend_url) + "/event/verify",
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE,
+                getString(R.string.backend_url) + "/event",
                 eventRequest,
                 response -> {
                     try {
