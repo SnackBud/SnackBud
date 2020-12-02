@@ -20,6 +20,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -198,25 +199,32 @@ public class CancelMeetup extends DialogFragment implements AdapterView.OnItemSe
             Log.w(TAG, "error, no google sign in");
             return;
         }
-        Log.e(TAG, Objects.requireNonNull(acct.getId()));
-        JSONObject eventRequest = new JSONObject();
-        //eventRequest.put("guestId", acct.getId());
-        eventRequest.put("eventId", this.eventId);
-        Log.e(TAG, eventRequest.toString());
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE,
-                getString(R.string.backend_url) + "/event",
-                eventRequest,
-                response -> {
-                    try {
-                        VolleyLog.v("Response:%n %s", response.toString(4));
-                        //Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }, error -> {
-            //Toast.makeText(getContext(), error.toString(), Toast.LENGTH_SHORT).show();
-            VolleyLog.e("Error: ", error.getMessage());
-        });
-        queue.add(request);
+
+        try {
+            JSONObject eventRequest = new JSONObject();
+            eventRequest.put("eventId", this.eventId);
+            Log.w(TAG, this.eventId);
+
+            Log.w(TAG, eventRequest.toString());
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE,
+                    getString(R.string.backend_url) + "/event",
+                    eventRequest,
+                    response -> {
+                        try {
+                            VolleyLog.v("Response:%n %s", response.toString(4));
+                            //Toast.makeText(getContext(), response.toString(), Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }, error -> {
+                //Toast.makeText(getContext(), error.toString(), Toast.LENGTH_SHORT).show();
+                VolleyLog.e("Error: ", error.getMessage());
+            });
+            queue.add(request);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, e.toString());
+        }
     }
 }

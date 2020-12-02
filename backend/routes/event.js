@@ -161,7 +161,7 @@ router.post("/", (req, res) => {
 
 // delete a specific event in our db
 router.delete("/", (req, res) => {
-  // console.log("/event DELETE request");
+  console.log(req.body);
   if (req.body.eventId == null) {
     res.status(400).json("bad input");
     return;
@@ -340,13 +340,14 @@ router.post("/contactTrace", (req, res) => {
     },
     {
       guestIds: { guestId: req.body.userId },
-      $not: { notVerified: { $elemMatch: { guestId: req.body.userId } } }
+      notVerified: { $nin: { guestId: req.body.userId } }
     }
     ]
   },
     (err, pastEvents) => {
       if (err) {
         // error case protected here
+        console.log(err);
         res.status(404).send(err);
         return;
       }
