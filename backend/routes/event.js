@@ -161,7 +161,7 @@ router.post("/", (req, res) => {
 
 // delete a specific event in our db
 router.delete("/", (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   if (req.body.eventId == null) {
     res.status(400).json("bad input");
     return;
@@ -347,7 +347,6 @@ router.post("/contactTrace", (req, res) => {
     (err, pastEvents) => {
       if (err) {
         // error case protected here
-        console.log(err);
         res.status(404).send(err);
         return;
       }
