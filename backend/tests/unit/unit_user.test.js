@@ -1,9 +1,6 @@
 // mongoose model for the routes we are testing
 const User = require("../../models/user");
 
-// modules that will be mocked
-const Helpers = require("../../helper");
-
 // We use the module mockingoose to mock mongoose functions
 const mockingoose = require("mockingoose").default;
 
@@ -21,9 +18,6 @@ const request = supertest(app);
 
 
 describe("User Model Test", () => {
-
-    let helper = new Helpers();
-    helper.notifyHelper = jest.fn();
     const guest = new User({
         userId: "1",
         username: "Arnold",
@@ -99,9 +93,6 @@ describe("User Model Test", () => {
 });
 
 describe("User Model Test bad calls", () => {
-
-    let helper = new Helpers();
-    helper.notifyHelper = jest.fn();
 
     // set up mockingoose for mocking the mongoose functions
     beforeEach(() => {

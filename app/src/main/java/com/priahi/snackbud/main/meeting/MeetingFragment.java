@@ -378,9 +378,9 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
             mHour = 8;
             mMinute = 0;
         }
-        else {
-            //mHour = mHour + 1;
-        }
+//        else {
+//            mHour = mHour + 1;
+//        }
 
         // Launch Time Picker Dialog
         RangeTimePickerDialog timePickerDialog = new RangeTimePickerDialog(requireContext(),
