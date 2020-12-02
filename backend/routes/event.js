@@ -369,36 +369,8 @@ router.post("/contactTrace", (req, res) => {
         });
     });
 });
-// delete a specific event in our db
-// router.delete("/deleteAll", (req, res) => {
-//   // console.log("/event DELETE request");
-
-//   Event.deleteMany({},
-//     (err, d) => {
-//       if (err) {
-//         res.status(404).send(err);
-//         // console.log(err);
-//       // } else if (d.acknowledged && d.deletedCount === 1) {
-//       //   res.status(200).send("delete all successful");
-//       } else {
-//         res.status(200).send("delete all successful");
-//       }
-//     });
-// });
 
 module.exports = router;
-
-// function checkParams(req, res) {
-//   const _ = req.body;
-//   const nullExists = (_.guestIds == null ||
-//     _.restId == null ||
-//     _.timeOfMeet == null);
-//   if (nullExists) {
-//     res.status(400).json("bad input");
-//     return 400;
-//   }
-//   return 0;
-// }
 
 // delete a specific event in our db
 // router.delete("/deleteAll", (req, res) => {

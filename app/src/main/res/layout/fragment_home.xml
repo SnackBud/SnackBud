@@ -68,28 +68,35 @@
     </LinearLayout>
 
 
-    <Button android:layout_width="300dp"
-            android:layout_height="100dp"
-            android:id="@+id/verify_meetup"
-            android:text="@string/verify_meetup"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintBottom_toTopOf="@+id/cancel_meetup"/>
+    <Button
+        android:id="@+id/verify_meetup"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:text="@string/verify_meetup"
+        app:layout_constraintBottom_toTopOf="@+id/covid_report"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
-    <Button android:layout_width="300dp"
-            android:layout_height="100dp"
-            android:id="@+id/cancel_meetup"
-            android:text="@string/cancel_meetup"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+<!--    <Button android:layout_width="300dp"-->
+<!--            android:layout_height="100dp"-->
+<!--            android:id="@+id/cancel_meetup"-->
+<!--            android:text="@string/cancel_meetup"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/linearLayout2"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"/>-->
 
     <Button
-            android:id="@+id/covid_report"
-            android:layout_width="120dp"
-            android:layout_height="100dp"
-            android:text="@string/covid_report" app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cancel_meetup"/>
+        android:id="@+id/covid_report"
+        android:layout_width="120dp"
+        android:layout_height="100dp"
+        android:text="@string/covid_report"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintVertical_bias="0.705" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
