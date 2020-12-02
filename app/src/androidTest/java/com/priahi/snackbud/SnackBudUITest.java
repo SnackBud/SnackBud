@@ -176,32 +176,32 @@ public class SnackBudUITest {
         Assert.assertTrue(true);
     }
 
-    /*
-     * Click on verify meetup
-     * */
-    @Test
-    public void clickOnCancelMeetup() {
-        switchPageToProfile();
-        onView(withId(R.id.cancel_meetup))
-                .perform(click());
-
-        onView(withText("109786710572605387609"))
-                .check(doesNotExist());
-
-        Assert.assertTrue(true);
-    }
-
-    /*
-     * Click on event spinner
-     * */
-    @Test
-    public void clickOnCancelEventSpinner() {
-        clickOnCancelMeetup();
-        onView(withId(R.id.cancel_event_spinner))
-                .check(matches(isDisplayed()));
-
-        Assert.assertTrue(true);
-    }
+//    /*
+//     * Click on verify meetup
+//     * */
+//    @Test
+//    public void clickOnCancelMeetup() {
+//        switchPageToProfile();
+//        onView(withId(R.id.cancel_meetup))
+//                .perform(click());
+//
+//        onView(withText("109786710572605387609"))
+//                .check(doesNotExist());
+//
+//        Assert.assertTrue(true);
+//    }
+//
+//    /*
+//     * Click on event spinner
+//     * */
+//    @Test
+//    public void clickOnCancelEventSpinner() {
+//        clickOnCancelMeetup();
+//        onView(withId(R.id.cancel_event_spinner))
+//                .check(matches(isDisplayed()));
+//
+//        Assert.assertTrue(true);
+//    }
 
     /*
      * Cancel Event
