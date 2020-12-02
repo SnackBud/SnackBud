@@ -20,6 +20,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import android.view.View;
@@ -40,12 +41,12 @@ public class CancelMeetup extends DialogFragment implements AdapterView.OnItemSe
 //    private static final String url = "http://192.168.1.66:3000";
 
 
-    private Button cancelEvent;
-    private RequestQueue queue;
+
     private String eventId;
     private Map<String, String> eventsIdMap = new HashMap<>();
     private ArrayList<String> eventsIdList = new ArrayList<>();
     private ArrayList<String> eventTitle = new ArrayList<>();
+    private RequestQueue queue;
 
 
     public static CancelMeetup newInstance() {
@@ -76,22 +77,23 @@ public class CancelMeetup extends DialogFragment implements AdapterView.OnItemSe
         closeButton.setOnClickListener(v -> dismiss());
 
         // cancel button
-        cancelEvent = view.findViewById(R.id.cancel_event);
-        cancelEvent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    putRequest();
-                    dismiss();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        Button cancelEvent = view.findViewById(R.id.cancel_event);
+        cancelEvent.setOnClickListener(v -> {
+            try {
+                putRequest();
+                dismiss();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         });
+
+        queue = Volley.newRequestQueue(requireContext());
 
         // spinner
         final Spinner eventDropdown = requireView().findViewById(R.id.cancel_event_spinner);
         eventDropdown.setOnItemSelectedListener(this);
+
+        getUserEvents(eventDropdown);
     }
 
     // for setting the users and restaurants
@@ -110,7 +112,7 @@ public class CancelMeetup extends DialogFragment implements AdapterView.OnItemSe
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
+        // Codacy Fix
     }
 
     @SuppressWarnings("Duplicates")
@@ -198,11 +200,11 @@ public class CancelMeetup extends DialogFragment implements AdapterView.OnItemSe
         }
         Log.e(TAG, Objects.requireNonNull(acct.getId()));
         JSONObject eventRequest = new JSONObject();
-        eventRequest.put("guestId", acct.getId());
+        //eventRequest.put("guestId", acct.getId());
         eventRequest.put("eventId", this.eventId);
         Log.e(TAG, eventRequest.toString());
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.PUT,
-                getString(R.string.backend_url) + "/event/verify",
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.DELETE,
+                getString(R.string.backend_url) + "/event",
                 eventRequest,
                 response -> {
                     try {

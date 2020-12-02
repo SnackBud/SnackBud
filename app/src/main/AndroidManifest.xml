@@ -23,7 +23,7 @@
         <activity
                 android:name=".main.profile.cancelmeetup.CancelMeetup"
                 android:label="@string/title_activity_cancel_meetup"
-                android:theme="@style/AppTheme.NoActionBar">
+                android:theme="@style/AppTheme.NoActionBar" tools:ignore="Instantiatable">
         </activity>
         <activity android:name=".main.about.About">
         </activity>

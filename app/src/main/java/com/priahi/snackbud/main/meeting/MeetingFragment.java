@@ -238,7 +238,7 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
                         e.printStackTrace();
                     }
                 }, error -> {
-            Log.d(TAG, "Failed with error msg:\t" + error.getMessage());
+            // Log.d(TAG, "Failed with error msg:\t" + error.getMessage());
             Log.d(TAG, "Error StackTrace: \t" + Arrays.toString(error.getStackTrace()));
             // edited here
             try {
@@ -378,9 +378,9 @@ public class MeetingFragment extends Fragment implements View.OnClickListener {
             mHour = 8;
             mMinute = 0;
         }
-//        else {
-//            mHour = mHour + 1;
-//        }
+        else {
+            mHour = mHour + 1;
+        }
 
         // Launch Time Picker Dialog
         RangeTimePickerDialog timePickerDialog = new RangeTimePickerDialog(requireContext(),
